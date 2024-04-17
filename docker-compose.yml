@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  db:
+  mariadb:
     image: mysql:latest
     restart: always
     environment:
@@ -11,5 +11,14 @@ services:
       - ./mysql-data:/var/lib/mysql
       - ./init.sql:/tmp/init.sql
     command: ["--init-file", "/tmp/init.sql"]
+    depends_on:
+      - webserver
+  webserver:
+    image: golang:latest
+    restart: always
+  caddy:
+    image: caddy:latest
+    volumes:
+      - ./Config/Caddyfile:/etc/caddy/Caddyfile
     ports:
-      - "3306:3306"
+      - "443:443"
