@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootPASSWORD
+      MYSQL_DATABASE: TEST
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+      - ./init.sql:/tmp/init.sql
+    command: ["--init-file", "/tmp/init.sql"]
+    ports:
+      - "3306:3306"
