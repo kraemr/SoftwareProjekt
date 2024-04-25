@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   mariadb:
@@ -14,8 +14,9 @@ services:
     depends_on:
       - webserver
   webserver:
-    image: golang:latest
-    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
   caddy:
     image: caddy:latest
     volumes:
