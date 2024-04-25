@@ -1,1 +1,3 @@
-respond "Hello World"
+localhost
+
+respond "Hello, world!"
