@@ -1,12 +1,11 @@
 FROM golang:latest AS build
+WORKDIR /opt/app/
+COPY app/ .
 
-WORKDIR /app
-
-COPY . .
-
-RUN go build -o myapp
+RUN cd api/src && ls -la && go build -o ../build/api main.go
 
 # Stage 2: Create a minimal image to run the application
 FROM scratch
-COPY --from=build /app/myapp /myapp
-CMD ["/myapp"]
+WORKDIR /opt/api
+COPY --from=build /opt/app/api/build/api api
+CMD ["./api"]
