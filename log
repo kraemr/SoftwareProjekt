@@ -1,0 +1,54 @@
+Sending build context to Docker daemon  212.5MB
+Step 1/6 : FROM golang:latest AS build
+ ---> e49d53614208
+Step 2/6 : WORKDIR /opt/app/
+ ---> Using cache
+ ---> 1f015835fd0c
+Step 3/6 : COPY app/ .
+ ---> Using cache
+ ---> fce45648b0e1
+Step 4/6 : RUN cd api/src && ls -la && go build -o ../build/api main.go
+ ---> Using cache
+ ---> f0dc1725f4c2
+Step 5/6 : RUN ls -la
+ ---> Using cache
+ ---> a87b27c76166
+Step 6/6 : CMD ["/opt/app/api/build/api"]
+ ---> Using cache
+ ---> 6f6060a0b033
+Successfully built 6f6060a0b033
+Successfully tagged softwareprojekt_webserver:latest
+Attaching to softwareprojekt_caddy_1, softwareprojekt_webserver_1, softwareprojekt_mariadb_1
+[36mcaddy_1      |[0m {"level":"info","ts":1714054152.7030277,"msg":"using provided configuration","config_file":"/etc/caddy/Caddyfile","config_adapter":"caddyfile"}
+[36mcaddy_1      |[0m {"level":"warn","ts":1714054152.7035534,"msg":"Caddyfile input is not formatted; run 'caddy fmt --overwrite' to fix inconsistencies","adapter":"caddyfile","file":"/etc/caddy/Caddyfile","line":2}
+[36mcaddy_1      |[0m {"level":"info","ts":1714054152.7039268,"logger":"admin","msg":"admin endpoint started","address":"localhost:2019","enforce_origin":false,"origins":["//localhost:2019","//[::1]:2019","//127.0.0.1:2019"]}
+[36mcaddy_1      |[0m {"level":"info","ts":1714054152.7039793,"logger":"http.auto_https","msg":"server is listening only on the HTTPS port but has no TLS connection policies; adding one to enable TLS","server_name":"srv0","https_port":443}
+[36mcaddy_1      |[0m {"level":"info","ts":1714054152.7039852,"logger":"http.auto_https","msg":"enabling automatic HTTP->HTTPS redirects","server_name":"srv0"}
+[36mcaddy_1      |[0m {"level":"info","ts":1714054152.7041087,"logger":"tls.cache.maintenance","msg":"started background certificate maintenance","cache":"0xc0002bde80"}
+[36mcaddy_1      |[0m {"level":"info","ts":1714054152.704348,"logger":"http","msg":"enabling HTTP/3 listener","addr":":443"}
+[36mcaddy_1      |[0m {"level":"info","ts":1714054152.7043948,"msg":"failed to sufficiently increase receive buffer size (was: 208 kiB, wanted: 2048 kiB, got: 416 kiB). See https://github.com/quic-go/quic-go/wiki/UDP-Buffer-Sizes for details."}
+[36mcaddy_1      |[0m {"level":"info","ts":1714054152.7044585,"logger":"http.log","msg":"server running","name":"srv0","protocols":["h1","h2","h3"]}
+[36mcaddy_1      |[0m {"level":"info","ts":1714054152.70448,"logger":"http.log","msg":"server running","name":"remaining_auto_https_redirects","protocols":["h1","h2","h3"]}
+[36mcaddy_1      |[0m {"level":"info","ts":1714054152.7044828,"logger":"http","msg":"enabling automatic TLS certificate management","domains":["localhost"]}
+[36mcaddy_1      |[0m {"level":"warn","ts":1714054152.7046964,"logger":"tls","msg":"stapling OCSP","error":"no OCSP stapling for [localhost]: no OCSP server specified in certificate","identifiers":["localhost"]}
+[36mcaddy_1      |[0m {"level":"warn","ts":1714054152.7078946,"logger":"tls","msg":"storage cleaning happened too recently; skipping for now","storage":"FileStorage:/data/caddy","instance":"5875710a-1e13-4c45-aef3-d0963f8296a9","try_again":1714140552.707893,"try_again_in":86399.999999635}
+[36mcaddy_1      |[0m {"level":"info","ts":1714054152.7079566,"logger":"tls","msg":"finished cleaning storage units"}
+[36mcaddy_1      |[0m {"level":"info","ts":1714054152.715217,"logger":"pki.ca.local","msg":"root certificate is already trusted by system","path":"storage:pki/authorities/local/root.crt"}
+[36mcaddy_1      |[0m {"level":"info","ts":1714054152.7153485,"msg":"autosaved config (load with --resume flag)","file":"/config/caddy/autosave.json"}
+[36mcaddy_1      |[0m {"level":"info","ts":1714054152.7153554,"msg":"serving initial configuration"}
+[32mwebserver_1  |[0m Server is running on port 8000
+[33mmariadb_1    |[0m 2024-04-25 14:09:13+00:00 [Note] [Entrypoint]: Entrypoint script for MySQL Server 8.3.0-1.el8 started.
+[33mmariadb_1    |[0m 2024-04-25 14:09:13+00:00 [Note] [Entrypoint]: Switching to dedicated user 'mysql'
+[33mmariadb_1    |[0m 2024-04-25 14:09:13+00:00 [Note] [Entrypoint]: Entrypoint script for MySQL Server 8.3.0-1.el8 started.
+[33mmariadb_1    |[0m '/var/lib/mysql/mysql.sock' -> '/var/run/mysqld/mysqld.sock'
+[33mmariadb_1    |[0m 2024-04-25T14:09:13.385847Z 0 [System] [MY-015015] [Server] MySQL Server - start.
+[33mmariadb_1    |[0m 2024-04-25T14:09:13.552494Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.3.0) starting as process 1
+[33mmariadb_1    |[0m 2024-04-25T14:09:13.563720Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+[33mmariadb_1    |[0m 2024-04-25T14:09:13.672842Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+[33mmariadb_1    |[0m 2024-04-25T14:09:13.925512Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+[33mmariadb_1    |[0m 2024-04-25T14:09:13.925588Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+[33mmariadb_1    |[0m 2024-04-25T14:09:13.932743Z 0 [Warning] [MY-011810] [Server] Insecure configuration for --pid-file: Location '/var/run/mysqld' in the path is accessible to all OS users. Consider choosing a different directory.
+[33mmariadb_1    |[0m 2024-04-25T14:09:13.973397Z 7 [ERROR] [MY-000061] [Server] 1046  No database selected.
+[33mmariadb_1    |[0m 2024-04-25T14:09:13.974233Z 0 [System] [MY-011323] [Server] X Plugin ready for connections. Bind-address: '::' port: 33060, socket: /var/run/mysqld/mysqlx.sock
+[33mmariadb_1    |[0m 2024-04-25T14:09:13.974259Z 0 [System] [MY-010931] [Server] /usr/sbin/mysqld: ready for connections. Version: '8.3.0'  socket: '/var/run/mysqld/mysqld.sock'  port: 3306  MySQL Community Server - GPL.
+Gracefully stopping... (press Ctrl+C again to force)
