@@ -6,7 +6,7 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: rootPASSWORD
-      MYSQL_DATABASE: TEST
+      MYSQL_DATABASE: SITE_DB
     volumes:
       - ./mysql-data:/var/lib/mysql
       - ./init.sql:/tmp/init.sql
@@ -17,6 +17,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    environment:
+      SITE_DB_PASSWORD: rootPASSWORD
   caddy:
     image: caddy:latest
     volumes:
