@@ -10,6 +10,7 @@ import (
 	"time"
 	"github.com/go-sql-driver/mysql"
 	"src/crypto_utils"
+	"src/sessions"
 //	"io"
 )
 
@@ -101,10 +102,6 @@ func registerUser(res http.ResponseWriter, req *http.Request) {
 	fmt.Fprintf(res, "{\"success\":true}")
 }
 
-func startLoginSession(){
-
-}
-
 func loginUser(res http.ResponseWriter, req *http.Request) {
 	decoder := json.NewDecoder(req.Body)
 	var user User_registration
@@ -135,7 +132,7 @@ func loginUser(res http.ResponseWriter, req *http.Request) {
 		return	
 	}
 	if(correct == true){
-		startLoginSession()	
+		sessions.StartSession(res,req);
 		fmt.Fprintf(res, "{\"success\":true}")
 	}else{
 		fmt.Fprintf(res, "{\"success\":false}")

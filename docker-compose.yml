@@ -19,6 +19,7 @@ services:
       dockerfile: Dockerfile
     environment:
       SITE_DB_PASSWORD: rootPASSWORD
+      SESSION_KEY: 8D28E179A8226396169CC074AE0DE76A
   caddy:
     image: caddy:latest
     volumes:
