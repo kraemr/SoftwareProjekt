@@ -9,3 +9,7 @@
   #map .leaflet-control-container {
     display: none;
 }
+.sidebar {
+  width: 50%;
+  margin-top: 50px;
+}
