@@ -1,5 +1,4 @@
 package main
-
 import (
 	"database/sql"
 	"encoding/json"
@@ -13,17 +12,14 @@ import (
 	"src/sessions"
 //	"io"
 )
-
 const (
 	maxOpenConns = 100
 	maxIdleConns = 50
 	maxLifetime  = 5 * time.Minute
 )
-
 var (
 	db *sql.DB
 )
-
 func initDB() {
 	site_db_pw := os.Getenv("SITE_DB_PASSWORD")
 	fmt.Println(site_db_pw)
@@ -78,14 +74,11 @@ func registerUser(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	// TODO: HASH PASSWORD FIRST
 	prepared_stmt, err := db.Prepare("INSERT INTO USER(email,password) VALUES(?,?)")
 	if err != nil {
 		http.Error(res, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-
 
 	argon2Pw, err := crypto_utils.GetHashedPassword(user.Password);
 	if err != nil {
