@@ -2,21 +2,24 @@ package attractions;
 import (
 	_ "errors"
 	"database/sql"
+	"src/db_utils"
 	"fmt"
 )
 
-var(
-	db *sql.DB
-)
+
+
+
 
 type Attraction struct{
-	Title string 			`json:"title"`
-	Type string  			`json:"type"` 
-	Recommended_count int 	`json:"recommended_count"`
-	City string				`json:"city"`
-	Info string				`json:"info"`
-	PosX float32			`json:"posX"`
-	PosY float32			`json:"posY"`
+	Id   			  int64	   `json:id`
+	Title 			  string   `json:"title"`
+	Type  			  string   `json:"type"` 
+	Recommended_count int 	   `json:"recommended_count"`
+	City 			  string   `json:"city"`
+	Info 			  string   `json:"info"`
+	Approved		  bool	   `json:approved`		
+	PosX 			  float32  `json:"posX"`
+	PosY 			  float32  `json:"posY"`
 }
 
 type Filter struct{
@@ -25,35 +28,111 @@ type Filter struct{
 	Filter_value string		`json:"filter_value"`
 }
 
+
+// This function Also Makes sure that the City string is made to be lowercase
 func InsertAttraction(a Attraction) error{
+	var db *sql.DB = db_utils.DB
 	prepared_stmt,err := db.Prepare("INSERT INTO ATTRACTION_ENTRY(title,type,recommended_count,city,info,PosX,PosY) VALUES(?,?,?,?,?,?,?)")
 	if(err != nil){
 		fmt.Println("Couldnt Insert Attraction")
 		return err
 	}
-	prepared_stmt.Exec(a.Title,a.Type,a.Recommended_count,a.Info,a.PosX,a.PosY)
+	result,err := prepared_stmt.Exec(a.Title,a.Type,a.Recommended_count,a.City,a.Info,a.PosX,a.PosY)
+	_ = result
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
+func ChangeAttractionApproval(approved bool,id int64) error{
+	var db *sql.DB = db_utils.DB
+	prepared_stmt,err := db.Prepare("UPDATE ATTRACTION_ENTRY SET ATTRACTION_ENTRY.approved=? WHERE ATTRACTION_ENTRY.id=?")
+	if(err != nil){
+		fmt.Println("Couldnt Create Approve/Disapprove Attraction PreparedSTMT")
+		return err
+	}
+	result,err := prepared_stmt.Exec(approved,id)
+	_ = result
+	if err != nil {
+		return err
+	}
+	return nil
 
-func GetAttraction(id int) Attraction{
-
-
-
-	return Attraction{}
 }
 
-func GetAttractionByName(name string) Attraction{
-	return Attraction{}
+func GetAttraction(id int) (Attraction,error){
+	var db *sql.DB = db_utils.DB
+	row, err := db.Query("SELECT id,title,type,recommended_count,city,info,approved,PosX,PosY FROM ATTRACTION_ENTRY WHERE id = ?", id)
+	
+	if(err != nil){
+		return Attraction{},err
+	}
+	defer row.Close()
+	var a Attraction;
+
+	for row.Next() {
+		row.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Info,&a.Approved,&a.PosX,&a.PosY)
+	}	
+
+	if(err != nil){
+		return Attraction{},err
+	}
+	return a,nil
 }
 
-func GetAttractionCount() int{
-	return 1
+
+// Get Attraction By City String where City is converted to lowercase always
+func GetAttractionsByCity(city string) ( []Attraction,error) {
+	var db *sql.DB = db_utils.DB
+	var attractions []Attraction 
+	rows, err := db.Query("SELECT * from ATTRACTION_ENTRY WHERE city = ?", city)
+	if(err != nil){
+		return attractions,err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		a := Attraction{};
+		rows.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Info,&a.Approved,&a.PosX,&a.PosY)
+		attractions = append(attractions, a)
+	}	
+
+	if(err != nil){
+		return attractions,err
+	}
+	return attractions,nil
 }
 
+/* 
+Gets Attraction by Everything Similiar
+Example User Types a
+Finds everything starting with a
+*/
+func GetAttractionsByTitle(title string) ( []Attraction,error){
+	var db *sql.DB = db_utils.DB
+	var attractions []Attraction
+	title_like_str := "%" + title + "%"
+	rows, err := db.Query("SELECT * from ATTRACTION_ENTRY WHERE title LIKE ? LIMIT 1000", title_like_str)
+	if(err != nil){
+		return attractions,err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		a := Attraction{};
+		rows.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Info,&a.Approved,&a.PosX,&a.PosY)
+		attractions = append(attractions, a)
+	}	
+
+	if(err != nil){
+		return attractions,err
+	}
+	return attractions,nil
+}
+
+
+// TODO: Implement some Kind of Filtering as generic as possible
 func GetAttractionsWithFilters(filters []Filter)([]Attraction,error){
 	return nil,nil
 }
