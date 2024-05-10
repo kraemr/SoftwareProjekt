@@ -4,5 +4,3 @@ CREATE TABLE IF NOT EXISTS USER (id SERIAL PRIMARY KEY,email TEXT,password TEXT)
 CREATE TABLE IF NOT EXISTS ATTRACTION_ENTRY(id SERIAL PRIMARY KEY,title varchar(64),
 type varchar(32),recommended_count int,city Text,info Text,approved BOOLEAN,PosX Float,PosY Float);
 
-
-

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	
 	_ "time"
 	"src/sessions"
 	"src/db_utils"
@@ -103,7 +104,7 @@ func findFavoritesForUser(w http.ResponseWriter, r *http.Request) {
 func findAttractionsNearUser(w http.ResponseWriter, r *http.Request) {
 }
 
-
+/*
 func test(){
 	test_attraction := attractions.Attraction{}
 	test_attraction.Title = "testTitle"
@@ -147,21 +148,16 @@ func test(){
 	}
 
 }
-
+*/
 
 func main() {
 	argsWithProg := os.Args
 	db_utils.InitDB()
 	fmt.Println(argsWithProg)
-	test()
 	if(len(argsWithProg ) > 1 && argsWithProg[1] == "test"){
-
+		// run tests
 	}
-	// if you want to test outside of the docker then do
-	// publicDir := "../../public"
-	// in the Docker
 	publicDir := "/opt/app/public"
-	
 	// ########### apis #############
 	http.HandleFunc("/api/register", registerUser)
 	http.HandleFunc("/api/login", loginUser)

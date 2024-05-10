@@ -3,14 +3,13 @@ import (
 	"src/crypto_utils"
 	_	"src/attractions"
 	"database/sql"
+	"src/db_utils"
 )
 
-var(
-	db *sql.DB
-)
 
 
 func RegisterUser(email string,password string) bool{
+	var db *sql.DB = db_utils.DB
 	prepared_stmt, err := db.Prepare("INSERT INTO USER(email,password) VALUES(?,?)")
 	if err != nil {
 		return false
@@ -30,6 +29,7 @@ func RegisterUser(email string,password string) bool{
 
 func LoginUser(email string,password string) bool{
 // type here is going to be Row instead of Rows
+	var db *sql.DB = db_utils.DB
 	row, err := db.Query("SELECT password from USER where email=? LIMIT 1", email)
 	if(err != nil){
 		return false
