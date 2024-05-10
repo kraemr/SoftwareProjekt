@@ -19,8 +19,4 @@ function createMap() {
   L.control.zoom({ position: 'bottomright' }).addTo(map);
 
   allMarkersLayer = L.layerGroup().addTo(map);
-
-  map.on('zoomend', function () {
-    handleZoomChange();
-  });
 }
