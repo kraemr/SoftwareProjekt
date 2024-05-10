@@ -56,6 +56,9 @@ func loginUser(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
+
+
+// also works
 func getAttractionsByCity(res http.ResponseWriter, req *http.Request){
 	if(sessions.CheckLoggedIn(req)){
 		var city string = req.URL.Query().Get("city")
@@ -65,14 +68,16 @@ func getAttractionsByCity(res http.ResponseWriter, req *http.Request){
 			fmt.Fprintf(res, "{\"success\":false}")
 		}else{
 			_ = attractions
-			fmt.Fprintf(res, "{\"success\":true}")
-		}
+			encoder := json.NewEncoder(res)
+			encoder.Encode(attractions)		}
 	}else{
 		// send 403 forbidden, or maybe a redirect to login ?
 		fmt.Fprintf(res, "{\"success\":false}")
 	}
 }
 
+
+// Works
 func getAttractionsByTitle(res http.ResponseWriter, req *http.Request){
 	if(sessions.CheckLoggedIn(req)){
 		var title string = req.URL.Query().Get("title")
@@ -82,7 +87,8 @@ func getAttractionsByTitle(res http.ResponseWriter, req *http.Request){
 			fmt.Fprintf(res, "{\"success\":false}")
 		}else{
 			_ = attractions
-			fmt.Fprintf(res, "{\"success\":true}")
+			encoder := json.NewEncoder(res)
+			encoder.Encode(attractions)
 		}
 	}else{
 		// send 403 forbidden, or maybe a redirect to login ?
