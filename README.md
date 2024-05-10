@@ -44,4 +44,5 @@ Zusätzlich könnten wir simple Kompressionsalgos benutzen wie RLE, Huffman,Lz4 
 CREATE TABLE attraction_entry(id AUTO_INCREMENT INTEGER PRIMARY KEY,title varchar(64),type varchar(32),recommended_count int,city Text,info Text,PosX double,PosY double)
 ```
 
-
+# COMPOSE LOG/PRINTING
+In Docker-Compose Output werden Print statements ohne newline nicht angezeigt!!!!!

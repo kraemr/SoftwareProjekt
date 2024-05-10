@@ -1,7 +1,8 @@
-CREATE DATABASE SITE_DB;
+CREATE DATABASE IF NOT EXISTS SITE_DB;
 USE SITE_DB;
-CREATE TABLE IF NOT EXISTS USER (id INT AUTO_INCREMENT PRIMARY KEY,email TEXT,password TEXT);
-CREATE TABLE IF NOT EXISTS ATTRACTION_ENTRY(id AUTO_INCREMENT INTEGER PRIMARY KEY,title varchar(64),type varchar(32),recommended_count int,city Text,info Text,PosX Float,PosY Float);
+CREATE TABLE IF NOT EXISTS USER (id SERIAL PRIMARY KEY,email TEXT,password TEXT);
+CREATE TABLE IF NOT EXISTS ATTRACTION_ENTRY(id SERIAL PRIMARY KEY,title varchar(64),
+type varchar(32),recommended_count int,city Text,info Text,approved BOOLEAN,PosX Float,PosY Float);
 
 
 
