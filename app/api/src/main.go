@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"time"
+	_ "time"
 	"src/sessions"
 	"src/db_utils"
 )
@@ -28,7 +28,7 @@ func registerUser(res http.ResponseWriter, req *http.Request) {
 		http.Error(res, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	success := db_utils.RegisterUser(user.Email,user.Password);
+	success := sessions.RegisterUser(user.Email,user.Password);
 	if(success == true){
 		fmt.Fprintf(res, "{\"success\":true}")
 	}else{
@@ -46,7 +46,7 @@ func loginUser(res http.ResponseWriter, req *http.Request) {
 	}
 	fmt.Println(user)
 	
-	correct := db_utils.LoginUser(user.Email,user.Password);
+	correct := sessions.LoginUser(user.Email,user.Password);
 	if(correct == true){
 		sessions.StartSession(res,req);
 		fmt.Fprintf(res, "{\"success\":true}")
@@ -61,11 +61,16 @@ func findFavoritesForUser(w http.ResponseWriter, r *http.Request) {
 func findAttractionsNearUser(w http.ResponseWriter, r *http.Request) {
 }
 
+
+
+
 func main() {
 	argsWithProg := os.Args
-	time.Sleep(10 * time.Second) // wait for DB, TODO: make a healthcheck for The DB and in compose wait till healthy
 	db_utils.InitDB()
 	fmt.Println(argsWithProg)
+	if(len(argsWithProg ) > 1 && argsWithProg[1] == "test"){
+
+	}
 	// if you want to test outside of the docker then do
 	// publicDir := "../../public"
 	// in the Docker

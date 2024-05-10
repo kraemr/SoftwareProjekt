@@ -9,13 +9,10 @@ import (
 	"crypto/subtle"
 )
 
-
-
 var (
     ErrInvalidHash         = errors.New("the encoded hash is not in the correct format")
     ErrIncompatibleVersion = errors.New("incompatible version of argon2")
 )
-
 
 type params struct{
 	memory      uint32

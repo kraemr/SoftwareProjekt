@@ -7,7 +7,6 @@ import (
 )
 
 var store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
-
 func StartSession(w http.ResponseWriter, r *http.Request){
 	session, err := store.Get(r, "sessionid")
 	if err != nil {

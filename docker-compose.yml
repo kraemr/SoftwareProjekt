@@ -2,8 +2,20 @@ version: "3.8"
 
 services:
   mariadb:
-    image: mysql:latest
+    image: mariadb:latest
     restart: always
+    healthcheck:
+      interval: 10s
+      retries: 9
+      test:
+        [
+          "CMD",
+          "healthcheck.sh",
+          "--su-mysql",
+          "--connect",
+          "--innodb_initialized"
+        ]
+      timeout: 10s
     environment:
       MYSQL_ROOT_PASSWORD: rootPASSWORD
       MYSQL_DATABASE: SITE_DB
@@ -11,8 +23,6 @@ services:
       - ./mysql-data:/var/lib/mysql
       - ./init.sql:/tmp/init.sql
     command: ["--init-file", "/tmp/init.sql"]
-    depends_on:
-      - webserver
   webserver:
     build:
       context: .
@@ -20,6 +30,11 @@ services:
     environment:
       SITE_DB_PASSWORD: rootPASSWORD
       SESSION_KEY: 8D28E179A8226396169CC074AE0DE76A
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      caddy:
+        condition: service_started
   caddy:
     image: caddy:latest
     volumes:

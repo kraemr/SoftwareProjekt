@@ -1,6 +1,6 @@
 module src
 
-go 1.21.5
+go 1.19
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
