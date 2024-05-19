@@ -28,6 +28,11 @@ const parallelism = 2
 const keyLength  =32
 const saltLength = 16
 
+type hash struct {
+    
+}
+
+
 func decodeHash(encodedHash string) (p *params, salt, hash []byte, err error) {
     vals := strings.Split(encodedHash, "$")
 	fmt.Println(vals)
