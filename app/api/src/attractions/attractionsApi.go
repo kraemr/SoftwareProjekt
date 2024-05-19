@@ -6,18 +6,44 @@ import(
 	"encoding/json"
 )
 
+
+// delete attraction
 func delete(req *http.Request) (string,error){
-	return "",nil
+	id := req.URL.Query().Get("id")
+	convertedID,err := strconv.ParseInt(id, 10, 64)
+	RemoveAttraction(convertedID)
+	return "",err
 }
 
+
+// update existing attraction
+// check if moderator
 func put(req *http.Request) (string,error){
-	return "",nil
+	var attraction Attraction
+	decoder := json.NewDecoder(req.Body)
+	err := decoder.Decode(&attraction)
+	if(err != nil){
 
+	}
+	err = UpdateAttraction(attraction)
+	if(err != nil){
+
+	}
+	return "",nil
 }
 
+// add attraction
+// check if moderator
 func post(req *http.Request) (string,error){
+	var attraction Attraction
+	decoder := json.NewDecoder(req.Body)
+	err := decoder.Decode(&attraction)
+	if(err != nil){
+	}
+	err = InsertAttraction(attraction)
+	if(err != nil){
+	}
 	return "",nil
-
 }
 
 func get(req *http.Request) (string,error){
@@ -34,7 +60,6 @@ func get(req *http.Request) (string,error){
 	posxIsSet := posx != ""
 	posyIsSet := posy != ""
 
-
 	var err error
 	var output string
 	var attractions []Attraction
@@ -47,26 +72,28 @@ func get(req *http.Request) (string,error){
 	}else if(idIsSet){ // by id
 		convertedID := 0
 		convertedID,err = strconv.Atoi(id)
+		attraction,err = GetAttraction(convertedID)
 		if(err != nil){
 			output = "{\"info\":\"Attraction does not exist\"}"
 		}
-		attraction,err = GetAttraction(convertedID)
 		attractions = append(attractions,attraction)
 	}else if(categoryIsSet){ // by category
 		attractions,err = GetAttractionsByCategory(category)
 	}else if(posxIsSet && posyIsSet){ // by location
-		f1, ferr := strconv.ParseFloat(posx, 32)
-		f2, ferr := strconv.ParseFloat(posy, 32)
-		attractions,err  = GetAttractionsByPos(f1,f2);
-	}/*else{ // get all with pagination
-
-	}*/
+		f1, _ := strconv.ParseFloat(posx, 32)
+		f2, _ := strconv.ParseFloat(posy, 32)
+		attractions,err  = GetAttractionsByPos(float32(f1),float32(f2));
+	}
 
 	if(err != nil){
-
+		return "{\"info\":\"Attraction does not exist\"}",err
 	}else{
-		output,err = json.Marshal(attractions)	
-		return string(output),err
+		json_bytes , json_err := json.Marshal(attractions)	
+		if(json_err != nil){
+			fmt.Println("error");
+		}
+		output = string(json_bytes)
+		return output,err
 	}
 
 
@@ -91,44 +118,3 @@ func HandleAttractionsREST(res http.ResponseWriter, req *http.Request){
 		fmt.Fprintf(res, output)
 	}
 }
-
-/*
-// also works
-func getAttractionsByCity(res http.ResponseWriter, req *http.Request){
-	if(sessions.CheckLoggedIn(req)){
-		var city string = req.URL.Query().Get("city")
-		attractions,err := attractions.GetAttractionsByCity(city)
-		if(err != nil){
-			_ = err
-			fmt.Fprintf(res, "{\"success\":false}")
-		}else{
-			_ = attractions
-			encoder := json.NewEncoder(res)
-			encoder.Encode(attractions)		
-		}
-	}else{
-		// send 403 forbidden, or maybe a redirect to login ?
-		fmt.Fprintf(res, "{\"success\":false}")
-	}
-}
-
-
-// Works
-func getAttractionsByTitle(res http.ResponseWriter, req *http.Request){
-	if(sessions.CheckLoggedIn(req)){
-		var title string = req.URL.Query().Get("title")
-		attractions,err := attractions.GetAttractionsByTitle(title)
-		if(err != nil){
-			_ = err
-			fmt.Fprintf(res, "{\"success\":false}")
-		}else{
-			_ = attractions
-			encoder := json.NewEncoder(res)
-			encoder.Encode(attractions)
-		}
-	}else{
-		// send 403 forbidden, or maybe a redirect to login ?
-		fmt.Fprintf(res, "{\"success\":false}")
-	}
-}
-*/

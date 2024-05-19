@@ -33,6 +33,22 @@ type Filter struct{
 }
 
 
+
+func RemoveAttraction(id int64) error{
+	var db *sql.DB = db_utils.DB
+	prepared_stmt,err := db.Prepare("DELETE FROM ATTRACTION_ENTRY WHERE id = ?")
+	if(err != nil){
+		fmt.Println("Couldnt Insert Attraction")
+		return err
+	}
+	result,err := prepared_stmt.Exec(id)
+	_ = result
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // This function Also Makes sure that the City string is made to be lowercase
 func InsertAttraction(a Attraction) error{
 	var db *sql.DB = db_utils.DB
@@ -42,6 +58,22 @@ func InsertAttraction(a Attraction) error{
 		return err
 	}
 	result,err := prepared_stmt.Exec(a.Title,a.Type,a.Recommended_count,a.City,a.Info,a.PosX,a.PosY)
+	_ = result
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// This function Also Makes sure that the City string is made to be lowercase
+func UpdateAttraction(a Attraction) error{
+	var db *sql.DB = db_utils.DB
+	prepared_stmt,err := db.Prepare("UPDATE ATTRACTION_ENTRY SET title=?,type=?,recommended_count=?,city=?,info=?,PosX=?,PosY=? WHERE id=?")
+	if(err != nil){
+		fmt.Println("Couldnt Insert Attraction")
+		return err
+	}
+	result,err := prepared_stmt.Exec(a.Title,a.Type,a.Recommended_count,a.City,a.Info,a.PosX,a.PosY,a.Id)
 	_ = result
 	if err != nil {
 		return err
