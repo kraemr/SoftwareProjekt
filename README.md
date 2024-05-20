@@ -20,23 +20,27 @@ path: /api/attractions
 send entire attraction json object in JSON POST TO
 path: /api/attractions
 
-## filter by city ?
+## get attractions filtered by city ?
 
+GET
 path: /api/attractions?city=Oppenheim
 returns array of attraction Json Objects
 
-## filter by title ?
+## get attractions filtered by title ?
 
+GET
 path: /api/attractions?title=Schwimmbad
 returns array of attraction Json Objects
 
-## filter by category ("type" in db)
+## get attractions filtered by category ("type" in db)
 
+GET
 path: /api/attractions?category=Landmark
 returns array of attraction Json Objects
 
 ## get single attraction by id
 
+GET
 path: /api/attractions?id=5
 returns single attraction Json Object
 
