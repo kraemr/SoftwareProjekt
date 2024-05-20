@@ -64,10 +64,6 @@ func startServer(port string){
 }
 
 func main() {
-
-	str,err1 := crypto_utils.GetHashedPassword("passwort1234")
-	fmt.Println(str);
-	_ = err1
 	argsWithProg := os.Args
 	db_utils.InitDB()
 	fmt.Println(argsWithProg)
