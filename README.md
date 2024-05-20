@@ -2,6 +2,44 @@
 
 Eine React / Angular / Electron / hauptsache kein nodejs Web Applikation um Ausflugsziele in deiner Stadt zu finden
 
+# Attractions Api
+
+## delete attraction
+
+send request with DELETE to
+path: /api/attractions?id=10000
+with the given attraction id you want deleted
+
+## update attraction
+
+send entire attraction json object in JSON PUT TO
+path: /api/attractions
+
+## add attraction ?
+
+send entire attraction json object in JSON POST TO
+path: /api/attractions
+
+## filter by city ?
+
+path: /api/attractions?city=Oppenheim
+returns array of attraction Json Objects
+
+## filter by title ?
+
+path: /api/attractions?title=Schwimmbad
+returns array of attraction Json Objects
+
+## filter by category ("type" in db)
+
+path: /api/attractions?category=Landmark
+returns array of attraction Json Objects
+
+## get single attraction by id
+
+path: /api/attractions?id=5
+returns single attraction Json Object
+
 # Docker Compose
 
 ```bash
