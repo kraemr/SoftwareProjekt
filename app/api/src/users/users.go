@@ -1,10 +1,10 @@
 package users;
 
 type User struct{
+	UserId int64
 	Email string
 	Password string
 	City string
-	UserId int64
 	Username string
 	Admin bool
 }

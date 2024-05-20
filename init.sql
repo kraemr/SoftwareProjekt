@@ -1,12 +1,49 @@
 CREATE DATABASE IF NOT EXISTS SITE_DB;
 USE SITE_DB;
-CREATE TABLE IF NOT EXISTS USER (id SERIAL PRIMARY KEY,email TEXT,password TEXT);
-DROP TABLE ATTRACTION_ENTRY;
-CREATE TABLE IF NOT EXISTS ATTRACTION_ENTRY(id SERIAL PRIMARY KEY,title varchar(64),
-type varchar(32),recommended_count int,city Text,info Text,approved BOOLEAN,PosX Float,PosY Float,stars Float);
+
+CREATE TABLE IF NOT EXISTS USER (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    email TEXT,
+    password TEXT,
+    city TEXT,
+    username TEXT,
+    admin BOOLEAN
+);
+
+CREATE TABLE IF NOT EXISTS ATTRACTION_ENTRY(
+    id INT AUTO_INCREMENT PRIMARY KEY,title varchar(64),
+    type varchar(32),
+    recommended_count int,
+    city Text,info Text,
+    approved BOOLEAN,
+    PosX Float,
+    PosY Float,
+    stars Float
+);
+
+-- To get Username JOIN
+CREATE TABLE IF NOT EXISTS ATTRACTION_REVIEW (id SERIAL PRIMARY KEY,   
+    user_id INT,
+    attraction_id INT,
+    text TEXT,
+    stars FLOAT
+);
+-- add foreign key constraints
+ALTER TABLE ATTRACTION_REVIEW ADD CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES USER(id);
+ALTER TABLE ATTRACTION_REVIEW ADD CONSTRAINT attraction_id_fk FOREIGN KEY (attraction_id) REFERENCES ATTRACTION_ENTRY(id);
 
 
--- Insert sample data into the ATTRACTION_ENTRY table for places in Germany
+-- TESTDATA
+--- Users
+-- ALL users have the password: passwort1234
+-- Obviously delete em later ...
+INSERT INTO USER(id,email,password,city,username,admin) VALUES(911111,"admin@testemail.com","$argon2id$v=19$m=2048,t=1,p=2$m0Ro6ArcaMfanzBFGVmQCw$vmDrLnu2CfevEJwJh/KeVu53cScOfjYzF57jNIFPJ4Q","Oppenheim","adminman",TRUE)
+INSERT INTO USER(id,email,password,city,username,admin) VALUES(911112,"test@testemail.com","$argon2id$v=19$m=2048,t=1,p=2$m0Ro6ArcaMfanzBFGVmQCw$vmDrLnu2CfevEJwJh/KeVu53cScOfjYzF57jNIFPJ4Q","Müllhausen","testman",FALSE)
+INSERT INTO USER(id,email,password,city,username,admin) VALUES(911113,"meeenz@meeenz.com","$argon2id$v=19$m=2048,t=1,p=2$m0Ro6ArcaMfanzBFGVmQCw$vmDrLnu2CfevEJwJh/KeVu53cScOfjYzF57jNIFPJ4Q","Mainz","meeenzman",FALSE)
+--- Users
+
+
+--- Attraction
 INSERT INTO ATTRACTION_ENTRY (title, type, recommended_count, city, info, approved, PosX, PosY, stars)
 VALUES
 ('Brandenburg Gate', 'Landmark', 12000, 'Berlin', 'An 18th-century neoclassical monument in Berlin, one of the best-known landmarks of Germany.', TRUE, 52.5163, 13.3777, 4.8),
@@ -18,3 +55,6 @@ VALUES
 ('Marienplatz', 'Square', 11000, 'Munich', 'A central square in the city center of Munich, featuring the New Town Hall and the Glockenspiel.', TRUE, 48.1374, 11.5755, 4.7),
 ('Sanssouci Palace', 'Palace', 7000, 'Potsdam', 'The former summer palace of Frederick the Great, King of Prussia, in Potsdam, near Berlin.', TRUE, 52.4011, 13.0416, 4.7),
 ('AMONGUS Palace', 'Palace', 7000, 'Imposter', 'The former summer palace of Frederick the SUS, King of SUSSEX, in SUSSEX.', FALSE, 12.4011, 13.0416, 0);
+--- Attraction
+
+-- TESTDATA
