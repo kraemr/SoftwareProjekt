@@ -1,3 +1,4 @@
 localhost {
     reverse_proxy webserver:8000
+    reverse_proxy webserver:8080
 }

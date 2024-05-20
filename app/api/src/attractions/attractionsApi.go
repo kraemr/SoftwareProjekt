@@ -11,8 +11,8 @@ import(
 func delete(req *http.Request) (string,error){
 	id := req.URL.Query().Get("id")
 	convertedID,err := strconv.ParseInt(id, 10, 64)
-	RemoveAttraction(convertedID)
-	return "",err
+	err = RemoveAttraction(convertedID)
+	return "{\"success\":true}",err
 }
 
 
@@ -29,7 +29,7 @@ func put(req *http.Request) (string,error){
 	if(err != nil){
 
 	}
-	return "",nil
+	return "{\"success\":true}",nil
 }
 
 // add attraction
@@ -39,11 +39,13 @@ func post(req *http.Request) (string,error){
 	decoder := json.NewDecoder(req.Body)
 	err := decoder.Decode(&attraction)
 	if(err != nil){
+
 	}
 	err = InsertAttraction(attraction)
 	if(err != nil){
+
 	}
-	return "",nil
+	return "{\"success\":true}",nil
 }
 
 func get(req *http.Request) (string,error){
