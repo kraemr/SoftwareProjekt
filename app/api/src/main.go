@@ -54,6 +54,14 @@ func loginUser(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
+func startServer(port string){
+	fmt.Println("Http Server is running on port: " + port)
+	err := http.ListenAndServe(":" + port, nil)
+	if err != nil {
+		fmt.Println("Error starting File server:", err)
+	}
+}
+
 func main() {
 	argsWithProg := os.Args
 	db_utils.InitDB()
@@ -66,16 +74,12 @@ func main() {
 	http.HandleFunc("/api/register", registerUser)
 	http.HandleFunc("/api/login", loginUser)
 	http.HandleFunc("/api/attractions",attractions.HandleAttractionsREST)
+	http.HandleFunc("/api/users",users.HandleUsersREST)
+
 	// ########### apis ############
 	// start static files server with publicDir as root
 	fileServer := http.FileServer(http.Dir(publicDir))
 	http.Handle("/", fileServer)
 	go notifications.StartNotificationServer("8080","/notifications")
-	err := http.ListenAndServe(":8000", nil)
-	if err != nil {
-		fmt.Println("Error starting File server:", err)
-	}
-	fmt.Println("Http Server is running on port 8000")
-
-
+	startServer("8000") // keeps running i.e blocks execution
 }
