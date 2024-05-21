@@ -1,27 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="apple-touch-icon" sizes="180x180" href="resources/favicon_io/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="resources/favicon_io/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="resources/favicon_io/favicon-16x16.png">
+    <link rel="manifest" href="resources/favicon_io/site.webmanifest">
+    <link href="leaflet/leaflet.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/index.css">
+    <script src="search.js"></script>
+    <script src="map.js"></script>
+    <script src="leaflet/leaflet.js"></script>
+    <meta charset="utf-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <title>Login Page</title>
+    <style>
+        .btnLogin{
+            background-color: #A64C79;
+            width: 100%;
+            height: 2.5em;
+        }
+        .btnLogin:hover{
+            background-color: #734079;
+        }
+    </style>
 </head>
+
 <body>
-    <h2>Login</h2>
-    <form id="loginForm">
-        <label for="email">Email:</label><br>
-        <input type="email" id="email" name="email" required><br><br>
-
-        <label for="password">Password:</label><br>
-        <input type="password" id="password" name="password" required><br><br>
-
-        <label for="confirmPassword">Confirm Password:</label><br>
-        <input type="password" id="confirmPassword" name="confirmPassword" required><br><br>
-
-        <button type="submit">Login</button>
-    </form>
-
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card mt-5">
+                    <div class="card-header text-center">
+                        <h3>Sign In With Email</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="loginForm">
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control" id="email" placeholder="Enter email">
+                            </div>
+                            <div class="form-group mt-2">
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control" id="password" placeholder="Password">
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block btnLogin mt-2">Sign In</button>
+                        </form>
+                        <hr>
+                        <div class="text-center">
+                            <p>Need an account? <a href="register.html">Sign Up</a></p>
+                            <button class="btn btn-secondary btn-block">Continue with Twitter</button>
+                            <button class="btn btn-secondary btn-block">Continue with Facebook</button>
+                            <button class="btn btn-secondary btn-block" onclick="continueAsGuest()">Continue as guest</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <script>
-        document.getElementById("loginForm").addEventListener("submit", function(event) {
+        // Function to continue as a guest
+        continueAsGuest = () => {
+            window.location.href = "index.html";
+        }
+        document.getElementById("loginForm").addEventListener("submit", function (event) {
             event.preventDefault(); // Prevent the default form submission
 
             // Get the form data
@@ -52,21 +95,25 @@
                 },
                 body: jsonData
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                return response.json();
-            })
-            .then(data => {
-		console.log("")
-            })
-            .catch(error => {
-                // Handle errors
-                console.error("There was a problem with the login request:", error);
-                alert("Login failed. Please try again.");
-            });
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("")
+                })
+                .catch(error => {
+                    // Handle errors
+                    console.error("There was a problem with the login request:", error);
+                    alert("Login failed. Please try again.");
+                });
         });
     </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>
