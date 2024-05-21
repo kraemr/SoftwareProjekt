@@ -62,3 +62,7 @@ go build -o ../build/api main.go
 # COMPOSE LOG/PRINTING
 
 In Docker-Compose Output werden Print statements ohne newline nicht angezeigt!!!!!
+
+# Testing Websocket Locally
+
+In firefox you need to add an exception in certificates for localhost
