@@ -25,8 +25,8 @@ func TestInsertAttraction(t *testing.T){
 	if(err != nil){
 		t.Fatalf(`InsertAttraction(): %v`,err)
 	}
-
 }
+
 func TestGetNullAttraction(t *testing.T){
 	attr,err := attractions.GetAttraction(93123121)
 	if(err == nil){
@@ -41,12 +41,12 @@ func TestGetNullAttractionCategory(t *testing.T){
 		t.Fatalf(`GetAttractionsByCategory(): SHOULD RETURN AN ERROR ON NON EXISTANT DATA`)
 	}
 	_ = attr
-}
+} 
 
-func TestGetNullAttraction(t *testing.T){
+func TestGetNullAttractionTitle(t *testing.T){
 	attr,err := attractions.GetAttractionsByTitle("AFSNAFJASNKFNSAKJFNKAJSFNKJASNFJKANSKJFNASJFNAKJS")
 	if(err == nil){
-		t.Fatalf(`GetAttractionsByCategory(): SHOULD RETURN AN ERROR ON NON EXISTANT DATA`)
+		t.Fatalf(`GetAttractionsByTitle(): SHOULD RETURN AN ERROR ON NON EXISTANT DATA`)
 	}
 	_ = attr
 }
