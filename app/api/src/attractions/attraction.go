@@ -34,6 +34,8 @@ type Filter struct{
 }
 
 
+var ErrNoAttraction = fmt.Errorf("No Attractions Found")
+
 
 func RemoveAttraction(id int64) error{
 	var db *sql.DB = db_utils.DB
@@ -108,13 +110,18 @@ func GetAttraction(id int) (Attraction,error){
 	defer row.Close()
 	var a Attraction;
 
+	nodata_found := true
 	for row.Next() {
 		row.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars)
+		nodata_found = false
 	}	
 
 	if(err != nil){
 		return Attraction{},err
+	}else if(nodata_found){
+		return Attraction{},ErrNoAttraction
 	}
+
 	return a,nil
 }
 
@@ -126,8 +133,10 @@ func GetAttractionsByPos(posx float32,posy float32) ([]Attraction,error){
 		return attractions,err
 	}
 	defer rows.Close()
+	nodata_found := true
 
 	for rows.Next() {
+		nodata_found = false
 		a := Attraction{};
 		rows.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars)
 		attractions = append(attractions, a)
@@ -135,7 +144,10 @@ func GetAttractionsByPos(posx float32,posy float32) ([]Attraction,error){
 
 	if(err != nil){
 		return attractions,err
+	}else if(nodata_found){
+		return nil,ErrNoAttraction
 	}
+
 	return attractions,nil
 }
 
@@ -148,8 +160,11 @@ func GetAttractionsByCategory(category string) ([]Attraction,error){
 		return attractions,err
 	}
 	defer rows.Close()
+	nodata_found := true
+
 
 	for rows.Next() {
+		nodata_found = false
 		a := Attraction{};
 		rows.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars)
 		attractions = append(attractions, a)
@@ -157,6 +172,8 @@ func GetAttractionsByCategory(category string) ([]Attraction,error){
 
 	if(err != nil){
 		return attractions,err
+	}else if(nodata_found){
+		return nil,ErrNoAttraction
 	}
 	return attractions,nil
 }
@@ -171,8 +188,11 @@ func GetAttractionsByCity(city string) ( []Attraction,error) {
 		return attractions,err
 	}
 	defer rows.Close()
+	nodata_found := true
+
 
 	for rows.Next() {
+		nodata_found = false
 		a := Attraction{};
 		rows.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars)
 		attractions = append(attractions, a)
@@ -180,6 +200,8 @@ func GetAttractionsByCity(city string) ( []Attraction,error) {
 
 	if(err != nil){
 		return attractions,err
+	}else if(nodata_found){
+		return nil,ErrNoAttraction
 	}
 	return attractions,nil
 }
@@ -198,8 +220,10 @@ func GetAttractionsByTitle(title string) ( []Attraction,error){
 		return attractions,err
 	}
 	defer rows.Close()
+	nodata_found := true
 
 	for rows.Next() {
+		nodata_found = false
 		a := Attraction{};
 		rows.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars)
 		attractions = append(attractions, a)
@@ -207,6 +231,8 @@ func GetAttractionsByTitle(title string) ( []Attraction,error){
 
 	if(err != nil){
 		return attractions,err
+	}else if(nodata_found){
+		return nil,ErrNoAttraction
 	}
 	return attractions,nil
 }

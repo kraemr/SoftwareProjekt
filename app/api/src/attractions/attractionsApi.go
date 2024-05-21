@@ -88,7 +88,7 @@ func get(req *http.Request) (string,error){
 	}
 
 	if(err != nil){
-		return "{\"info\":\"Attraction does not exist\"}",err
+		return "{\"success\":false,\"info\":\"Attraction does not exist\"}",err
 	}else{
 		json_bytes , json_err := json.Marshal(attractions)	
 		if(json_err != nil){
@@ -116,6 +116,7 @@ func HandleAttractionsREST(res http.ResponseWriter, req *http.Request){
 	}
 	if(err != nil){
 		// handle error here, send 500,403,402,401,400 and so on depending on error
+		fmt.Fprintf(res,output)
 	}else{
 		fmt.Fprintf(res, output)
 	}

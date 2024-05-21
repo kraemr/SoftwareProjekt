@@ -10,7 +10,6 @@ import (
 	"src/attractions"
 	"src/users"
 	"src/notifications"
-	"src/crypto_utils"
 )
 
 
@@ -20,8 +19,8 @@ func registerUser(res http.ResponseWriter, req *http.Request) {
 	decoder := json.NewDecoder(req.Body)
 	_ = decoder
 	var user *users.UserLoginInfo = &users.UserLoginInfo{
-		Email:"t@g.com",
-		Password:"test",
+		Email:"",
+		Password:"",
 	}
 	err := decoder.Decode(&user)
 	if err != nil {
@@ -62,6 +61,7 @@ func startServer(port string){
 		fmt.Println("Error starting File server:", err)
 	}
 }
+
 
 func main() {
 	argsWithProg := os.Args
