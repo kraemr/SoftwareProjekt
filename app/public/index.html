@@ -6,6 +6,8 @@
     <link rel="icon" type="image/png" sizes="32x32" href="resources/favicon_io/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="resources/favicon_io/favicon-16x16.png">
     <link rel="manifest" href="resources/favicon_io/site.webmanifest">
+    <!-- Option 1: Include in HTML -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
     <link href="leaflet/leaflet.css" rel="stylesheet">
     <link rel="stylesheet" href="css/index.css">
     <script src="search.js"></script>
@@ -16,21 +18,51 @@
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Xplocity - Special spots in your city!</title>
+    <style>
+        /* Additional styles for the user icon button */
+        .user-container {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            /* Ensure it stays on top of other elements */
+        }
+
+        .user-icon {
+            width: 2em;
+            height: 2em;
+            border-radius: 50%;
+            background-color: #A64C79;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <body>
     <!--Floating Search-->
     <div class="search-container m-2">
-        <input type="text" id="search-input" class="rounded" placeholder="Search..." onkeydown="if(event.keyCode==13) searchLocation()" />
+        <input type="text" id="search-input" class="rounded" placeholder="Search..."
+            onkeydown="if(event.keyCode==13) searchLocation()" />
+    </div>
+    <!--Floating User Icon-->
+    <div class="user-container">
+        <span class="user-icon" onclick="openUserSettings()">
+            <i class="bi bi-person"></i>
+        </span>
     </div>
     <div id="map"></div>
     <script>
         createMap();
         createSearchTrigger();
     </script>
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> 
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 
 </html>
