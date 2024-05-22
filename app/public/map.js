@@ -20,3 +20,35 @@ function createMap() {
 
   allMarkersLayer = L.layerGroup().addTo(map);
 }
+function placeMarkers(data) {
+  for (var elem of data) {
+    let marker = createBlueMarker(elem.YGCSWGS84, elem.XGCSWGS84, elem.id);
+    allMarkersLayer.addLayer(marker);
+  }
+  console.log(data);
+}
+
+
+//Blauer Marker
+function createBlueMarker(lat, lng, unfallId) {
+  var latlng = L.latLng(lat, lng);
+  var customIcon = L.icon({
+    iconUrl: ".leaflet/images/marker-icon-2x-blue.png",
+    iconSize: [25, 41], // Größe des Icons
+    iconAnchor: [12, 41], // Position des Ankers relativ zur Mitte des Icons
+    popupAnchor: [0, -16] // Position des Popups relativ zur Mitte des Icons
+  });
+
+  var marker = L.marker(latlng, {
+    icon: customIcon,
+    clickable: true
+  });
+  marker.unfallID = unfallId;
+
+  // Add click event listener to the marker
+  marker.on('click', function () {
+    loadPopInformation(marker);
+  });
+
+  return marker;
+}
