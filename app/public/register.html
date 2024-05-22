@@ -16,12 +16,13 @@
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <title>Register Page</title>
     <style>
-        .btnLogin{
+        .btnLogin {
             background-color: #A64C79;
             width: 100%;
             height: 2.5em;
         }
-        .btnLogin:hover{
+
+        .btnLogin:hover {
             background-color: #734079;
         }
     </style>
@@ -69,6 +70,10 @@
     </div>
 
     <script>
+        // Function to continue as a guest
+        continueAsGuest = () => {
+            window.location.href = "index.html";
+        }
         document.getElementById("loginForm").addEventListener("submit", function (event) {
             event.preventDefault(); // Prevent the default form submission
 
