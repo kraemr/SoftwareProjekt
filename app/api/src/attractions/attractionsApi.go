@@ -17,7 +17,7 @@ func delete(req *http.Request) (string,error){
 
 
 // update existing attraction
-// check if moderator
+// check if logged in 
 func put(req *http.Request) (string,error){
 	var attraction Attraction
 	decoder := json.NewDecoder(req.Body)
@@ -33,7 +33,7 @@ func put(req *http.Request) (string,error){
 }
 
 // add attraction
-// check if moderator
+// check if logged in
 func post(req *http.Request) (string,error){
 	var attraction Attraction
 	decoder := json.NewDecoder(req.Body)
@@ -55,6 +55,7 @@ func get(req *http.Request) (string,error){
 	var category string = req.URL.Query().Get("category")
 	var posx string = req.URL.Query().Get("posx")
 	var posy string = req.URL.Query().Get("posy")
+
 	cityIsSet := city != ""
 	titleIsSet := title != ""
 	idIsSet := id != ""

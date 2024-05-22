@@ -9,6 +9,7 @@ import (
 func BroadcastRecommendations(){
 
 }
+
 var(
 	upgrader = websocket.Upgrader{
 		ReadBufferSize:  1024,
@@ -25,6 +26,23 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	_ = ws
+}
+
+
+func sendNotifications(w http.ResponseWriter, r *http.Request){
+	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
+	c, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Print("upgrade:", err)
+		return
+	}
+	defer c.Close()
+	// check the users date in json and only send those
+	// unless the user sends the all:true flag
+	// otherwise only NEW Notifications will be sent to clients
+	for {
+		break
+	}
 }
 
 
