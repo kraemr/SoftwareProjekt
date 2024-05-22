@@ -73,9 +73,10 @@
             event.preventDefault(); // Prevent the default form submission
 
             // Get the form data
+            var firstName = document.getElementById("firstName").value;
+            var lastName = document.getElementById("lastName").value;
             var email = document.getElementById("email").value;
             var password = document.getElementById("password").value;
-            var confirmPassword = document.getElementById("confirmPassword").value;
 
             // Check if passwords match
             if (password !== confirmPassword) {
@@ -85,6 +86,8 @@
 
             // Construct the JSON object
             var data = {
+                firstName: firstName,
+                lastName: lastName,
                 email: email,
                 password: password
             };

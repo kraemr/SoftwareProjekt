@@ -70,13 +70,6 @@
             // Get the form data
             var email = document.getElementById("email").value;
             var password = document.getElementById("password").value;
-            var confirmPassword = document.getElementById("confirmPassword").value;
-
-            // Check if passwords match
-            if (password !== confirmPassword) {
-                alert("Passwords do not match");
-                return;
-            }
 
             // Construct the JSON object
             var data = {

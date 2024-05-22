@@ -84,12 +84,12 @@ function setPopUp(data, marker) {
 }
 
 function loadPopInformation(marker) {
-  //Get unfallId from marker
-  var unfallId = marker.unfallID;
+  //Get attractionID from marker
+  var attractionID = marker.attractionID;
 
   //query information from unfallId
   var xhr = new XMLHttpRequest();
-  xhr.open('GET', `dbQueries.php?function=loadUnfallById&unfallid=` + unfallId, true);    //Concat get Parameter
+  xhr.open('GET', `dbQueries.php?function=loadUnfallById&unfallid=` + attractionID, true);    //Concat get Parameter
 
   xhr.onload = function () {
     console.log(xhr.responseText); //Handler der auf eine Response wartet, die Anfrage wird erst danach mit xhr.send() aufgerufen
@@ -102,11 +102,4 @@ function loadPopInformation(marker) {
     }
   };
   xhr.send();
-}
-
-function filterButtonClick() {
-  if (currentZoomLevel >= breakZoomLevel) {
-    removeAllMarkers();
-    loadMarkersInVisibleBounds();
-  }
 }
