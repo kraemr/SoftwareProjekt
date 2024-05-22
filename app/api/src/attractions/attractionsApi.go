@@ -15,9 +15,7 @@ func delete(req *http.Request) (string,error){
 	return "{\"success\":true}",err
 }
 
-
-// update existing attraction
-// check if logged in 
+// update existing attraction, check if logged in 
 func put(req *http.Request) (string,error){
 	var attraction Attraction
 	decoder := json.NewDecoder(req.Body)
@@ -87,7 +85,6 @@ func get(req *http.Request) (string,error){
 		f2, _ := strconv.ParseFloat(posy, 32)
 		attractions,err  = GetAttractionsByPos(float32(f1),float32(f2));
 	}
-
 	if(err != nil){
 		return "{\"success\":false,\"info\":\"Attraction does not exist\"}",err
 	}else{
@@ -98,8 +95,6 @@ func get(req *http.Request) (string,error){
 		output = string(json_bytes)
 		return output,err
 	}
-
-
 }
 
 func HandleAttractionsREST(res http.ResponseWriter, req *http.Request){
