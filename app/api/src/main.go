@@ -13,27 +13,7 @@ import (
 )
 
 
-// Users can register with only email and passwd
-// Later on they can add more info if they wish to
-func registerUser(res http.ResponseWriter, req *http.Request) {
-	decoder := json.NewDecoder(req.Body)
-	_ = decoder
-	var user *users.UserLoginInfo = &users.UserLoginInfo{
-		Email:"",
-		Password:"",
-	}
-	err := decoder.Decode(&user)
-	if err != nil {
-		http.Error(res, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	success := sessions.RegisterUser(user.Email,user.Password);
-	if(success == true){
-		fmt.Fprintf(res, "{\"success\":true}")
-	}else{
-		fmt.Fprintf(res, "{\"success\":false}")
-	}
-}
+
 
 func loginUser(res http.ResponseWriter, req *http.Request) {
 	decoder := json.NewDecoder(req.Body)
@@ -72,7 +52,6 @@ func main() {
 	}
 	publicDir := "/opt/app/public"
 	// ########### apis #############
-	http.HandleFunc("/api/register", registerUser)
 	http.HandleFunc("/api/login", loginUser)
 	http.HandleFunc("/api/attractions",attractions.HandleAttractionsREST)
 	http.HandleFunc("/api/users",users.HandleUsersREST)

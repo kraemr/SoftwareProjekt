@@ -125,6 +125,31 @@ func GetAttraction(id int) (Attraction,error){
 	return a,nil
 }
 
+
+func GetAttractions() ([]Attraction,error){
+	var db *sql.DB = db_utils.DB
+	var attractions []Attraction
+	rows, err := db.Query("SELECT * FROM ATTRACTION_ENTRY")
+	if(err != nil){
+		return attractions,err
+	}
+	defer rows.Close()
+	nodata_found := true
+	for rows.Next() {
+		nodata_found = false
+		a := Attraction{};
+		rows.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars)
+		attractions = append(attractions, a)
+	}	
+	if(err != nil){
+		return attractions,err
+	}else if(nodata_found){
+		return nil,ErrNoAttraction
+	}
+	return attractions,nil
+
+}
+
 func GetAttractionsByPos(posx float32,posy float32) ([]Attraction,error){
 	var db *sql.DB = db_utils.DB
 	var attractions []Attraction 
