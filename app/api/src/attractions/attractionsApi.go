@@ -84,6 +84,8 @@ func get(req *http.Request) (string,error){
 		f1, _ := strconv.ParseFloat(posx, 32)
 		f2, _ := strconv.ParseFloat(posy, 32)
 		attractions,err  = GetAttractionsByPos(float32(f1),float32(f2));
+	}else{
+		attractions,err = GetAttractions()
 	}
 	if(err != nil){
 		return "{\"success\":false,\"info\":\"Attraction does not exist\"}",err
