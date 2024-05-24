@@ -23,7 +23,8 @@ func put(){
 
 /*
 // Users can register with only email and passwd
-// Later on they can add more info if they wish to
+// Later on they can add more info if they wish to, that would be with a PUT api call
+
 func registerUser(res http.ResponseWriter, req *http.Request) {
 	decoder := json.NewDecoder(req.Body)
 	_ = decoder

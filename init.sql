@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS ATTRACTION_REVIEW (
 );
 
 
-CREATE TABLE USER_NOTFICATIONS(
+CREATE TABLE USER_NOTIFICATIONS(
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
     info TEXT NOT NULL,
@@ -44,8 +44,7 @@ CREATE TABLE USER_NOTFICATIONS(
 -- add foreign key constraints
 ALTER TABLE ATTRACTION_REVIEW ADD CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES USER(id);
 ALTER TABLE ATTRACTION_REVIEW ADD CONSTRAINT attraction_id_fk FOREIGN KEY (attraction_id) REFERENCES ATTRACTION_ENTRY(id);
-
-ALTER TABLE USER_NOTFICATIONS ADD CONSTRAINT notif_user_id_fk FOREIGN KEY (user_id) REFERENCES USER(id);
+ALTER TABLE USER_NOTIFICATIONS ADD CONSTRAINT notif_user_id_fk FOREIGN KEY (user_id) REFERENCES USER(id);
 
 
 
@@ -58,7 +57,7 @@ INSERT INTO USER(id,email,password,city,username,admin) VALUES(911112,"test@test
 INSERT INTO USER(id,email,password,city,username,admin) VALUES(911113,"meeenz@meeenz.com","$argon2id$v=19$m=2048,t=1,p=2$m0Ro6ArcaMfanzBFGVmQCw$vmDrLnu2CfevEJwJh/KeVu53cScOfjYzF57jNIFPJ4Q","Mainz","meeenzman",FALSE);
 --- Users
 
-INSERT INTO USER_NOTFICATIONS(user_id,info) VALUES(911111,"<p> GOODBYE WORLD </p>");
+INSERT INTO USER_NOTIFICATIONS(user_id,info,date) VALUES(911111,"<p> GOODBYE WORLD </p>","2000-01-01");
 -- Attraction
 INSERT INTO ATTRACTION_ENTRY (id,title, type, recommended_count, city, info, approved, PosX, PosY, stars)
 VALUES(9000,'Brandenburg Gate', 'Landmark', 12000, 'Berlin', 'An 18th-century neoclassical monument in Berlin, one of the best-known landmarks of Germany.', TRUE, 52.5163, 13.3777, 4.8),

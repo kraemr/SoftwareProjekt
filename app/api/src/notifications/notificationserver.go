@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"log"
 	"fmt"
+	"encoding/json"
 )	
 
 func BroadcastRecommendations(){
@@ -29,6 +30,13 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 }
 
 
+
+
+// User sends Id to start sesh
+// c.readmessage
+// parse json -> jsonObject
+// getNotificationsForID(jsonObject.Id) -> send Notifications
+
 func sendNotifications(w http.ResponseWriter, r *http.Request){
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 	c, err := upgrader.Upgrade(w, r, nil)
@@ -41,6 +49,19 @@ func sendNotifications(w http.ResponseWriter, r *http.Request){
 	// unless the user sends the all:true flag
 	// otherwise only NEW Notifications will be sent to clients
 	for {
+		notifications,err := getNotificationsForId(911111)
+		if(err != nil){
+			fmt.Println(err.Error())
+		}
+		json_bytes , json_err := json.Marshal(notifications)
+		if(json_err != nil){
+			fmt.Println("error Creating Json")
+		}
+		err = c.WriteMessage(websocket.TextMessage, json_bytes)
+		if err != nil {
+			log.Println("write:", err)
+			//break
+		}
 		break
 	}
 }
@@ -74,8 +95,7 @@ func echo(w http.ResponseWriter, r *http.Request) {
 
 func StartNotificationServer(port string,path string){
 	addr := ":" + port
-	http.HandleFunc(path, serveWs)
-	http.HandleFunc("/echo", echo)
+	http.HandleFunc(path, sendNotifications)
 	fmt.Println("started NotificationServer at: " + addr)
 	if err := http.ListenAndServe(addr, nil); err != nil {
 		log.Fatal(err)

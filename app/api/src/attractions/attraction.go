@@ -135,7 +135,7 @@ func GetAttractions() ([]Attraction,error){
 	}
 	defer rows.Close()
 	nodata_found := true
-	for rows.Next() {
+	for rows.Next(){
 		nodata_found = false
 		a := Attraction{};
 		rows.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars)

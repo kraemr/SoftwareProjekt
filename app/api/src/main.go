@@ -15,6 +15,15 @@ import (
 
 
 
+func debug(res http.ResponseWriter, req *http.Request) {
+	if(sessions.CheckLoggedIn(req) == true){
+		fmt.Fprintf(res, "{\"success\":true}")
+	}else{
+		fmt.Fprintf(res, "{\"success\":false}")
+	}
+}
+
+
 func loginUser(res http.ResponseWriter, req *http.Request) {
 	decoder := json.NewDecoder(req.Body)
 	var user users.UserLoginInfo
@@ -53,6 +62,8 @@ func main() {
 	publicDir := "/opt/app/public"
 	// ########### apis #############
 	http.HandleFunc("/api/login", loginUser)
+	http.HandleFunc("/api/debug", debug)
+
 	http.HandleFunc("/api/attractions",attractions.HandleAttractionsREST)
 	http.HandleFunc("/api/users",users.HandleUsersREST)
 

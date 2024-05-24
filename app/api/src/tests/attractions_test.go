@@ -5,6 +5,13 @@ import (
 	"src/db_utils"
 )
 
+
+
+func TestRemoveAttraction(t *testing.T){
+
+}
+
+
 //UNIT-TEST ATTRACTION
 func TestInsertAttraction(t *testing.T){
 	db_utils.InitDB()
@@ -27,23 +34,42 @@ func TestInsertAttraction(t *testing.T){
 	}
 }
 
-func TestGetNullAttraction(t *testing.T){
+
+func TestUpdateAttraction(t *testing.T){
+
+}
+
+func TestChangeAttractionApproval(t *testing.T){
+
+}
+
+
+
+func TestGetAttraction(t *testing.T){
 	attr,err := attractions.GetAttraction(93123121)
 	if(err == nil){
-		t.Fatalf(`GetAttraction(): SHOULD RETURN AN ERROR ON NON EXISTANT DATA`)
+		t.Fatalf(`GetAttraction(): NON EXISTANT ATTRACTION SHOULD RETURN AN ERROR ON NON EXISTANT DATA`)
 	}
 	_ = attr
 }
 
-func TestGetNullAttractionCategory(t *testing.T){
+func TestGetAttractions(t *testing.T){
+
+}
+
+func TestGetAttractionsByPos(t *testing.T){
+
+}
+
+func TestGetAttractionsByCategory(t *testing.T){
 	attr,err := attractions.GetAttractionsByCategory("AFSNAFJASNKFNSAKJFNKAJSFNKJASNFJKANSKJFNASJFNAKJS")
 	if(err == nil){
 		t.Fatalf(`GetAttractionsByCategory(): SHOULD RETURN AN ERROR ON NON EXISTANT DATA`)
 	}
 	_ = attr
-} 
+}
 
-func TestGetNullAttractionTitle(t *testing.T){
+func TestGetAttractionTitle(t *testing.T){
 	attr,err := attractions.GetAttractionsByTitle("AFSNAFJASNKFNSAKJFNKAJSFNKJASNFJKANSKJFNASJFNAKJS")
 	if(err == nil){
 		t.Fatalf(`GetAttractionsByTitle(): SHOULD RETURN AN ERROR ON NON EXISTANT DATA`)
