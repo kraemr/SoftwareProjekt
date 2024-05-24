@@ -36,7 +36,7 @@ TODO: Find out how to do broadcast websockets
 // c.readmessage
 // parse json -> jsonObject
 // getNotificationsForID(jsonObject.Id) -> send Notifications
-NotificationSendSignal := false
+var NotificationSendSignal bool
 func sendNotifications(w http.ResponseWriter, r *http.Request){
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 	c, err := upgrader.Upgrade(w, r, nil)
