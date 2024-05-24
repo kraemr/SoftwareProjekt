@@ -6,7 +6,7 @@ services:
     restart: always
     healthcheck:
       interval: 10s
-      retries: 9
+      retries: 18
       test:
         [
           "CMD",
