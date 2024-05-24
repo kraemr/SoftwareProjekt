@@ -7,13 +7,28 @@ import (
 )
 
 var store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
-func StartSession(w http.ResponseWriter, r *http.Request){
+
+
+func GetLoggedInUserId( r *http.Request) int32{
+	session, err := store.Get(r, "sessionid")
+	if(err != nil){
+		return -1
+	}
+	id,ok := session.Values["id"].(int32)
+	if(!ok){
+		return -1
+	}
+	return id
+}
+
+func StartSession(w http.ResponseWriter, r *http.Request,id int32){
 	session, err := store.Get(r, "sessionid")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	session.Values["logged_in"] = true
+	session.Values["id"] = id
 	err = session.Save(r, w)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

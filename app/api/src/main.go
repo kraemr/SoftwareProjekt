@@ -36,7 +36,12 @@ func loginUser(res http.ResponseWriter, req *http.Request) {
 	
 	correct := sessions.LoginUser(user.Email,user.Password);
 	if(correct == true){
-		sessions.StartSession(res,req);
+		// get Id
+		id,uerr := users.GetUserIdByEmail(user.Email)
+		if(uerr != nil){
+			fmt.Println("loginUser: couldnt get user by id")
+		}
+		sessions.StartSession(res,req,id);
 		fmt.Fprintf(res, "{\"success\":true}")
 	}else{
 		fmt.Fprintf(res, "{\"success\":false}")

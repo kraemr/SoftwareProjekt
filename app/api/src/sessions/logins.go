@@ -35,7 +35,7 @@ func LoginUser(email string,password string) bool{
 		return false
 	}
 	defer row.Close()
-	var hashedPassword string="";
+	var hashedPassword string
 	for row.Next() {
 		row.Scan(&hashedPassword)
 	}

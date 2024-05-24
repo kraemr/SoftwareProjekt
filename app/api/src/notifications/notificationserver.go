@@ -5,11 +5,9 @@ import (
 	"log"
 	"fmt"
 	"encoding/json"
+	"src/sessions"
+	"src/users"
 )	
-
-func BroadcastRecommendations(){
-
-}
 
 var(
 	upgrader = websocket.Upgrader{
@@ -17,6 +15,7 @@ var(
 		WriteBufferSize: 1024,
 	}
 )
+
 func serveWs(w http.ResponseWriter, r *http.Request) {
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 	ws, err := upgrader.Upgrade(w, r, nil)
@@ -30,14 +29,15 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-TODO: Find out how to do broadcast websockets
-This seems to fit the bill: https://github.com/gorilla/websocket/blob/main/examples/chat
+Tech
+
+
 */
 // User sends Id to start sesh
 // c.readmessage
 // parse json -> jsonObject
 // getNotificationsForID(jsonObject.Id) -> send Notifications
-var NotificationSendSignal bool
+var NotificationSendSignal bool = false
 func sendNotifications(w http.ResponseWriter, r *http.Request){
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 	c, err := upgrader.Upgrade(w, r, nil)
@@ -49,6 +49,12 @@ func sendNotifications(w http.ResponseWriter, r *http.Request){
 	// check the users date in json and only send those
 	// unless the user sends the all:true flag
 	// otherwise only NEW Notifications will be sent to clients
+	id := sessions.GetLoggedInUserId(r)
+	fmt.Println(id)
+	// we have user id, now get the city
+	city,err := users.GetUserCityById(id)
+	fmt.Println(city);
+
 	for {
 		if(NotificationSendSignal){
 			notifications,err := getNotificationsForId(911111)
