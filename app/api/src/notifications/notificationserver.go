@@ -31,6 +31,7 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 
 /*
 TODO: Find out how to do broadcast websockets
+This seems to fit the bill: https://github.com/gorilla/websocket/blob/main/examples/chat
 */
 // User sends Id to start sesh
 // c.readmessage
