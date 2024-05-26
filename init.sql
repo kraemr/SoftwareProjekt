@@ -17,11 +17,12 @@ CREATE TABLE IF NOT EXISTS USER_PREFERENCES (
     periodic_recommendations BOOLEAN
 );
 
-
 CREATE TABLE USER_FAVORITE(
     id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    attraction_id INT NOT NULL
+    attraction_id INT NOT NULL,
+    type varchar(32) NOT NULL,
+    city varchar(32) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS ATTRACTION_ENTRY(

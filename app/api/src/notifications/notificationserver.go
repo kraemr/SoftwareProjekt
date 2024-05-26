@@ -56,7 +56,7 @@ func sendNotifications(w http.ResponseWriter, r *http.Request){
 	fmt.Println(city);
 
 	for {
-		if(NotificationSendSignal){
+//		if(NotificationSendSignal){
 			notifications,err := getNotificationsForId(911111)
 			if(err != nil){
 				fmt.Println(err.Error())
@@ -71,37 +71,11 @@ func sendNotifications(w http.ResponseWriter, r *http.Request){
 				//break
 			}
 			NotificationSendSignal = false
-		}
+//		}
 		
 	}
 }
 
-
-
-
-func echo(w http.ResponseWriter, r *http.Request) {
-	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
-	c, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Print("upgrade:", err)
-		return
-	}
-	defer c.Close()
-	for {
-		mt, message, err := c.ReadMessage()
-		if err != nil {
-			fmt.Println("read:", err)
-			break
-		}
-		fmt.Println(message)
-
-		err = c.WriteMessage(mt, message)
-		if err != nil {
-			fmt.Println("write:", err)
-			break
-		}
-	}
-}
 
 func StartNotificationServer(port string,path string){
 	addr := ":" + port
