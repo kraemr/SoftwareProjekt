@@ -5,7 +5,8 @@ COPY test_all.sh .
 #RUN apt update 
 #RUN apt install -y golang
 #RUN apt-get install -y ca-certificates openssl
-RUN cd api/src && rm 'go.mod' && rm 'go.sum' && go mod init src
+RUN cd api/src && rm 'go.mod' && go mod init src
+#&& rm 'go.sum' && go mod init src
 
 
 WORKDIR /opt/app/api/src

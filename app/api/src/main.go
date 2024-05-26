@@ -9,6 +9,7 @@ import (
 	"src/db_utils"
 	"src/attractions"
 	"src/users"
+	"src/favorites"
 	"src/notifications"
 )
 
@@ -71,6 +72,7 @@ func main() {
 
 	http.HandleFunc("/api/attractions",attractions.HandleAttractionsREST)
 	http.HandleFunc("/api/users",users.HandleUsersREST)
+	http.HandleFunc("/api/favorites",favorites.HandleFavoritesREST);
 
 	// ########### apis ############
 	// start static files server with publicDir as root

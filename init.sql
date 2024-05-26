@@ -10,6 +10,9 @@ CREATE TABLE IF NOT EXISTS USER (
     username TEXT,
     admin BOOLEAN
 );
+-- create index
+CREATE INDEX _USER_INDEX ON USER(id);
+
 
 CREATE TABLE IF NOT EXISTS USER_PREFERENCES (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -17,13 +20,15 @@ CREATE TABLE IF NOT EXISTS USER_PREFERENCES (
     periodic_recommendations BOOLEAN
 );
 
+-- create index
+CREATE INDEX _USER_PREFS_INDEX ON USER_PREFERENCES(user_id);
+
 CREATE TABLE USER_FAVORITE(
     id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    attraction_id INT NOT NULL,
-    type varchar(32) NOT NULL,
-    city varchar(32) NOT NULL
+    attraction_id INT NOT NULL UNIQUE
 );
+CREATE INDEX _USER_FAVORITE_INDEX ON USER_FAVORITE(user_id);
 
 CREATE TABLE IF NOT EXISTS ATTRACTION_ENTRY(
     id INT AUTO_INCREMENT PRIMARY KEY,title varchar(64),
@@ -36,6 +41,8 @@ CREATE TABLE IF NOT EXISTS ATTRACTION_ENTRY(
     PosY Float,
     stars Float
 );
+CREATE INDEX _ATTRACTION_ENTRY_INDEX ON ATTRACTION_ENTRY(city);
+
 
 -- To get Username JOIN
 -- TODO Add DATE
@@ -46,6 +53,9 @@ CREATE TABLE IF NOT EXISTS ATTRACTION_REVIEW (
     text TEXT,
     stars FLOAT
 );
+CREATE INDEX _ATTRACTION_REVIEW_INDEX ON ATTRACTION_REVIEW(attraction_id);
+
+
 
 
 CREATE TABLE USER_NOTIFICATIONS(
@@ -54,6 +64,8 @@ CREATE TABLE USER_NOTIFICATIONS(
     info TEXT NOT NULL,
     date DATE
 );
+CREATE INDEX _USER_NOTIFICATIONS_INDEX ON USER_NOTIFICATIONS(user_id);
+
 
 -- add foreign key constraints
 ALTER TABLE ATTRACTION_REVIEW ADD CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES USER(id);
@@ -67,15 +79,15 @@ ALTER TABLE USER_FAVORITE ADD CONSTRAINT fav_attraction_id_fk FOREIGN KEY (attra
 
 
 -- TESTDATA
---- Users
--- ALL users have the password: passwort1234
--- Obviously delete em later ...
 INSERT INTO USER(id,email,password,city,username,admin) VALUES(911111,"admin@testemail.com","$argon2id$v=19$m=2048,t=1,p=2$m0Ro6ArcaMfanzBFGVmQCw$vmDrLnu2CfevEJwJh/KeVu53cScOfjYzF57jNIFPJ4Q","Oppenheim","adminman",TRUE);
 INSERT INTO USER(id,email,password,city,username,admin) VALUES(911112,"test@testemail.com","$argon2id$v=19$m=2048,t=1,p=2$m0Ro6ArcaMfanzBFGVmQCw$vmDrLnu2CfevEJwJh/KeVu53cScOfjYzF57jNIFPJ4Q","Müllhausen","testman",FALSE);
 INSERT INTO USER(id,email,password,city,username,admin) VALUES(911113,"meeenz@meeenz.com","$argon2id$v=19$m=2048,t=1,p=2$m0Ro6ArcaMfanzBFGVmQCw$vmDrLnu2CfevEJwJh/KeVu53cScOfjYzF57jNIFPJ4Q","Mainz","meeenzman",FALSE);
---- Users
 
 INSERT INTO USER_NOTIFICATIONS(user_id,info,date) VALUES(911111,"<p> GOODBYE WORLD </p>","2000-01-01");
+
+
+
+
 -- Attraction
 INSERT INTO ATTRACTION_ENTRY (id,title, type, recommended_count, city, info, approved, PosX, PosY, stars)
 VALUES(9000,'Brandenburg Gate', 'Landmark', 12000, 'Berlin', 'An 18th-century neoclassical monument in Berlin, one of the best-known landmarks of Germany.', TRUE, 52.5163, 13.3777, 4.8),
@@ -89,6 +101,7 @@ VALUES(9000,'Brandenburg Gate', 'Landmark', 12000, 'Berlin', 'An 18th-century ne
 (9008,'AMONGUS Palace', 'Palace', 7000, 'Imposter', 'The former summer palace of Frederick the SUS, King of SUSSEX, in SUSSEX.', FALSE, 12.4011, 13.0416, 0);
 -- Attraction
 
+INSERT INTO USER_FAVORITE(user_id,attraction_id) VALUES(911111,9000); 
 -- Review
 INSERT INTO ATTRACTION_REVIEW(user_id,attraction_id,text,stars) VALUES(911113,9000,"Great place for my trad wife and 50 kids would go again, was able to drink my beer in peace without my bitch wife nagging",5);
 

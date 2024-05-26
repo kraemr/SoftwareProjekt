@@ -1,9 +1,14 @@
 package recommendations;
 
-func SendRecommendationToUser(id int32) error{
-	
-}
+import(
+	"src/favorites"
+	"src/attractions"
+)
 
-func SendRecommendationToCity(city string) error{
+type Recommendation
 
+
+
+func GetRecommendationsForUser(id int32) error{
+	favorites.
 }
