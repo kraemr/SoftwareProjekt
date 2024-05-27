@@ -1,50 +1,103 @@
-package users;
+package users
+
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
+	"strconv"
 )
 
-func get(){
-
-}
-
-func post(){
-
-}
-
-func delete(){
-
-}
-
-func put(){
-
-}
-
-
-
-/*
-// Users can register with only email and passwd
-// Later on they can add more info if they wish to, that would be with a PUT api call
-
-func registerUser(res http.ResponseWriter, req *http.Request) {
-	decoder := json.NewDecoder(req.Body)
-	_ = decoder
-	var user *users.UserLoginInfo = &users.UserLoginInfo{
-		Email:"",
-		Password:"",
+// delete user
+func delete(req *http.Request) (string, error) {
+	id := req.URL.Query().Get("id")
+	convertedID, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return "", err
 	}
+	err = DeleteUser(convertedID)
+	return "{\"success\":true}", err
+}
+
+// update existing user
+func put(req *http.Request) (string, error) {
+	var user User
+	decoder := json.NewDecoder(req.Body)
 	err := decoder.Decode(&user)
 	if err != nil {
-		http.Error(res, err.Error(), http.StatusInternalServerError)
-		return
+		return "", err
 	}
-	success := sessions.RegisterUser(user.Email,user.Password);
-	if(success == true){
-		fmt.Fprintf(res, "{\"success\":true}")
-	}else{
-		fmt.Fprintf(res, "{\"success\":false}")
-	}
+	err = UpdateUser(user)
+	return "{\"success\":true}", err
 }
-*/
 
-func HandleUsersREST(res http.ResponseWriter, req *http.Request){
+// Add user
+func post(req *http.Request) (string, error) {
+	var user User
+	decoder := json.NewDecoder(req.Body)
+	err := decoder.Decode(&user)
+	if err != nil {
+		return "", err
+	}
+	err = CreateUser(user)
+	return "{\"success\":true}", err
+}
+
+// get existing user by id or email
+func get(req *http.Request) (string, error) {
+	var inID string = req.URL.Query().Get("id")
+	var inEmail string = req.URL.Query().Get("email")
+
+	idIsSet := inID != ""
+	emailIsSet := inEmail != ""
+
+	var err error
+	var output string
+	var user User
+
+	if idIsSet { // by id
+		convertedID, err := strconv.ParseInt(inID, 10, 64)
+		if err != nil {
+			return "{\"info\":\"User does not exist\"}", err
+		}
+		user = GetUserByID(convertedID)
+		outputBytes, err := json.Marshal(user)
+		if err != nil {
+			return "{\"success\":false,\"info\":\"Error marshalling user data\"}", err
+		}
+		output = string(outputBytes)
+	} else if emailIsSet { // by email
+		user, err = GetUserByEmail(inEmail)
+		if err != nil {
+			return "{\"success\":false,\"info\":\"Error marshalling user data\"}", err
+		}
+		outputBytes, err := json.Marshal(user)
+		if err != nil {
+			return "{\"success\":false,\"info\":\"Error marshalling user data\"}", err
+		}
+		output = string(outputBytes)
+	} else {
+		return "{\"success\":false,\"info\":\"No user id provided\"}", nil
+	}
+	return output, err
+}
+
+func HandleUsersREST(res http.ResponseWriter, req *http.Request) {
+	var output string
+	var err error
+	switch req.Method {
+	case "GET":
+		output, err = get(req)
+	case "POST":
+		output, err = post(req)
+	case "PUT":
+		output, err = put(req)
+	case "DELETE":
+		output, err = delete(req)
+	}
+	if err != nil {
+		// handle error here, send 500,403,402,401,400 and so on depending on error
+		fmt.Fprintf(res, "{\"success\":false,\"info\":\"%v\"}", err)
+	} else {
+		fmt.Fprintf(res, output)
+	}
 }
