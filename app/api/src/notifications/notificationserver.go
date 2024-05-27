@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"src/sessions"
 	"src/users"
+	"time"
 )	
 
 var(
@@ -53,55 +54,40 @@ func sendNotifications(w http.ResponseWriter, r *http.Request){
 	fmt.Println(id)
 	// we have user id, now get the city
 	city,err := users.GetUserCityById(id)
+	if(err != nil){
+		fmt.Println("user has no city???")
+		return
+	}
 	fmt.Println(city);
-
 	for {
-		if(NotificationSendSignal){
-			notifications,err := getNotificationsForId(911111)
-			if(err != nil){
+			time.Sleep(10 * time.Second)
+			
+			user_notifications,user_err := getNotificationsForId(id)
+			if(user_err != nil){
 				fmt.Println(err.Error())
+				break
 			}
+			city_notifications,city_err := getRecentNotificationsForCity(city)
+			if(city_err != nil){
+				fmt.Println(err.Error())
+				break
+			}
+			notifications := append(user_notifications,city_notifications...)
+
 			json_bytes , json_err := json.Marshal(notifications)
 			if(json_err != nil){
 				fmt.Println("error Creating Json")
+				break
 			}
-			err = c.WriteMessage(websocket.TextMessage, json_bytes)
+			err := c.WriteMessage(websocket.TextMessage, json_bytes)
 			if err != nil {
 				log.Println("write:", err)
-				//break
+				break
 			}
-			NotificationSendSignal = false
-		}
 		
 	}
 }
 
-
-
-
-func echo(w http.ResponseWriter, r *http.Request) {
-	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
-	c, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Print("upgrade:", err)
-		return
-	}
-	defer c.Close()
-	for {
-		mt, message, err := c.ReadMessage()
-		if err != nil {
-			fmt.Println("read:", err)
-			break
-		}
-		fmt.Println(message)
-
-		err = c.WriteMessage(mt, message)
-		if err != nil {
-			fmt.Println("write:", err)
-			break
-		}
-	}
-}
 
 func StartNotificationServer(port string,path string){
 	addr := ":" + port

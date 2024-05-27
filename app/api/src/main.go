@@ -9,7 +9,9 @@ import (
 	"src/db_utils"
 	"src/attractions"
 	"src/users"
+	"src/favorites"
 	"src/notifications"
+	"src/recommendations"
 )
 
 
@@ -71,11 +73,16 @@ func main() {
 
 	http.HandleFunc("/api/attractions",attractions.HandleAttractionsREST)
 	http.HandleFunc("/api/users",users.HandleUsersREST)
+	http.HandleFunc("/api/favorites",favorites.HandleFavoritesREST)
+	http.HandleFunc("/api/recommendations",recommendations.HandleRecommendationsREST)
 
-	// ########### apis ############
+	// ########### apis ###########
 	// start static files server with publicDir as root
 	fileServer := http.FileServer(http.Dir(publicDir))
 	http.Handle("/", fileServer)
 	go notifications.StartNotificationServer("8080","/notifications")
+
+	//_,_ = recommendations.GetRecommendationForUser(100,"Berlin","Landmark");
+
 	startServer("8000") // keeps running i.e blocks execution
 }
