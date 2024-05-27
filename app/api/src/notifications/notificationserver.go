@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"src/sessions"
 	"src/users"
+	"time"
 )	
 
 var(
@@ -56,8 +57,8 @@ func sendNotifications(w http.ResponseWriter, r *http.Request){
 	fmt.Println(city);
 
 	for {
-//		if(NotificationSendSignal){
-			notifications,err := getNotificationsForId(911111)
+			time.Sleep(10 * time.Second)
+			notifications,err := getNotificationsForId(id)
 			if(err != nil){
 				fmt.Println(err.Error())
 			}
@@ -68,10 +69,7 @@ func sendNotifications(w http.ResponseWriter, r *http.Request){
 			err = c.WriteMessage(websocket.TextMessage, json_bytes)
 			if err != nil {
 				log.Println("write:", err)
-				//break
 			}
-			NotificationSendSignal = false
-//		}
 		
 	}
 }

@@ -203,6 +203,9 @@ func GetAttractionsByCategory(category string) ([]Attraction,error){
 	return attractions,nil
 }
 
+
+
+
 // Get Attraction By City String where City is converted to lowercase always
 func GetAttractionsByCity(city string) ( []Attraction,error) {
 	var db *sql.DB = db_utils.DB
