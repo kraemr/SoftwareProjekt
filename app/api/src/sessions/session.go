@@ -5,9 +5,7 @@ import (
 	"os"
 	"fmt"
 )
-
 var store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
-
 
 func GetLoggedInUserId( r *http.Request) int32{
 	session, err := store.Get(r, "sessionid")

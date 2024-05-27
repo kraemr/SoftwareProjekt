@@ -4,18 +4,14 @@ import(
 	"net/http"
 	"encoding/json"
 	"fmt"
+	"src/sessions"
 	"strconv"
 )
 
 
 func get(req *http.Request) (string,error){
-	id  := req.URL.Query().Get("id")
-	convertedID,str_err := strconv.Atoi(id)
-	if(str_err != nil){
-		return "{\"success\":false}",str_err
-	}
-
-	favorites,err := GetAttractionFavoritesByUserId(int32(convertedID));
+	id := sessions.GetLoggedInUserId(req)
+	favorites,err := GetAttractionFavoritesByUserId(int32(id));
 	if(err != nil){
 		return "{\"success\":false}",err
 	}
