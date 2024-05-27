@@ -54,18 +54,6 @@ function updateGeoJsonLayer(data) {
     map.flyToBounds(geoJsonLayer.getBounds());
 }
 
-//Input-Trigger
-function createSearchTrigger() {
-    var input = document.getElementById("search-input");
-
-    input.addEventListener("keypress", function (event) {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            document.getElementById("search-button").click();
-        }
-    });
-}
-
 function displayGermanyonStartup() {
 
     var apiUrl = 'https://nominatim.openstreetmap.org/search.php?q=Deutschland&polygon_geojson=1&format=geojson&limit=1&countrycodes=de';

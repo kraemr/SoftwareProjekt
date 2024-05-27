@@ -9,7 +9,6 @@ function createMap() {
   map = L.map("map").setView([51.163361, 10.447683], 7); //Mainz = [49.991756, 8.24414], 15
 
   displayGermanyonStartup();
-  loadAllMarkers();
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution:
       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -20,21 +19,41 @@ function createMap() {
   L.control.zoom({ position: "bottomright" }).addTo(map);
 
   allMarkersLayer = L.layerGroup().addTo(map);
+  loadAllMarkers();
 }
 function loadAllMarkers() {
-  fetch("/api/attractions")
-    .then((response) => response.json())
+  // Construct the JSON object
+  var data;
+  jsonData = JSON.stringify(data);
+    fetch(document.location.origin + "/api/attractions", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: jsonData,
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    })
     .then((data) => {
-      placeMarkers(data);
+      console.log(data);
     })
     .catch((error) => {
-      console.error("Error fetching attractions:", error);
+      // Handle errors
+      console.error(
+        "There was a problem with the login request:",
+        error
+      );
+      alert("Login failed. Please try again.");
     });
 }
 
 function placeMarkers(data) {
   for (var elem of data) {
-    let marker = createBlueMarker(elem.PosX, elem.PosY, elem.id);
+    let marker = createBlueMarker(elem.posx, elem.posy, elem.id);
     allMarkersLayer.addLayer(marker);
   }
   console.log(data);
@@ -81,23 +100,4 @@ function setPopUp(data, marker) {
 }
 
 function loadPopInformation(marker) {
-  //Get unfallId from marker
-  var attractionID = marker.attractionID;
-
-  //query information from unfallId
-  var xhr = new XMLHttpRequest();
-  // GET /api/attractions RETURNS JSON
-  xhr.open("GET", "/api/attractions/" + attractionID, true);
-
-  xhr.onload = function () {
-    console.log(xhr.responseText); //Handler der auf eine Response wartet, die Anfrage wird erst danach mit xhr.send() aufgerufen
-    if (xhr.status === 200) {
-      var data = JSON.parse(xhr.responseText);
-      console.log("popup info " + data);
-      setPopUp(data, marker); //call set Filters with DB data
-    } else {
-      reject("Request failed. Returned status of " + xhr.status);
-    }
-  };
-  xhr.send();
 }
