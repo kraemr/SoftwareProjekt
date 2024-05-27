@@ -10,6 +10,7 @@ type Notification struct{
 	Info string `json:info` // HTML code with the message inside
 	Date string `json:date`// Date that notification was created on
 }
+
 var ErrNoNotification = fmt.Errorf("No Notifications Found")
 
 
@@ -49,7 +50,17 @@ func getNotificationsForIDByDate(user_id int32,date string) ([]Notification,erro
 
 func getNotificationsForId(user_id int32) ([]Notification,error){
 	var db *sql.DB = db_utils.DB
-	rows, err := db.Query("SELECT info,date FROM USER_NOTIFICATIONS WHERE user_id = ?", user_id)
+	rows, err := db.Query("SELECT info,date FROM USER_NOTIFICATIONS WHERE user_id = ? LIMIT 100", user_id)
+	if(err != nil){
+		return nil,err
+	}
+	defer rows.Close()
+	return getNotificationsFromDb(rows);
+}
+
+func getRecentNotificationsForCity(city string) ([]Notification,error){
+	var db *sql.DB = db_utils.DB
+	rows, err := db.Query("SELECT info,date FROM CITY_NOTIFICATIONS WHERE city = ? LIMIT 100", city)
 	if(err != nil){
 		return nil,err
 	}

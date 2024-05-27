@@ -3,7 +3,6 @@
 Eine React / Angular / Electron / hauptsache kein nodejs Web Applikation um Ausflugsziele in deiner Stadt zu finden
 
 # Attractions Api
-
 ## delete attraction
 
 send request with DELETE to
@@ -43,6 +42,19 @@ returns array of attraction Json Objects
 GET
 path: /api/attractions?id=5
 returns single attraction Json Object
+
+
+
+# Notifications
+Notification have info field and date field info contains html that should directly be added to a divs innerHTML 
+```js
+webSocket = new WebSocket("wss://"+document.location.host+"/notifications");
+webSocket.onmessage = (event) => {
+  console.log(event.data);
+};
+...
+```
+
 
 # Docker Compose
 
