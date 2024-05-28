@@ -22,15 +22,11 @@ function createMap() {
   loadAllMarkers();
 }
 function loadAllMarkers() {
-  // Construct the JSON object
-  var data;
-  jsonData = JSON.stringify(data);
-    fetch(document.location.origin + "/api/attractions", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: jsonData,
+  fetch(document.location.origin + "/api/attractions", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    }
   })
     .then((response) => {
       if (!response.ok) {
@@ -39,21 +35,18 @@ function loadAllMarkers() {
       return response.json();
     })
     .then((data) => {
-      console.log(data);
+      placeMarkers(data);
     })
     .catch((error) => {
-      // Handle errors
-      console.error(
-        "There was a problem with the login request:",
-        error
-      );
-      alert("Login failed. Please try again.");
+      console.error("There was a problem with the request:", error);
+      alert("Failed to load markers. Please try again.");
     });
 }
 
+
 function placeMarkers(data) {
   for (var elem of data) {
-    let marker = createBlueMarker(elem.posx, elem.posy, elem.id);
+    let marker = createBlueMarker(elem.posX, elem.posY, elem.Id);
     allMarkersLayer.addLayer(marker);
   }
   console.log(data);
@@ -63,7 +56,7 @@ function placeMarkers(data) {
 function createBlueMarker(lat, lng, attractionID) {
   var latlng = L.latLng(lat, lng);
   var customIcon = L.icon({
-    iconUrl: ".leaflet/images/marker-icon-2x-blue.png",
+    iconUrl: "leaflet/images/marker-icon-2x.png",
     iconSize: [25, 41], // Größe des Icons
     iconAnchor: [12, 41], // Position des Ankers relativ zur Mitte des Icons
     popupAnchor: [0, -16], // Position des Popups relativ zur Mitte des Icons
@@ -100,4 +93,35 @@ function setPopUp(data, marker) {
 }
 
 function loadPopInformation(marker) {
+  fetch(document.location.origin + `/api/attractions/${marker.attractionID}`)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      setPopUp(data, marker);
+    })
+    .catch((error) => {
+      console.error("There was a problem with the request:", error);
+    });
+}
+
+function setPopUp(data, marker) {
+  var popupContent = `
+    <div>
+      <strong>City: </strong> ${data.city}<br>
+      <strong>Title: </strong> ${data.title}<br>
+      <strong>ID: </strong> ${data.Id}<br>
+      <strong>Type: </strong> ${data.type}<br>
+      <strong>Position X: </strong> ${data.posX}<br>
+      <strong>Position Y: </strong> ${data.posY}<br>
+      <strong>Info: </strong> ${data.info}<br>
+      <strong>Stars: </strong> ${data.Stars}<br>
+      <strong>Recommended Count: </strong> ${data.recommended_count}
+    </div>
+  `;
+
+  marker.bindPopup(popupContent).openPopup();
 }
