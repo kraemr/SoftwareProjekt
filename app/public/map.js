@@ -98,7 +98,7 @@ function setPopUp(data, marker) {
       <strong>Position X: </strong> ${data.posX}<br>
       <strong>Position Y: </strong> ${data.posY}<br>
       <strong>Info: </strong> ${data.info}<br>
-      <strong>Stars: </strong> ${data.Stars}<br>
+      <strong>Stars: </strong> ${data.Stars}&#11088;<br>
       <strong>Recommended Count: </strong> ${data.recommended_count}
     </div>
   `;
