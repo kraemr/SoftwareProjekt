@@ -61,39 +61,38 @@ function displayGermanyonStartup() {
     // Check if geolocation is supported by the browser
     if ("geolocation" in navigator) {
         // Prompt user for permission to access their location
-        geolocation.getCurrentPosition(
-            // Success callback function
-            (position) => {
-                // Get the user's latitude and longitude coordinates
-                const lat = position.coords.latitude;
-                const lng = position.coords.longitude;
+        map.locate({ setView: false });
 
-                // Do something with the location data, e.g. display on a map
-                console.log(`Latitude: ${lat}, longitude: ${lng}`);
-                newApiUrl = 'https://nominatim.openstreetmap.org/reverse?format=geojson&lat=' + lat + '&lon=' + lng;
-                executeAPICall(newApiUrl);
-                // Create a custom icon for the user's location marker
-                var userLocationIcon = L.icon({
-                    iconUrl: 'leaflet/images/marker-icon-red.png',
-                    iconSize: [25, 41], // Customize the size as needed
-                    iconAnchor: [12, 41],
-                    popupAnchor: [0, -16],
-                });
+        // Handle the location found event
+        map.on('locationfound', function (e) {
+            // Get the user's latitude and longitude coordinates
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
 
-                // Create the marker with the custom icon
-                var userLocationMarker = L.marker([lat, lng], {
-                    icon: userLocationIcon,
-                    clickable: true,
-                }).addTo(map);
-            },
-            // Error callback function
-            (error) => {
-                // Handle errors, e.g. user denied location sharing permissions
-                console.error("Error getting user location:", error);
-                executeAPICall(apiUrl);
-            }
-            
-        );
+            // Do something with the location data, e.g. display on a map
+            console.log(`Latitude: ${lat}, longitude: ${lng}`);
+            newApiUrl = 'https://nominatim.openstreetmap.org/reverse?format=geojson&lat=' + lat + '&lon=' + lng;
+            executeAPICall(newApiUrl);
+            // Create a custom icon for the user's location marker
+            var userLocationIcon = L.icon({
+                iconUrl: 'leaflet/images/marker-icon-red.png',
+                iconSize: [25, 41], // Customize the size as needed
+                iconAnchor: [12, 41],
+                popupAnchor: [0, -16],
+            });
+
+            // Create the marker with the custom icon
+            var userLocationMarker = L.marker([lat, lng], {
+                icon: userLocationIcon,
+                clickable: true,
+            }).addTo(map);
+        });
+        // Error callback function
+        map.on('locationerror', function (e) {
+            // Handle errors, e.g. user denied location sharing permissions
+            console.error("Error getting user location:", error);
+            executeAPICall(apiUrl);
+        });
     } else {
         // Geolocation is not supported by the browser
         console.error("Geolocation is not supported by this browser.");
