@@ -46,67 +46,47 @@ function loadAllMarkers() {
 
 function placeMarkers(data) {
   for (var elem of data) {
-    let marker = createBlueMarker(elem.posX, elem.posY, elem.Id);
+    let marker = createBlueMarker(elem);
     allMarkersLayer.addLayer(marker);
   }
   console.log(data);
 }
 
+
 //Blauer Marker
-function createBlueMarker(lat, lng, attractionID) {
-  var latlng = L.latLng(lat, lng);
+function createBlueMarker(attraction) {
+  var latlng = L.latLng(attraction.posX, attraction.posY);
   var customIcon = L.icon({
-    iconUrl: "leaflet/images/marker-icon-2x.png",
-    iconSize: [25, 41], // Größe des Icons
-    iconAnchor: [12, 41], // Position des Ankers relativ zur Mitte des Icons
-    popupAnchor: [0, -16], // Position des Popups relativ zur Mitte des Icons
+    iconUrl: "leaflet/images/marker-icon-2x.png", // Update this path to your actual icon path
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [0, -16],
   });
 
   var marker = L.marker(latlng, {
     icon: customIcon,
     clickable: true,
   });
-  marker.attractionID = attractionID;
+
+  // Store attraction data in the marker
+  marker.attractionData = attraction;
 
   // Add click event listener to the marker
   marker.on("click", function () {
-    loadPopInformation(marker);
+    setPopUp(marker.attractionData, marker);
   });
 
   return marker;
 }
-function setPopUp(data, marker) {
-  var popupContent = `
-        <div>
-            <strong>City: </strong> ${data[0].city}<br>
-            <strong>Title: </strong> ${data[0].title}<br>
-            <strong>ID: </strong> ${data[0].id}<br>
-            <strong>Category: </strong> ${data[0].category}<br>
-            <strong>Position X: </strong> ${data[0].posx}<br>
-            <strong>Position Y: </strong> ${data[0].posy}<br>
-            ${vehicleTrue}     
-        </div>
-    `;
 
-  // Set the popup content for the currently clicked marker
-  marker.bindPopup(popupContent).openPopup();
+function placeMarkers(data) {
+  for (var elem of data) {
+    let marker = createBlueMarker(elem);
+    allMarkersLayer.addLayer(marker);
+  }
+  console.log(data);
 }
 
-function loadPopInformation(marker) {
-  fetch(document.location.origin + `/api/attractions/${marker.attractionID}`)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.json();
-    })
-    .then((data) => {
-      setPopUp(data, marker);
-    })
-    .catch((error) => {
-      console.error("There was a problem with the request:", error);
-    });
-}
 
 function setPopUp(data, marker) {
   var popupContent = `
@@ -123,5 +103,6 @@ function setPopUp(data, marker) {
     </div>
   `;
 
+  // Set the popup content for the currently clicked marker
   marker.bindPopup(popupContent).openPopup();
 }
