@@ -39,7 +39,8 @@ CREATE TABLE IF NOT EXISTS ATTRACTION_ENTRY(
     approved BOOLEAN,
     PosX Float,
     PosY Float,
-    stars Float
+    stars Float,
+    img_url TEXT
 );
 CREATE INDEX _ATTRACTION_ENTRY_INDEX ON ATTRACTION_ENTRY(city);
 
