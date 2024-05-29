@@ -131,7 +131,6 @@ function executeAPICall(apiUrl) {
             const cityCoordinates = data.features[0].geometry.coordinates;
             const cityLatLng = L.latLng(cityCoordinates[1], cityCoordinates[0]);
             map.setView(cityLatLng, 10); // Adjust the zoom level as needed
-
         })
         .catch(error => {
             console.error('Fehler bei der API-Abfrage:', error);

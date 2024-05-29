@@ -102,7 +102,14 @@ function setPopUp(data, marker) {
       <strong>Recommended Count: </strong> ${data.recommended_count}
     </div>
   `;
+  // Create a new popup instance for the marker
+  var popup = L.popup().setContent(popupContent);
 
-  // Set the popup content for the currently clicked marker
-  marker.bindPopup(popupContent).openPopup();
+  // Bind the popup to the marker
+  marker.bindPopup(popup);
+
+  // Open the popup when the marker is clicked
+  marker.on("click", function () {
+    marker.openPopup();
+  });
 }
