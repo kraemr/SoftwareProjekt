@@ -18,7 +18,7 @@ function createMap() {
   map.removeControl(map.zoomControl);
   L.control.zoom({ position: "bottomright" }).addTo(map);
 
-  allMarkersLayer = L.layerGroup().addTo(map);
+  allMarkersLayer = L.markerClusterGroup().addTo(map);
   loadAllMarkers();
 }
 function loadAllMarkers() {
