@@ -74,6 +74,7 @@ function createBlueMarker(attraction) {
   // Add click event listener to the marker
   marker.on("click", function () {
     setPopUp(marker.attractionData, marker);
+    marker.openPopup();
   });
 
   return marker;
