@@ -22,7 +22,9 @@ services:
     volumes:
       - ./mysql-data:/var/lib/mysql
       - ./init.sql:/tmp/init.sql
-    command: ["--init-file", "/tmp/init.sql"]
+    command: [ "--init-file", "/tmp/init.sql" ]
+
+
   webserver:
     build:
       context: .
@@ -35,6 +37,13 @@ services:
         condition: service_healthy
       caddy:
         condition: service_started
+    develop:
+      watch:
+        - action: sync
+          path: ./app
+          target: /opt/app
+
+
   caddy:
     image: caddy:latest
     volumes:
