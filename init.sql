@@ -2,13 +2,22 @@ DROP DATABASE SITE_DB;
 CREATE DATABASE IF NOT EXISTS SITE_DB;
 USE SITE_DB;
 
+CREATE TABLE CITY_MODERATOR(
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    email TEXT,
+    password TEXT,
+    city TEXT,
+    username TEXT
+);
+
+
+
 CREATE TABLE IF NOT EXISTS USER (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     email TEXT,
     password TEXT,
     city TEXT,
-    username TEXT,
-    admin BOOLEAN
+    username TEXT
 );
 -- create index
 CREATE INDEX _USER_INDEX ON USER(id);
