@@ -52,3 +52,9 @@ func testDB() {
 	}
 	defer rows.Close()
 }
+
+func GetCurrentDate() string{
+	now := time.Now()
+	return now.Format("2006-01-02")
+}
+

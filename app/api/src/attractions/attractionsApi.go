@@ -21,10 +21,12 @@ func put(req *http.Request) (string,error){
 	decoder := json.NewDecoder(req.Body)
 	err := decoder.Decode(&attraction)
 	if(err != nil){
+		return "{\"success\":false}",err
 
 	}
 	err = UpdateAttraction(attraction)
 	if(err != nil){
+		return "{\"success\":false}",err
 
 	}
 	return "{\"success\":true}",nil
@@ -37,11 +39,11 @@ func post(req *http.Request) (string,error){
 	decoder := json.NewDecoder(req.Body)
 	err := decoder.Decode(&attraction)
 	if(err != nil){
-
+		return "{\"success\":false}",err
 	}
 	err = InsertAttraction(attraction)
 	if(err != nil){
-
+		return "{\"success\":false}",err
 	}
 	return "{\"success\":true}",nil
 }
@@ -87,6 +89,7 @@ func get(req *http.Request) (string,error){
 	}else{
 		attractions,err = GetAttractions()
 	}
+	
 	if(err != nil){
 		return "{\"success\":false,\"info\":\"Attraction does not exist\"}",err
 	}else{

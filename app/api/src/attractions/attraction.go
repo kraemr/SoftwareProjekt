@@ -3,15 +3,9 @@ import (
 	_ "errors"
 	"database/sql"
 	"src/db_utils"
+	"src/reviews"
 	"fmt"
 )
-
-type Review struct{
-	Text string `json:text`
-	Username string `json:username`
-	Userid int64 `json:userid` 
-	Stars float32 `json:stars`
-}
 
 type Attraction struct{
 	Id   			  int64	    `json:id`
@@ -25,7 +19,7 @@ type Attraction struct{
 	PosY 			  float32   `json:"posY"`
 	Stars			  float32   `json:stars`
 	Img_url			  string    `json:img_url`
-	Reviews			  []Review  `json:reviews`
+	Reviews			  []reviews.Review  `json:reviews`
 }
 
 type Filter struct{
@@ -143,18 +137,14 @@ func GetRecommendationForUser(id int32,city string,pref_type string) ([]Attracti
 		rows.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars,&a.Img_url)
 		recommended_attractions = append(recommended_attractions, a)
 		fmt.Println(a)
-
 	}	
 	if(nodata_found){
 		return nil,ErrNoRecommendation 
 	}else if(err != nil){
 		return nil,err
 	}
-
 	return recommended_attractions,nil
 }
-
-
 
 func GetAttractions() ([]Attraction,error){
 	var db *sql.DB = db_utils.DB

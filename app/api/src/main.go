@@ -11,6 +11,7 @@ import (
 	"src/users"
 	"src/favorites"
 	"src/notifications"
+	"src/reviews"
 	"src/recommendations"
 )
 
@@ -75,7 +76,7 @@ func main() {
 	http.HandleFunc("/api/users",users.HandleUsersREST)
 	http.HandleFunc("/api/favorites",favorites.HandleFavoritesREST)
 	http.HandleFunc("/api/recommendations",recommendations.HandleRecommendationsREST)
-
+	http.HandleFunc("/api/reviews",reviews.HandleReviewREST)
 	// ########### apis ###########
 	// start static files server with publicDir as root
 	fileServer := http.FileServer(http.Dir(publicDir))

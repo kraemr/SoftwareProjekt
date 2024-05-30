@@ -50,7 +50,7 @@ func getNotificationsForIDByDate(user_id int32,date string) ([]Notification,erro
 
 func getNotificationsForId(user_id int32) ([]Notification,error){
 	var db *sql.DB = db_utils.DB
-	rows, err := db.Query("SELECT info,date FROM USER_NOTIFICATIONS WHERE user_id = ? LIMIT 100", user_id)
+	rows, err := db.Query("SELECT info,date FROM USER_NOTIFICATIONS WHERE user_id = ? LIMIT 100 ORDER BY date DESC", user_id)
 	if(err != nil){
 		return nil,err
 	}
@@ -60,7 +60,7 @@ func getNotificationsForId(user_id int32) ([]Notification,error){
 
 func getRecentNotificationsForCity(city string) ([]Notification,error){
 	var db *sql.DB = db_utils.DB
-	rows, err := db.Query("SELECT info,date FROM CITY_NOTIFICATIONS WHERE city = ? LIMIT 100", city)
+	rows, err := db.Query("SELECT info,date FROM CITY_NOTIFICATIONS WHERE city = ? LIMIT 100 ORDER BY date DESC", city)
 	if(err != nil){
 		return nil,err
 	}
