@@ -78,11 +78,13 @@ func CheckModeratorAccessToCity(r *http.Request	,city string) bool{
 	}
 
 	if logged_in, ok := session.Values["logged_in"].(bool); !ok {
+		_ = logged_in
 		fmt.Println("session was nil or unexpected type")
 		return false
 	}
 
-	if city , ok := session.Values["moderator_city"].(string); !ok{
+	if city , ok := session.Values["moderator_city"].(string); !ok {
+		_ = city
 		fmt.Println("session was nil or unexpected type")
 		return false
 	}
