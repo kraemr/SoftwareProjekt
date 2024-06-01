@@ -1,14 +1,10 @@
 package moderator;
-
-package attractions;
 import(
 	"fmt"
 	"net/http"
 	"strconv"
 	"encoding/json"
 )
-
-
 // delete attraction
 func delete(req *http.Request) (string,error){
 	id := req.URL.Query().Get("id")
