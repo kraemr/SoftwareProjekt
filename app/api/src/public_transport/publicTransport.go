@@ -1,4 +1,4 @@
-package main
+package public_transport
 
 import (
 	"encoding/json"
@@ -107,49 +107,34 @@ func fetchJourneys(fromID, toID string) ([]Journey, error) {
 	return journeys, nil
 }
 
-func main() {
-	// Definiert die Koordinaten für den Startpunkt und den Zielpunkt.
-	fromLat, fromLon := 49.9179102, 8.3430285 // Beispielkoordinaten für irgendwo in Nackenheim
-	toLat, toLon := 49.987809, 8.2272517      // Beispielkoordinaten für Lucy-Hillebrand-Straße, Mainz
-
-	// Holt die Standort-ID für den Startpunkt.
+func FetchFullRouteLongLat(fromLat, fromLon, toLat, toLon float64) ([]Journey, error) {
+	// Holt die Standort-ID für den Zielpunkt.
 	fromID, err := fetchLocationID(fromLat, fromLon)
 	if err != nil {
-		fmt.Println("Error fetching from location ID:", err)
-		return
+		err = fmt.Errorf("Error fetching to location ID: %w", err)
+		return nil, err
 	}
 
 	// Holt die Standort-ID für den Zielpunkt.
 	toID, err := fetchLocationID(toLat, toLon)
 	if err != nil {
-		fmt.Println("Error fetching to location ID:", err)
-		return
+		err = fmt.Errorf("Error fetching to location ID: %w", err)
+		return nil, err
 	}
 
 	// Holt die besten Reisen von der Start-ID zur Ziel-ID.
 	journeys, err := fetchJourneys(fromID, toID)
 	if err != nil {
-		fmt.Println("Error fetching journeys:", err)
-		return
+		err = fmt.Errorf("Error fetching journeys: %w", err)
+		return nil, err
 	}
 
 	if len(journeys) == 0 {
 		fmt.Println("No journeys found")
-		return
+		err = fmt.Errorf("No journeys found")
+		return nil, err
 	}
 
-	// Gibt die gefundenen Reisen aus.
-	for _, journey := range journeys {
-		fmt.Printf("Journey from %f,%f to %f,%f:\n", fromLat, fromLon, toLat, toLon)
-		for _, leg := range journey.Legs {
-			fmt.Printf("  - From %s to %s\n", leg.Origin.Name, leg.Destination.Name)
-			if leg.Line.Name == "" {
-				fmt.Printf("    Walk from %s to %s\n", leg.Origin.Name, leg.Destination.Name)
-			} else {
-				fmt.Printf("    Take %s (%s) from %s to %s\n", leg.Line.Name, leg.Line.Product, leg.Origin.Name, leg.Destination.Name)
-			}
-			fmt.Printf("    Departure: %s (planned: %s)\n", leg.Departure, leg.PlannedDeparture)
-			fmt.Printf("    Arrival: %s (planned: %s)\n", leg.Arrival, leg.PlannedArrival)
-		}
-	}
+	// Gefundenen Reisen zurückgeben.
+	return journeys, nil
 }

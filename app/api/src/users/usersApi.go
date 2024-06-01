@@ -59,7 +59,10 @@ func get(req *http.Request) (string, error) {
 		if err != nil {
 			return "{\"info\":\"User does not exist\"}", err
 		}
-		user = GetUserByID(convertedID)
+		user, err = GetUserByID(convertedID)
+		if err != nil {
+			return "{\"success\":false,\"info\":\"Error getting user by ID\"}", err
+		}
 		outputBytes, err := json.Marshal(user)
 		if err != nil {
 			return "{\"success\":false,\"info\":\"Error marshalling user data\"}", err

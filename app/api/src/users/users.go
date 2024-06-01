@@ -46,7 +46,7 @@ func GetUserByEmail(email string) (User, error) {
 	var db *sql.DB = db_utils.DB
 	rows, err := db.Query("SELECT id from USER WHERE email=? LIMIT 1", email)
 	if err != nil {
-		return 0, err
+		return User{}, err
 	}
 	defer rows.Close()
 	var id int32
@@ -57,9 +57,19 @@ func GetUserByEmail(email string) (User, error) {
 	}
 
 	if id == 0 {
-		return 0, ErrNoUser
+		return User{}, ErrNoUser
 	} else {
-		return id, nil
+		rows, err := db.Query("SELECT id, email, password, city, username from USER WHERE id=? LIMIT 1", id)
+		if err != nil {
+			return User{}, err
+		}
+		defer rows.Close()
+		var user User
+		user.UserId = int64(id)
+		for rows.Next() {
+			rows.Scan(&user.UserId, &user.Email, &user.Password, &user.City, &user.Username)
+		}
+		return user, nil
 	}
 }
 
@@ -85,51 +95,51 @@ func GetUserIdByEmail(email string) (int32, error) {
 }
 
 // get user by id (assuming function needed)
-func GetUserByID(userId int64) User {
+func GetUserByID(userId int64) (User, error) {
 	var db *sql.DB = db_utils.DB
-    query := "SELECT id, email, password, city, username FROM USER WHERE id=? LIMIT 1"
-    row := db.QueryRow(query, userId)
+	query := "SELECT id, email, password, city, username FROM USER WHERE id=? LIMIT 1"
+	row := db.QueryRow(query, userId)
 
-    var user User
-    err := row.Scan(&user.UserId, &user.Email, &user.Password, &user.City, &user.Username)
-    if err != nil {
-        if err == sql.ErrNoRows {
-            return user, ErrNoUser
-        }
-        return user, err
-    }
-    return user, nil
+	var user User
+	err := row.Scan(&user.UserId, &user.Email, &user.Password, &user.City, &user.Username)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return user, ErrNoUser
+		}
+		return user, err
+	}
+	return user, nil
 }
 
 // delete a user
 func DeleteUser(userId int64) error {
 	var db *sql.DB = db_utils.DB
-    query := "DELETE FROM USER WHERE id=?"
-    _, err := db.Exec(query, userId)
-    if err != nil {
-        return err
-    }
-    return nil
+	query := "DELETE FROM USER WHERE id=?"
+	_, err := db.Exec(query, userId)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // update user information
 func UpdateUser(newInfo User) error {
-	var db *sql.DB = db_utils.db
+	var db *sql.DB = db_utils.DB
 	query := "UPDATE USER SET email=?, password=?, city=?, username=? WHERE id=?"
-    _, err := db.Exec(query, newInfo.Email, newInfo.Password, newInfo.City, newInfo.Username, newInfo.UserId)
-    if err != nil {
-        return err
-    }
-    return nil
+	_, err := db.Exec(query, newInfo.Email, newInfo.Password, newInfo.City, newInfo.Username, newInfo.UserId)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // create a new user
 func CreateUser(user User) error {
 	var db *sql.DB = db_utils.DB
-    query := "INSERT INTO USER (email, password, city, username) VALUES (?, ?, ?, ?)"
-    _, err := db.Exec(query, user.Email, user.Password, user.City, user.Username)
-    if err != nil {
-        return err
-    }
-    return nil
+	query := "INSERT INTO USER (email, password, city, username) VALUES (?, ?, ?, ?)"
+	_, err := db.Exec(query, user.Email, user.Password, user.City, user.Username)
+	if err != nil {
+		return err
+	}
+	return nil
 }
