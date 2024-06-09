@@ -2,73 +2,125 @@
 <html lang="en">
 
 <head>
-    <link rel="apple-touch-icon" sizes="180x180" href="resources/favicon_io/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="resources/favicon_io/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="resources/favicon_io/favicon-16x16.png">
-    <link rel="manifest" href="resources/favicon_io/site.webmanifest">
-    <!-- Leaflet -->
-    <script src="leaflet/leaflet.js"></script>
-    <link href="leaflet/leaflet.css" rel="stylesheet">
-    <script src="leaflet/leaflet.markercluster-src.js"></script>
-    <link rel="stylesheet" href="leaflet/MarkerCluster.css" />
-    <link rel="stylesheet" href="leaflet/MarkerCluster.Default.css" />
-    <!-- Bootstrap -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Includes -->
-    <link rel="stylesheet" href="css/index.css">
-    <script src="search.js"></script>
-    <script src="map.js"></script>
-    <meta charset="utf-8">
-    <title>Xplocity - Special spots in your city!</title>
-    <style>
-        /* Additional styles for the user icon button */
-        .user-container {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            z-index: 1000;
-            /* Ensure it stays on top of other elements */
-        }
+  <meta name="viewport" content="width=device-width, initial-scale=1" charset="utf-8" />
+  <link rel="apple-touch-icon" sizes="180x180" href="resources/favicon_io/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="resources/favicon_io/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="resources/favicon_io/favicon-16x16.png" />
+  <link rel="manifest" href="resources/favicon_io/site.webmanifest" />
+  <!-- Includes -->
+  <link rel="stylesheet" href="css/index.css" />
+  <script src="search.js"></script>
+  <script src="map.js"></script>
+  <script src="sidebar.js"></script>
+  <!-- Leaflet -->
+  <script src="leaflet/leaflet.js"></script>
+  <link href="leaflet/leaflet.css" rel="stylesheet" />
+  <script src="leaflet/leaflet.markercluster-src.js"></script>
+  <link rel="stylesheet" href="leaflet/MarkerCluster.css" />
+  <link rel="stylesheet" href="leaflet/MarkerCluster.Default.css" />
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <title>Xplocity - Special spots in your city!</title>
+  <style>
+    /* Additional styles for the user icon button */
+    .user-container {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 1000;
+      /* Ensure it stays on top of other elements */
+    }
 
-        .user-icon {
-            width: 2em;
-            height: 2em;
-            border-radius: 50%;
-            background-color: #A64C79;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
-        }
-    </style>
+    .user-icon {
+      width: 2em;
+      height: 2em;
+      border-radius: 50%;
+      background-color: #A64C79;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .categories-scroller {
+      overflow-x: scroll;
+      max-width: 100px;
+      width: 100px;
+    }
+    #open-close-button {
+      position: relative;
+      top: 10px;
+      left: 10px;
+      z-index: 1000;
+      align-items: right;
+    }
+  </style>
 </head>
 
 <body>
-    <!--Floating Search-->
-    <div class="search-container m-2">
-        <input type="text" id="search-input" class="rounded" placeholder="Search..."
-            onkeydown="if(event.keyCode==13) searchLocation()" />
+  <!--Floating Search-->
+  <div class="search-container m-2">
+    <input type="text" id="search-input" class="rounded" placeholder="Search..."
+      onkeydown="if(event.keyCode==13) searchLocation()" />
+  </div>
+  <!--Floating User Icon-->
+  <div class="user-container">
+    <span class="user-icon" onclick="openUserSettings()">
+      <i class="bi bi-person"></i>
+    </span>
+    <div class="toggle-settings">
+      <div class="settings">
+        <a href="login.html" class="btn btn-primary">Login</a>
+        <a href="register.html" class="btn btn-primary">Register</a>
+      </div>
     </div>
-    <!--Floating User Icon-->
-    <div class="user-container">
-        <span class="user-icon" onclick="openUserSettings()">
-            <i class="bi bi-person"></i>
+  </div>
+  <!--Floating detractable left menu-->
+  <div>
+    <div id="open-close-button">
+      <button class="open-button" id="open-button" onclick="openSidebar()">
+        <i class="bi bi-list"></i>
+      </button>
+      <button class="close-button" id="close-button" onclick="closeSidebar()">
+        <i class="bi bi-x"></i>
+      </button>
+    </div>
+    <div class="sidebar mt-5">
+      <div class="sidebar-header">
+        <h3>Xplocity</h3>
+      </div>
+      <div class="sidebar-content">
+        <span class="sidebar-item">
+          <h4>Categories</h4>
         </span>
-    </div>
-    <!--Floating detractable left menu-->
+        <div class="sidebar-item">
 
-    <div id="map"></div>
-    <script>
-        createMap();
-    </script>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="map"></div>
+  <script>
+    function openSidebar() {
+      document.querySelector('.sidebar').style.display = 'block';
+      document.getElementById('close-button').style.display = 'block';
+      document.getElementById('open-button').style.display = 'none';
+    }
+    function closeSidebar() {
+      document.querySelector('.sidebar').style.display = 'none';
+      document.getElementById('close-button').style.display = 'none';
+      document.getElementById('open-button').style.display = 'block';
+    }
+    closeSidebar();
+    createMap();
+  </script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 
 </html>

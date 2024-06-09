@@ -2,7 +2,6 @@ var map;
 var sidebar;
 var allMarkersLayer;
 var currentZoomLevel;
-var breakZoomLevel = 15;
 var geoJsonLayer;
 
 function createMap() {
@@ -24,9 +23,6 @@ function createMap() {
 function loadAllMarkers() {
   fetch(document.location.origin + "/api/attractions", {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    }
   })
     .then((response) => {
       if (!response.ok) {
@@ -35,6 +31,7 @@ function loadAllMarkers() {
       return response.json();
     })
     .then((data) => {
+      console.log(data);
       placeMarkers(data);
     })
     .catch((error) => {
@@ -64,7 +61,6 @@ function createBlueMarker(attraction) {
   });
 
   var marker = L.marker(latlng, {
-    icon: customIcon,
     clickable: true,
   });
 
@@ -79,15 +75,6 @@ function createBlueMarker(attraction) {
 
   return marker;
 }
-
-function placeMarkers(data) {
-  for (var elem of data) {
-    let marker = createBlueMarker(elem);
-    allMarkersLayer.addLayer(marker);
-  }
-  console.log(data);
-}
-
 
 function setPopUp(data, marker) {
   var popupContent = `
