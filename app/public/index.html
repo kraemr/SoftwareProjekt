@@ -24,7 +24,16 @@
     integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <title>Xplocity - Special spots in your city!</title>
   <style>
-    /* Additional styles for the user icon button */
+    body {
+      font-family: "Lato", sans-serif;
+    }
+    .search-container {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 1000;
+    }
+
     .user-container {
       position: fixed;
       top: 10px;
@@ -46,27 +55,68 @@
       cursor: pointer;
     }
 
-    .categories-scroller {
-      overflow-x: scroll;
-      max-width: 100px;
-      width: 100px;
+    .sidepanel {
+      width: 0;
+      position: fixed;
+      z-index: 1;
+      height: 100%;
+      top: 0;
+      left: 0;
+      background-color: #111;
+      overflow-x: hidden;
+      transition: 0.5s;
+      padding-top: 60px;
     }
-    #open-close-button {
-      position: relative;
+
+    .sidepanel a {
+      padding: 8px 8px 8px 32px;
+      text-decoration: none;
+      font-size: 25px;
+      color: #818181;
+      display: block;
+      transition: 0.3s;
+    }
+
+    .sidepanel a:hover {
+      color: #f1f1f1;
+    }
+
+    .openbtn {
+      font-size: 20px;
+      cursor: pointer;
+      background-color: #111;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      position: fixed;
       top: 10px;
-      left: 10px;
-      z-index: 1000;
-      align-items: right;
+      left: 2px;
+      z-index: 2;
+      transition: left 0.5s;
+      margin-top: 25%;
+    }
+
+    .openbtn:hover {
+      background-color: #111;
+      color: white;
     }
   </style>
 </head>
 
 <body>
+
+  <div id="mySidepanel" class="sidepanel">
+
+  </div>
   <!--Floating Search-->
   <div class="search-container m-2">
     <input type="text" id="search-input" class="rounded" placeholder="Search..."
       onkeydown="if(event.keyCode==13) searchLocation()" />
   </div>
+  <button id="toggleButton" class="btn openbtn" onclick="toggleNav()">
+    <i class="bi bi-list"></i>
+  </button>
+  <div id="map"></div>
   <!--Floating User Icon-->
   <div class="user-container">
     <span class="user-icon" onclick="openUserSettings()">
@@ -79,48 +129,26 @@
       </div>
     </div>
   </div>
-  <!--Floating detractable left menu-->
-  <div>
-    <div id="open-close-button">
-      <button class="open-button" id="open-button" onclick="openSidebar()">
-        <i class="bi bi-list"></i>
-      </button>
-      <button class="close-button" id="close-button" onclick="closeSidebar()">
-        <i class="bi bi-x"></i>
-      </button>
-    </div>
-    <div class="sidebar mt-5">
-      <div class="sidebar-header">
-        <h3>Xplocity</h3>
-      </div>
-      <div class="sidebar-content">
-        <span class="sidebar-item">
-          <h4>Categories</h4>
-        </span>
-        <div class="sidebar-item">
-
-        </div>
-      </div>
-    </div>
-  </div>
-  <div id="map"></div>
   <script>
-    function openSidebar() {
-      document.querySelector('.sidebar').style.display = 'block';
-      document.getElementById('close-button').style.display = 'block';
-      document.getElementById('open-button').style.display = 'none';
+    function toggleNav() {
+      const sidepanel = document.getElementById("mySidepanel");
+      const button = document.getElementById("toggleButton");
+
+      if (sidepanel.style.width === "20%") {
+        sidepanel.style.width = "0";
+        button.style.left = "2px";
+      } else {
+        sidepanel.style.width = "20%";
+        button.style.left = "20%";
+      }
     }
-    function closeSidebar() {
-      document.querySelector('.sidebar').style.display = 'none';
-      document.getElementById('close-button').style.display = 'none';
-      document.getElementById('open-button').style.display = 'block';
-    }
-    closeSidebar();
     createMap();
   </script>
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
 </body>
 
 </html>
