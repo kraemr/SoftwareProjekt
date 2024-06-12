@@ -27,6 +27,7 @@ function searchLocation() {
     fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
+            loadAttractionsByCity(query);
             updateGeoJsonLayer(data);
             document.getElementById('search-input').value = "";
         })
@@ -34,7 +35,49 @@ function searchLocation() {
             console.error('Fehler bei der API-Abfrage:', error);
         });
 }
+function loadAttractionsByCity(city) {
+    var apiUrl = document.location.origin + '/api/attractions?city=' + encodeURIComponent(city);
+    console.log(apiUrl);
 
+    // Ausführen der API-Abfrage
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            // Löschen aller Marker
+            allMarkersLayer.clearLayers();
+            // Hinzufügen der neuen Marker
+            placeMarkers(data);
+        })
+        .catch(error => {
+            console.error('Fehler bei der API-Abfrage:', error);
+        });
+}
+// TODO: Implement api call to get attractions by bbox
+// Funktion um aus der API-Abfrage die nächsten Attraktionen zu finden (not api yet)
+function findNearestAttractions() {
+    // Lesen der aktuellen Kartenansicht
+    var bounds = map.getBounds();
+    var bbox = bounds.toBBoxString();
+
+    // Erstellen der API-URL
+    var apiUrl = document.location.origin + '/api/attractions?bbox=' + bbox;
+    console.log(apiUrl);
+
+    // Ausführen der API-Abfrage
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            // Löschen aller Marker
+            allMarkersLayer.clearLayers();
+            // Hinzufügen der neuen Marker
+            placeMarkers(data);
+        })
+        .catch(error => {
+            console.error('Fehler bei der API-Abfrage:', error);
+        });
+}
 // Funktion zum Aktualisieren der GeoJSON-Schicht und Anpassen der Karte
 function updateGeoJsonLayer(data) {
     // GeoJSON-Schicht erstellen oder aktualisieren
@@ -131,6 +174,9 @@ function executeAPICall(apiUrl) {
             const cityCoordinates = data.features[0].geometry.coordinates;
             const cityLatLng = L.latLng(cityCoordinates[1], cityCoordinates[0]);
             map.setView(cityLatLng, 10); // Adjust the zoom level as needed
+            // get the city name
+            var city = data.features[0].properties.display_name;
+            loadAttractionsByCity(city);
         })
         .catch(error => {
             console.error('Fehler bei der API-Abfrage:', error);

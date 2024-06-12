@@ -18,7 +18,7 @@ function createMap() {
   L.control.zoom({ position: "bottomright" }).addTo(map);
 
   allMarkersLayer = L.markerClusterGroup().addTo(map);
-  loadAllMarkers();
+  //loadAllMarkers();
 }
 function loadAllMarkers() {
   fetch(document.location.origin + "/api/attractions", {
