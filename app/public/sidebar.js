@@ -1,12 +1,17 @@
-// Toggle user settings
 function toggleSettings() {
-    var settings = document.getElementById('toggle-settings');
-    if (settings.style.display === 'none') {
-        settings.style.display = 'block';
-    } else {
-        settings.style.display = 'none';
+    const settingsContainer = document.querySelector('.settings-container');
+    settingsContainer.style.display = (settingsContainer.style.display === 'block') ? 'none' : 'block';
+  }
+  
+  // Optional: Close the settings when clicking outside of it
+  document.addEventListener('click', function(event) {
+    const userContainer = document.querySelector('.user-container');
+    const settingsContainer = document.querySelector('.settings-container');
+    if (!userContainer.contains(event.target) && !settingsContainer.contains(event.target)) {
+      settingsContainer.style.display = 'none';
     }
-}
+  });
+  
 // Toggle left sidebar
 function toggleNav() {
     const sidepanel = document.getElementById("mySidepanel");
