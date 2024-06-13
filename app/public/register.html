@@ -39,12 +39,8 @@
                     <div class="card-body">
                         <form id="loginForm">
                             <div class="form-group">
-                                <label for="firstName">First Name</label>
-                                <input type="text" class="form-control" id="firstName" placeholder="First Name">
-                            </div>
-                            <div class="form-group mt-2">
-                                <label for="lastName">Last Name</label>
-                                <input type="text" class="form-control" id="lastName" placeholder="Last Name">
+                                <label for="username">First Name</label>
+                                <input type="text" class="form-control" id="username" placeholder="username">
                             </div>
                             <div class="form-group mt-2">
                                 <label for="email">Email</label>
@@ -78,8 +74,7 @@
             event.preventDefault(); // Prevent the default form submission
 
             // Get the form data
-            var firstName = document.getElementById("firstName").value;
-            var lastName = document.getElementById("lastName").value;
+            var firstName = document.getElementById("username").value;
             var email = document.getElementById("email").value;
             var password = document.getElementById("password").value;
 
@@ -91,8 +86,7 @@
 
             // Construct the JSON object
             var data = {
-                firstName: firstName,
-                lastName: lastName,
+                username: username,
                 email: email,
                 password: password
             };
@@ -122,6 +116,8 @@
                     console.error("There was a problem with the login request:", error);
                     alert("Login failed. Please try again.");
                 });
+                // redirect to the login page
+                window.location.href = "login.html";
         });
     </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

@@ -114,6 +114,7 @@ function displayGermanyonStartup() {
                 // Do something with the location data, e.g. display on a map
                 console.log(`Latitude: ${lat}, longitude: ${lng}`);
                 newApiUrl = 'https://nominatim.openstreetmap.org/reverse?format=geojson&lat=' + lat + '&lon=' + lng;
+                // Get the city name from the API response
                 executeAPICall(newApiUrl);
                 // Create a custom icon for the user's location marker
                 var userLocationIcon = L.icon({
@@ -175,7 +176,8 @@ function executeAPICall(apiUrl) {
             const cityLatLng = L.latLng(cityCoordinates[1], cityCoordinates[0]);
             map.setView(cityLatLng, 10); // Adjust the zoom level as needed
             // get the city name
-            var city = data.features[0].properties.display_name;
+            var city = data.features[0].properties.address.city;
+            console.log(city);
             loadAttractionsByCity(city);
         })
         .catch(error => {
