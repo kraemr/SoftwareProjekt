@@ -9,6 +9,9 @@ import (
 )
 
 func get(req *http.Request) (string,error){
+	if(!sessions.CheckLoggedIn(req)) {
+		return "{\"success\":false,\"info\":\"Not Logged in\"}",nil
+	}
 	var city string = req.URL.Query().Get("city")
 	var category string = req.URL.Query().Get("category")
 	cityIsSet := city != ""

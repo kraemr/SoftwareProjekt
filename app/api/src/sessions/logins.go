@@ -13,7 +13,6 @@ func RegisterUser(email string,password string) bool{
 	if err != nil {
 		return false
 	}
-
 	argon2Pw, err := crypto_utils.GetHashedPassword(password);
 	if err != nil {
 		return false 

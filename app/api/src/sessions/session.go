@@ -19,6 +19,19 @@ func GetLoggedInUserId( r *http.Request) int32{
 	return id
 }
 
+func UserIsBanned(r *http.Request) bool{
+	session, err := store.Get(r, "sessionid")
+	if err != nil {
+		return false
+	}	
+	if banned, ok := session.Values["banned"].(bool); ok{
+		return banned
+	}else{
+		return false
+	}
+}
+
+
 func StartSession(w http.ResponseWriter, r *http.Request,id int32){
 	session, err := store.Get(r, "sessionid")
 	if err != nil {

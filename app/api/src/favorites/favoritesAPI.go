@@ -10,6 +10,10 @@ import(
 
 
 func get(req *http.Request) (string,error){
+	if(!sessions.CheckLoggedIn(req)) {
+		return "{\"success\":false,\"info\":\"Not Logged in\"}",nil
+	}
+
 	id := sessions.GetLoggedInUserId(req)
 	favorites,err := GetAttractionFavoritesByUserId(int32(id));
 	if(err != nil){
@@ -34,6 +38,9 @@ func put(req *http.Request) (string,error){
 
 // Add a Favorite
 func post(req *http.Request) (string,error){
+	if(!sessions.CheckLoggedIn(req)) {
+		return "{\"success\":false,\"info\":\"Not Logged in\"}",nil
+	}
 	var favorite AttractionFavorite
 	decoder := json.NewDecoder(req.Body)
 	err := decoder.Decode(&favorite)
@@ -48,6 +55,9 @@ func post(req *http.Request) (string,error){
 }
 
 func delete(req *http.Request) (string,error){
+	if(!sessions.CheckLoggedIn(req)) {
+		return "{\"success\":false,\"info\":\"Not Logged in\"}",nil
+	}
 	id  := req.URL.Query().Get("id")
 	convertedID,str_err := strconv.Atoi(id)
 	if(str_err != nil){

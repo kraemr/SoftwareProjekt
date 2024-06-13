@@ -29,17 +29,15 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 	_ = ws
 }
 
-/*
-Tech
-
-
-*/
 // User sends Id to start sesh
 // c.readmessage
 // parse json -> jsonObject
 // getNotificationsForID(jsonObject.Id) -> send Notifications
 var NotificationSendSignal bool = false
 func sendNotifications(w http.ResponseWriter, r *http.Request){
+	if(!sessions.CheckLoggedIn(r)) {
+		return
+	}
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 	c, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -49,7 +47,7 @@ func sendNotifications(w http.ResponseWriter, r *http.Request){
 	defer c.Close()
 	// check the users date in json and only send those
 	// unless the user sends the all:true flag
-	// otherwise only NEW Notifications will be sent to clients
+	// otherwise only NEW Notifications will be sent to client
 	id := sessions.GetLoggedInUserId(r)
 	fmt.Println(id)
 	// we have user id, now get the city
