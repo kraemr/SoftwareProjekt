@@ -30,13 +30,10 @@ window.addEventListener('resize', function () {
         sidepanel.style.height = "100%";
         sidepanel.style.top = "0";
         sidepanel.style.bottom = "auto";
-        sidepanel.style.width = "25%";
+        sidepanel.style.width = "0";
         button.style.bottom = "50%";
         button.style.left = "2px";
         console.log('The window is large');
-        if (sidepanel.style.width === "25%") {
-            button.style.left = "20%";
-        }
     }
 });
 // Toggle left sidebar
