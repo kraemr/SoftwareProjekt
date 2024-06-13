@@ -5,21 +5,41 @@ import (
 	"fmt"
 	"src/db_utils"
 )
-
 type User struct {
 	UserId   int64
-	Email    string
-	Password string
-	City     string
-	Username string
+	Email    string `json:email`
+	Password string  `json:password`
+	City     string `json:city`
+	Username string `json:username`
+	Activated string `json:activated`
 }
-
 type UserLoginInfo struct {
 	Email    string `json:email`
 	Password string `json:password`
 }
-
 var ErrNoUser = fmt.Errorf("No User Found")
+
+func GetUsersByCityAndBanned(city string) ([]User,error){
+	var db *sql.DB = db_utils.DB
+	var user User
+	var users []User
+	rows, err := db.Query("SELECT city from USER WHERE city=? and activated = FALSE LIMIT 1", city)
+	if err != nil {
+		return nil,err
+	}
+	nodata_found := true
+	for rows.Next(){
+		nodata_found = false
+		rows.Scan(&user.UserId, &user.Email, &user.Password, &user.City, &user.Username,&user.Activated)
+		users = append(users,user)
+	}
+	
+	if(nodata_found){
+		return users,nil
+	}else{
+		return nil,ErrNoUser
+	}
+}
 
 func GetUserCityById(id int32) (string, error) {
 	var db *sql.DB = db_utils.DB
@@ -42,6 +62,8 @@ func GetUserCityById(id int32) (string, error) {
 	}
 }
 
+
+// ???????? Chris wtf XD
 func GetUserByEmail(email string) (User, error) {
 	var db *sql.DB = db_utils.DB
 	rows, err := db.Query("SELECT id from USER WHERE email=? LIMIT 1", email)

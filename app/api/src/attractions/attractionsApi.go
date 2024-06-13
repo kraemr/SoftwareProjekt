@@ -10,6 +10,9 @@ import(
 
 // delete attraction
 func delete(req *http.Request) (string,error){
+	if(!sessions.CheckLoggedIn(req)) {
+		return "{\"success\":false,\"info\":\"Not Logged in\"}",nil
+	}
 	id := req.URL.Query().Get("id")
 	convertedID,err := strconv.ParseInt(id, 10, 64)
 	err = RemoveAttraction(convertedID)
@@ -18,6 +21,9 @@ func delete(req *http.Request) (string,error){
 
 // update existing attraction, check if logged in 
 func put(req *http.Request) (string,error){
+	if(!sessions.CheckLoggedIn(req)) {
+		return "{\"success\":false,\"info\":\"Not Logged in\"}",nil
+	}
 	var attraction Attraction
 	decoder := json.NewDecoder(req.Body)
 	err := decoder.Decode(&attraction)
@@ -36,6 +42,9 @@ func put(req *http.Request) (string,error){
 // add attraction
 // check if logged in
 func post(req *http.Request) (string,error){
+	if(!sessions.CheckLoggedIn(req)) {
+		return "{\"success\":false,\"info\":\"Not Logged in\"}",nil
+	}
 	var attraction Attraction
 	decoder := json.NewDecoder(req.Body)
 	err := decoder.Decode(&attraction)

@@ -7,8 +7,10 @@ import(
 )
 
 
-// delete attraction
 func delete(req *http.Request) (string,error){
+	if(!sessions.CheckLoggedIn(req)) {
+		return "{\"success\":false,\"info\":\"Not Logged in\"}",nil
+	}
 	id := req.URL.Query().Get("id")
 	convertedID,err := strconv.ParseInt(id, 10, 64)
 	if(err != nil){
@@ -22,8 +24,10 @@ func delete(req *http.Request) (string,error){
 	}
 }
 
-// update existing attraction, check if logged in 
 func put(req *http.Request) (string,error){
+	if(!sessions.CheckLoggedIn(req)) {
+		return "{\"success\":false,\"info\":\"Not Logged in\"}",nil
+	}
 	var review Review
 	decoder := json.NewDecoder(req.Body)
 	err := decoder.Decode(&review)
@@ -42,6 +46,9 @@ func put(req *http.Request) (string,error){
 // add attraction
 // check if logged in
 func post(req *http.Request) (string,error){
+	if(!sessions.CheckLoggedIn(req)) {
+		return "{\"success\":false,\"info\":\"Not Logged in\"}",nil
+	}
 	var review Review
 	decoder := json.NewDecoder(req.Body)
 	err := decoder.Decode(&review)
