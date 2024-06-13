@@ -32,7 +32,6 @@
       position: absolute;
       top: 10px;
       left: 10px;
-      z-index: 1000;
     }
 
     .user-container {
@@ -65,8 +64,13 @@
       left: 0;
       background-color: #111;
       overflow-x: hidden;
-      transition: 0.5s;
+      transition: 0.05s;
       padding-top: 60px;
+    }
+
+    .sidepanel-search {
+      border: #f1f1f1;
+      border-radius: 4px;
     }
 
     .sidepanel a {
@@ -75,7 +79,7 @@
       font-size: 25px;
       color: #818181;
       display: block;
-      transition: 0.3s;
+      transition: 0.05s;
     }
 
     .sidepanel a:hover {
@@ -93,7 +97,7 @@
       top: 10px;
       left: 2px;
       z-index: 2;
-      transition: left 0.5s;
+      transition: left 0.05s;
       margin-top: 25%;
     }
 
@@ -101,18 +105,63 @@
       background-color: #111;
       color: white;
     }
+
+    .scrolling-wrapper {
+      overflow-x: auto;
+    }
+    .btn-categories {
+      background-color: #A64C79;
+      color: white;
+      border: none;
+      width: auto;
+      border-radius: 4px;
+      padding: 0px 4px;;
+    }
+    .categories{
+      margin: 5px;
+    }
+    .btn-categories:hover {
+      background-color: #734079;
+    }
+    @media (max-width: 768px) {
+      .sidepanel {
+        bottom: 0px;
+        width: 100%;
+        height: 0px;
+        left: 0px;
+        right: 0px;
+      }
+
+      .openbtn {
+        bottom: 2px;
+        left: 50%;
+      }
+    }
   </style>
 </head>
 
 <body>
 
   <div id="mySidepanel" class="sidepanel">
-
+    <!--Sidepanel Search-->
+    <div class="search-container bg-white sidepanel-search m-2">
+      <input type="text" id="search-input" class="rounded" placeholder="Search..."
+        onkeydown="if(event.keyCode==13) searchBox  ()" />
+    </div>
+    <div class="scrolling-wrapper categories row flex-row flex-nowrap mt-4 pb-4 pt-2">
+      <button class="btn-categories m-2">Cafes</button>
+      <button class="btn-categories m-2">Restaurants</button>
+      <button class="btn-categories m-2">Bars</button>
+      <button class="btn-categories m-2">Parks</button>
+      <button class="btn-categories m-2">Museums</button>
+      <button class="btn-categories m-2">Galleries</button>
+      <button class="btn-categories m-2">Hotels</button>
+    </div>
   </div>
   <!--Floating Search-->
   <div class="search-container m-2">
     <input type="text" id="search-input" class="rounded" placeholder="Search..."
-      onkeydown="if(event.keyCode==13) searchBox()" />
+      onkeydown="if(event.keyCode==13) searchBox  ()" />
   </div>
   <button id="toggleButton" class="btn openbtn" onclick="toggleNav()">
     <i class="bi bi-list"></i>

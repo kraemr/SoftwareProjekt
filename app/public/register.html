@@ -39,7 +39,7 @@
                     <div class="card-body">
                         <form id="loginForm">
                             <div class="form-group">
-                                <label for="username">First Name</label>
+                                <label for="username">Username</label>
                                 <input type="text" class="form-control" id="username" placeholder="username">
                             </div>
                             <div class="form-group mt-2">
@@ -50,6 +50,11 @@
                                 <label for="password">Password</label>
                                 <input type="password" class="form-control" id="password" placeholder="Password">
                             </div>
+                            <div class="form-group mt-2">
+                                <label for="confirmPassword">Confirm Password</label>
+                                <input type="password" class="form-control" id="confirmPassword"
+                                    placeholder="Confirm Password">
+                            </div>
                             <button type="submit" class="btn btn-primary btn-block btnLogin mt-2">Sign Up</button>
                         </form>
                         <hr>
@@ -57,7 +62,7 @@
                             <p>Already have an account? <a href="login.html">Sign In</a></p>
                             <p>By signing up, you agree with the <a href="#">Terms of Service</a> and <a
                                     href="#">Privacy Policy</a></p>
-                            <button class="btn btn-secondary btn-block">Continue as guest</button>
+                            <button class="btn btn-secondary btn-block" onclick="continueAsGuest()" >Continue as guest</button>
                         </div>
                     </div>
                 </div>
@@ -67,7 +72,7 @@
 
     <script>
         // Function to continue as a guest
-        continueAsGuest = () => {
+        function continueAsGuest() {
             window.location.href = "index.html";
         }
         document.getElementById("loginForm").addEventListener("submit", function (event) {
@@ -77,6 +82,7 @@
             var firstName = document.getElementById("username").value;
             var email = document.getElementById("email").value;
             var password = document.getElementById("password").value;
+            var confirmPassword = document.getElementById("confirmPassword").value;
 
             // Check if passwords match
             if (password !== confirmPassword) {
@@ -110,14 +116,18 @@
                 })
                 .then(data => {
                     console.log("")
+                    if (data.success) {
+                        alert("Registration successful. Please login.");
+                        window.location.href = "login.html";
+                    } else {
+                        alert("Unknown Error");
+                    }
                 })
                 .catch(error => {
                     // Handle errors
                     console.error("There was a problem with the login request:", error);
                     alert("Login failed. Please try again.");
                 });
-                // redirect to the login page
-                window.location.href = "login.html";
         });
     </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
