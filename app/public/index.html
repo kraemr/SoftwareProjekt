@@ -12,6 +12,7 @@
   <script src="search.js"></script>
   <script src="map.js"></script>
   <script src="sidebar.js"></script>
+  <script src="user.js"></script>
   <!-- Leaflet -->
   <script src="leaflet/leaflet.js"></script>
   <link href="leaflet/leaflet.css" rel="stylesheet" />
@@ -135,7 +136,12 @@
       font-size: 20px;
       cursor: pointer;
     }
-
+    .user-icon-src {
+      background-image: url('resources/user.svg');
+      background-size: cover;
+      width: 1.5em;
+      height: 1.5em;
+    }
     .user-container {
       position: fixed;
       top: 10px;
@@ -189,7 +195,7 @@
 
   <div class="user-container">
     <span class="user-icon" onclick="toggleSettings()">
-      <i class="bi bi-person"></i>
+      <i class="user-icon-src"></i>
     </span>
     <div class="settings-container">
       <div class="row settings">
