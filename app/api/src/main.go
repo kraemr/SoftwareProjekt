@@ -37,9 +37,6 @@ func testPublicTransport() {
 	}
 }
 
-
-
-
 func checkUserLoggedIn(res http.ResponseWriter, req *http.Request) {
 	if sessions.CheckLoggedIn(req) == true {
 		fmt.Fprintf(res, "{\"success\":true}")

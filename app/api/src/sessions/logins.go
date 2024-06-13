@@ -1,7 +1,6 @@
 package sessions;
 import (
 	"src/crypto_utils"
-	_	"src/attractions"
 	"database/sql"
 	"src/db_utils"
 )
