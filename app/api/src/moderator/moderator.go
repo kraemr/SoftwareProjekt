@@ -2,6 +2,9 @@ package moderator
 
 import (
 	"fmt"
+	"src/db_utils"
+	"database/sql"
+
 )
 
 /*
@@ -44,4 +47,14 @@ func InsertModerator(moderator Moderator) ([]Moderator, error) {
 func DeleteModerator(id int64) error {
 	_ = id
 	return ErrNoModerator
+}
+
+func DisableUser(email string) error{
+	var db *sql.DB = db_utils.DB
+	query := "UPDATE USER SET active=false WHERE email = ?"
+	_,err := db.Exec(query,email)
+	if err != nil {
+		return err
+	}
+	return nil
 }
