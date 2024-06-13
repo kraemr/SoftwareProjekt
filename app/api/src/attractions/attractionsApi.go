@@ -4,6 +4,7 @@ import(
 	"net/http"
 	"strconv"
 	"encoding/json"
+	"src/sessions"
 )
 
 
@@ -55,20 +56,23 @@ func get(req *http.Request) (string,error){
 	var category string = req.URL.Query().Get("category")
 	var posx string = req.URL.Query().Get("posx")
 	var posy string = req.URL.Query().Get("posy")
-
+	var unapproved string = req.URL.Query().Get("unapproved")
+	_ = unapproved
 	cityIsSet := city != ""
 	titleIsSet := title != ""
 	idIsSet := id != ""
 	categoryIsSet := category != ""
 	posxIsSet := posx != ""
 	posyIsSet := posy != ""
-
+	unapprovedIsSet := unapproved != ""
 	var err error
 	var output string
 	var attractions []Attraction
 	var attraction Attraction
 
-	if(cityIsSet){	// filter by city
+	if(unapprovedIsSet && cityIsSet && sessions.CheckModeratorAccessToCity(req,city)) {
+		attractions,err = GetAttractionsUnapprovedCity(city)
+	}else if(cityIsSet){	// filter by city
 		attractions,err = GetAttractionsByCity(city)
 	}else if(titleIsSet){ // filter by title 
 		attractions,err = GetAttractionsByTitle(title)

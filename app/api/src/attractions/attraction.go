@@ -6,7 +6,6 @@ import (
 	"src/reviews"
 	"fmt"
 )
-
 type Attraction struct{
 	Id   			  int64	    `json:id`
 	Title 			  string    `json:"title"`
@@ -23,14 +22,11 @@ type Attraction struct{
 	Img_url			  string    `json:img_url`
 	Reviews			  []reviews.Review  `json:reviews`
 }
-
 type Filter struct{
 	Filter_on string		`json:"filter_on"`
 	Filter_by string		`json:"filter_by"`
 	Filter_value string		`json:"filter_value"`
 }
-
-
 var ErrNoAttraction = fmt.Errorf("No Attractions Found")
 
 
@@ -99,7 +95,7 @@ func ChangeAttractionApproval(approved bool,id int64) error{
 
 func GetAttraction(id int) (Attraction,error){
 	var db *sql.DB = db_utils.DB
-	row, err := db.Query("SELECT id,title,type,recommended_count,city,street,housenumber,info,approved,PosX,PosY,stars,img_url FROM ATTRACTION_ENTRY WHERE id = ?", id)
+	row, err := db.Query("SELECT id,title,type,recommended_count,city,street,housenumber,info,approved,PosX,PosY,stars,img_url FROM ATTRACTION_ENTRY WHERE id = ? and approved=TRUE", id)
 	
 	if(err != nil){
 		return Attraction{},err
@@ -126,7 +122,7 @@ var ErrNoRecommendation = fmt.Errorf("No Recommendations Found")
 func GetRecommendationForUser(id int32,city string,pref_type string) ([]Attraction,error){
 	var db *sql.DB = db_utils.DB
 	var recommended_attractions []Attraction 
-	rows, err := db.Query("SELECT * FROM ATTRACTION_ENTRY WHERE type = ? and city = ? ORDER BY stars LIMIT 4", pref_type,city)
+	rows, err := db.Query("SELECT * FROM ATTRACTION_ENTRY WHERE type = ? and city = ? and approved=TRUE ORDER BY stars LIMIT 4", pref_type,city)
 	if(err != nil){
 		return recommended_attractions,err
 	}
@@ -150,7 +146,7 @@ func GetRecommendationForUser(id int32,city string,pref_type string) ([]Attracti
 func GetAttractions() ([]Attraction,error){
 	var db *sql.DB = db_utils.DB
 	var attractions []Attraction
-	rows, err := db.Query("SELECT * FROM ATTRACTION_ENTRY")
+	rows, err := db.Query("SELECT * FROM ATTRACTION_ENTRY and approved=TRUE")
 	if(err != nil){
 		return attractions,err
 	}
@@ -168,13 +164,36 @@ func GetAttractions() ([]Attraction,error){
 		return nil,ErrNoAttraction
 	}
 	return attractions,nil
-
 }
+
+func GetAttractionsUnapprovedCity(city string) ([]Attraction,error){
+	var db *sql.DB = db_utils.DB
+	var attractions []Attraction
+	rows, err := db.Query("SELECT * FROM ATTRACTION_ENTRY WHERE city = ? and approved=FALSE",city)
+	if(err != nil){
+		return attractions,err
+	}
+	defer rows.Close()
+	nodata_found := true
+	for rows.Next(){
+		nodata_found = false
+		a := Attraction{};
+		rows.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Street,&a.Housenumber,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars,&a.Img_url)
+		attractions = append(attractions, a)
+	}	
+	if(err != nil){
+		return attractions,err
+	}else if(nodata_found){
+		return nil,ErrNoAttraction
+	}
+	return attractions,nil
+}
+
 
 func GetAttractionsByPos(posx float32,posy float32) ([]Attraction,error){
 	var db *sql.DB = db_utils.DB
 	var attractions []Attraction 
-	rows, err := db.Query("SELECT * FROM ATTRACTION_ENTRY WHERE PosX=? and PosY=?", posx,posy)
+	rows, err := db.Query("SELECT * FROM ATTRACTION_ENTRY WHERE PosX=? and PosY=? and approved=TRUE", posx,posy)
 	if(err != nil){
 		return attractions,err
 	}
@@ -200,7 +219,7 @@ func GetAttractionsByPos(posx float32,posy float32) ([]Attraction,error){
 func GetAttractionsByCategory(category string) ([]Attraction,error){
 	var db *sql.DB = db_utils.DB
 	var attractions []Attraction 
-	rows, err := db.Query("SELECT * FROM ATTRACTION_ENTRY WHERE type = ?", category)
+	rows, err := db.Query("SELECT * FROM ATTRACTION_ENTRY WHERE type = ? and approved=TRUE", category)
 	if(err != nil){
 		return attractions,err
 	}
@@ -227,7 +246,7 @@ func GetAttractionsByCategory(category string) ([]Attraction,error){
 func GetAttractionsByCity(city string) ( []Attraction,error) {
 	var db *sql.DB = db_utils.DB
 	var attractions []Attraction 
-	rows, err := db.Query("SELECT * from ATTRACTION_ENTRY WHERE city = ?", city)
+	rows, err := db.Query("SELECT * from ATTRACTION_ENTRY WHERE city = ? and approved=TRUE", city)
 	if(err != nil){
 		fmt.Println(err.Error())
 		return attractions,err
@@ -259,7 +278,7 @@ func GetAttractionsByTitle(title string) ( []Attraction,error){
 	_ = db
 	var attractions []Attraction
 	title_like_str := "%" + title + "%"
-	rows, err := db.Query("SELECT * from ATTRACTION_ENTRY WHERE title LIKE ? LIMIT 1000", title_like_str)
+	rows, err := db.Query("SELECT * from ATTRACTION_ENTRY WHERE title LIKE ? and approved=TRUE LIMIT 1000", title_like_str)
 	if(err != nil){
 		return attractions,err
 	}
