@@ -80,3 +80,30 @@ func HandleModeratorsREST(res http.ResponseWriter, req *http.Request) {
 		fmt.Fprintf(res, output)
 	}
 }
+
+type BanInfo struct{
+	Email string 
+	Reason string  // TODO Save as USER_NOTIFICATION
+}
+//TODO TEST
+func BanUser(res http.ResponseWriter, req *http.Request){
+	if(req.Method == "PUT"){
+		var ban BanInfo
+		decoder := json.NewDecoder(req.Body)
+		err := decoder.Decode(&ban)
+		if(err != nil){
+			fmt.Fprintf(res,"{\"success\":false,\"info\":\"invalid Data\"}")
+			return;
+		}else{
+			errUser := DisableUser(ban.Email);
+			if(errUser != nil){
+				fmt.Fprintf(res,"{\"success\":false,\"info\":\"User does not exist\"}")
+				return;
+			}
+			fmt.Fprintf(res,"{\"success\":true}")
+		}
+
+	}
+
+}
+

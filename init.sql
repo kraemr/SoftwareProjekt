@@ -17,7 +17,8 @@ CREATE TABLE IF NOT EXISTS USER (
     email TEXT,
     password TEXT,
     city TEXT,
-    username TEXT
+    username TEXT,
+    active BOOLEAN
 );
 -- create index
 CREATE INDEX _USER_INDEX ON USER(id);

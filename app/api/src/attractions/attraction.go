@@ -197,7 +197,6 @@ func GetAttractionsByPos(posx float32,posy float32) ([]Attraction,error){
 	return attractions,nil
 }
 
-
 func GetAttractionsByCategory(category string) ([]Attraction,error){
 	var db *sql.DB = db_utils.DB
 	var attractions []Attraction 
@@ -224,9 +223,6 @@ func GetAttractionsByCategory(category string) ([]Attraction,error){
 	return attractions,nil
 }
 
-
-
-
 // Get Attraction By City String where City is converted to lowercase always
 func GetAttractionsByCity(city string) ( []Attraction,error) {
 	var db *sql.DB = db_utils.DB
@@ -238,8 +234,6 @@ func GetAttractionsByCity(city string) ( []Attraction,error) {
 	}
 	defer rows.Close()
 	nodata_found := true
-
-
 	for rows.Next() {
 		nodata_found = false
 		a := Attraction{};
