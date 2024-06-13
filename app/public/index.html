@@ -44,9 +44,8 @@
       top: 0;
       left: 0;
       background-color: #111;
-      overflow-x: hidden;
       transition: 0.05s;
-      padding-top: 60px;
+      margin-top: 60px;
     }
 
     .sidepanel-search {
@@ -77,6 +76,8 @@
       position: fixed;
       top: 10px;
       left: 2px;
+      width: 2.5em;
+      height: 2.5em;
       z-index: 2;
       transition: left 0.05s;
       margin-top: 25%;
@@ -98,7 +99,6 @@
       width: auto;
       border-radius: 4px;
       padding: 0px 4px;
-      ;
     }
 
     .categories {
@@ -120,6 +120,7 @@
 
       .openbtn {
         bottom: 2px;
+        margin-top: auto;
         left: 50%;
       }
     }
@@ -167,7 +168,7 @@
 
 <body>
 
-  <div id="mySidepanel" class="sidepanel">
+  <div id="sidepanel-toggle" class="sidepanel">
     <!--Sidepanel Search
     <div class="search-container bg-white sidepanel-search m-2">
       <input type="text" id="search-input" class="rounded" placeholder="Search..."
