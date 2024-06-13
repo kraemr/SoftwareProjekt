@@ -47,6 +47,7 @@ function loadAttractionsByCity(city) {
     fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
+            console.log(data);
             // Löschen aller Marker
             allMarkersLayer.clearLayers();
             // Hinzufügen der neuen Marker
@@ -93,7 +94,14 @@ function displayGermanyonStartup() {
                     .then(response => response.json())
                     .then(data => {
                         // get the city name
-                        var city = data.features[0].properties.address.city;
+                        console.log(data);
+                        var city
+                        if (data.features[0].properties.address.city == undefined) {
+                            city = data.features[0].properties.address.municipality;
+                        } else {
+                            city = data.features[0].properties.address.city;
+                        }
+                        console.log(city);
                         searchLocation(city);
                     })
                 // Create a custom icon for the user's location marker
