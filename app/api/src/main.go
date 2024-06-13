@@ -61,6 +61,7 @@ func loginUser(res http.ResponseWriter, req *http.Request) {
 		id, uerr := users.GetUserIdByEmail(user.Email)
 		if uerr != nil {
 			fmt.Println("loginUser: couldnt get user by id")
+			return
 		}
 		sessions.StartSession(res, req, id)
 		fmt.Fprintf(res, "{\"success\":true}")
@@ -68,6 +69,33 @@ func loginUser(res http.ResponseWriter, req *http.Request) {
 		fmt.Fprintf(res, "{\"success\":false}")
 	}
 }
+
+
+func loginModerator(res http.ResponseWriter, req *http.Request) {
+	decoder := json.NewDecoder(req.Body)
+	var modInfo users.UserLoginInfo
+	err := decoder.Decode(&modInfo)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	fmt.Println(modInfo)
+
+	correct := sessions.LoginUser(modInfo.Email, modInfo.Password)
+	if correct == true {
+		// get Id
+		mod, uerr := moderator.GetModeratorByEmail(modInfo.Email)
+		if uerr != nil {
+			fmt.Println("loginUser: couldnt get user by id")
+			return
+		}
+		sessions.StartModeratorSession(res, req, mod.Id, mod.Email)
+		fmt.Fprintf(res, "{\"success\":true}")
+	} else {
+		fmt.Fprintf(res, "{\"success\":false}")
+	}
+}
+
 
 func startServer(port string) {
 	fmt.Println("Http Server is running on port: " + port)
@@ -85,17 +113,28 @@ func main() {
 		// run tests
 	}
 	publicDir := "/opt/app/public"
-	// ########### apis #############
+
+
+
+
 	http.HandleFunc("/api/login", loginUser)
 	http.HandleFunc("/api/logged_in", checkUserLoggedIn)
+	http.HandleFunc("/api/login_moderator",loginModerator)
+
+	http.HandleFunc("/api/ban",moderator.BanUser)
+	http.HandleFunc("/api/banned",moderator.GetBannedUsers)
+
+
+
+	// ########### Rest apis #############
 	http.HandleFunc("/api/attractions", attractions.HandleAttractionsREST)
 	http.HandleFunc("/api/users", users.HandleUsersREST)
 	http.HandleFunc("/api/favorites", favorites.HandleFavoritesREST)
 	http.HandleFunc("/api/recommendations", recommendations.HandleRecommendationsREST)
 	http.HandleFunc("/api/reviews", reviews.HandleReviewREST)
 	http.HandleFunc("/api/moderators", moderator.HandleModeratorsREST)
+	// ########### Rest apis ###########
 
-	// ########### apis ###########
 	// start static files server with publicDir as root
 	fileServer := http.FileServer(http.Dir(publicDir))
 	http.Handle("/", fileServer)

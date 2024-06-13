@@ -80,8 +80,10 @@ func get(req *http.Request) (string,error){
 	var attraction Attraction
 
 	if(unapprovedIsSet && cityIsSet && sessions.CheckModeratorAccessToCity(req,city)) {
+		fmt.Println("filter by unapproved city")
 		attractions,err = GetAttractionsUnapprovedCity(city)
 	}else if(cityIsSet){	// filter by city
+		fmt.Println("filter by city")
 		attractions,err = GetAttractionsByCity(city)
 	}else if(titleIsSet){ // filter by title 
 		attractions,err = GetAttractionsByTitle(title)

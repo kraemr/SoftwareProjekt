@@ -5,18 +5,27 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"src/sessions"
 )
 
-// delete attraction
+
+// moderators can only delete themselves
+// Site Admin can delete Moderator
 func delete(req *http.Request) (string, error) {
+	return "{\"success\":false}", nil 
 	id := req.URL.Query().Get("id")
 	convertedID, err := strconv.ParseInt(id, 10, 64)
 	err = DeleteModerator(convertedID)
 	return "{\"success\":true}", err
 }
 
-// update existing attraction, check if logged in
+
+// moderators can update ONLY himself
+// Site admins can update Everything he wants
 func put(req *http.Request) (string, error) {
+	if(!sessions.CheckLoggedIn(req)){
+		return "{\"success\":false}", nil
+	}
 	var moderator Moderator
 	decoder := json.NewDecoder(req.Body)
 	err := decoder.Decode(&moderator)
@@ -31,8 +40,9 @@ func put(req *http.Request) (string, error) {
 	return "{\"success\":true}", nil
 }
 
-// add attraction
-// check if logged in
+
+
+// ONLY Site Admins can add new Moderators
 func post(req *http.Request) (string, error) {
 	var moderator Moderator
 	decoder := json.NewDecoder(req.Body)
@@ -47,6 +57,7 @@ func post(req *http.Request) (string, error) {
 	return "{\"success\":true}", nil
 }
 
+// Only Moderators can get Info about Moderators
 func get(req *http.Request) (string, error) {
 	var city string = req.URL.Query().Get("city")
 	var id string = req.URL.Query().Get("id")
@@ -80,30 +91,3 @@ func HandleModeratorsREST(res http.ResponseWriter, req *http.Request) {
 		fmt.Fprintf(res, output)
 	}
 }
-
-type BanInfo struct{
-	Email string 
-	Reason string  // TODO Save as USER_NOTIFICATION
-}
-//TODO TEST
-func BanUser(res http.ResponseWriter, req *http.Request){
-	if(req.Method == "PUT"){
-		var ban BanInfo
-		decoder := json.NewDecoder(req.Body)
-		err := decoder.Decode(&ban)
-		if(err != nil){
-			fmt.Fprintf(res,"{\"success\":false,\"info\":\"invalid Data\"}")
-			return;
-		}else{
-			errUser := DisableUser(ban.Email);
-			if(errUser != nil){
-				fmt.Fprintf(res,"{\"success\":false,\"info\":\"User does not exist\"}")
-				return;
-			}
-			fmt.Fprintf(res,"{\"success\":true}")
-		}
-
-	}
-
-}
-

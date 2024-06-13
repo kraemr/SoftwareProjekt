@@ -47,14 +47,14 @@ func StartSession(w http.ResponseWriter, r *http.Request,id int32){
 	}
 }
 
-func StartModeratorSession(w http.ResponseWriter, r *http.Request,id int32,city string){
+func StartModeratorSession(w http.ResponseWriter, r *http.Request,moderator_id int32,city string){
 	session, err := store.Get(r, "sessionid")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	session.Values["logged_in"] = true
-	session.Values["id"] = id
+	session.Values["id"] = moderator_id
 	session.Values["moderator_city"]  = city
 	session.Values["moderator"] = true
 
@@ -84,7 +84,7 @@ func CheckLoggedIn(r *http.Request) bool {
 }
 
 
-func CheckModeratorAccessToCity(r *http.Request	,city string) bool{
+func CheckModeratorAccessToCity(r *http.Request	, _city string) bool{
 	session, err := store.Get(r, "sessionid")
 	if(err != nil){
 		return false
@@ -100,6 +100,8 @@ func CheckModeratorAccessToCity(r *http.Request	,city string) bool{
 		_ = city
 		fmt.Println("session was nil or unexpected type")
 		return false
+	}else if(city == _city){
+		return true
 	}
-	return true;
+	return false
 }

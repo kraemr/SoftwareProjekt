@@ -20,6 +20,7 @@ type Attraction struct{
 	PosY 			  float32   `json:"posY"`
 	Stars			  float32   `json:stars`
 	Img_url			  string    `json:img_url`
+	Added_by		  string    `json:added_by`
 	Reviews			  []reviews.Review  `json:reviews`
 }
 type Filter struct{
@@ -28,6 +29,35 @@ type Filter struct{
 	Filter_value string		`json:"filter_value"`
 }
 var ErrNoAttraction = fmt.Errorf("No Attractions Found")
+
+func getAttractionsFromDb(rows *sql.Rows)  ([]Attraction,error){
+	var attr_list []Attraction
+	no_data := true	
+	for rows.Next() {
+		no_data = false
+		a := Attraction{}
+		rows.Scan(
+			&a.Id,
+			&a.Title,
+			&a.Type,
+			&a.Recommended_count,
+			&a.City,
+			&a.Street,
+			&a.Housenumber,
+			&a.Info,
+			&a.Approved,
+			&a.PosX,
+			&a.PosY,
+			&a.Stars,
+			&a.Img_url,
+			&a.Added_by)
+		attr_list = append(attr_list,a)
+	}
+	if(no_data){
+		return nil,ErrNoAttraction
+	}
+	return attr_list,nil
+}
 
 
 func RemoveAttraction(id int64) error{
@@ -48,12 +78,12 @@ func RemoveAttraction(id int64) error{
 // This function Also Makes sure that the City string is made to be lowercase
 func InsertAttraction(a Attraction) error{
 	var db *sql.DB = db_utils.DB
-	prepared_stmt,err := db.Prepare("INSERT INTO ATTRACTION_ENTRY(title,type,recommended_count,city,street,housenumber,info,PosX,PosY,stars,img_url) VALUES(?,?,?,?,?,?,?,?,?,?,?)")
+	prepared_stmt,err := db.Prepare("INSERT INTO ATTRACTION_ENTRY(title,type,recommended_count,city,street,housenumber,info,PosX,PosY,stars,img_url,added_by) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)")
 	if(err != nil){
 		fmt.Println("Couldnt Insert Attraction")
 		return err
 	}
-	result,err := prepared_stmt.Exec(a.Title,a.Type,a.Recommended_count,a.City,a.Street,a.Housenumber,a.Info,a.PosX,a.PosY,a.Stars,a.Img_url)
+	result,err := prepared_stmt.Exec(a.Title,a.Type,a.Recommended_count,a.City,a.Street,a.Housenumber,a.Info,a.PosX,a.PosY,a.Stars,a.Img_url,a.Added_by)
 	_ = result
 	if err != nil {
 		return err
@@ -95,7 +125,7 @@ func ChangeAttractionApproval(approved bool,id int64) error{
 
 func GetAttraction(id int) (Attraction,error){
 	var db *sql.DB = db_utils.DB
-	row, err := db.Query("SELECT id,title,type,recommended_count,city,street,housenumber,info,approved,PosX,PosY,stars,img_url FROM ATTRACTION_ENTRY WHERE id = ? and approved=TRUE", id)
+	row, err := db.Query("SELECT id,title,type,recommended_count,city,street,housenumber,info,approved,PosX,PosY,stars,img_url,added_by FROM ATTRACTION_ENTRY WHERE id = ? and approved=TRUE", id)
 	
 	if(err != nil){
 		return Attraction{},err
@@ -105,7 +135,7 @@ func GetAttraction(id int) (Attraction,error){
 
 	nodata_found := true
 	for row.Next() {
-		row.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Street,&a.Housenumber,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars,&a.Img_url)
+		row.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Street,&a.Housenumber,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars,&a.Img_url,&a.Added_by)
 		nodata_found = false
 	}	
 
@@ -127,20 +157,7 @@ func GetRecommendationForUser(id int32,city string,pref_type string) ([]Attracti
 		return recommended_attractions,err
 	}
 	defer rows.Close()
-
-	nodata_found := true
-	var a Attraction 
-	for rows.Next() {
-		nodata_found = false
-		rows.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Street,&a.Housenumber,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars,&a.Img_url)
-		recommended_attractions = append(recommended_attractions, a)
-	}	
-	if(nodata_found){
-		return nil,ErrNoRecommendation 
-	}else if(err != nil){
-		return nil,err
-	}
-	return recommended_attractions,nil
+	return getAttractionsFromDb(rows)
 }
 
 func GetAttractions() ([]Attraction,error){
@@ -151,19 +168,7 @@ func GetAttractions() ([]Attraction,error){
 		return attractions,err
 	}
 	defer rows.Close()
-	nodata_found := true
-	for rows.Next(){
-		nodata_found = false
-		a := Attraction{};
-		rows.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Street,&a.Housenumber,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars,&a.Img_url)
-		attractions = append(attractions, a)
-	}	
-	if(err != nil){
-		return attractions,err
-	}else if(nodata_found){
-		return nil,ErrNoAttraction
-	}
-	return attractions,nil
+	return getAttractionsFromDb(rows)
 }
 
 func GetAttractionsUnapprovedCity(city string) ([]Attraction,error){
@@ -174,19 +179,7 @@ func GetAttractionsUnapprovedCity(city string) ([]Attraction,error){
 		return attractions,err
 	}
 	defer rows.Close()
-	nodata_found := true
-	for rows.Next(){
-		nodata_found = false
-		a := Attraction{};
-		rows.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Street,&a.Housenumber,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars,&a.Img_url)
-		attractions = append(attractions, a)
-	}	
-	if(err != nil){
-		return attractions,err
-	}else if(nodata_found){
-		return nil,ErrNoAttraction
-	}
-	return attractions,nil
+	return getAttractionsFromDb(rows)
 }
 
 
@@ -198,22 +191,7 @@ func GetAttractionsByPos(posx float32,posy float32) ([]Attraction,error){
 		return attractions,err
 	}
 	defer rows.Close()
-	nodata_found := true
-
-	for rows.Next() {
-		nodata_found = false
-		a := Attraction{};
-		rows.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Street,&a.Housenumber,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars,&a.Img_url)
-		attractions = append(attractions, a)
-	}	
-
-	if(err != nil){
-		return attractions,err
-	}else if(nodata_found){
-		return nil,ErrNoAttraction
-	}
-
-	return attractions,nil
+	return getAttractionsFromDb(rows)
 }
 
 func GetAttractionsByCategory(category string) ([]Attraction,error){
@@ -224,22 +202,7 @@ func GetAttractionsByCategory(category string) ([]Attraction,error){
 		return attractions,err
 	}
 	defer rows.Close()
-	nodata_found := true
-
-
-	for rows.Next() {
-		nodata_found = false
-		a := Attraction{};
-		rows.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Street,&a.Housenumber,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars,&a.Img_url)
-		attractions = append(attractions, a)
-	}	
-
-	if(err != nil){
-		return attractions,err
-	}else if(nodata_found){
-		return nil,ErrNoAttraction
-	}
-	return attractions,nil
+	return getAttractionsFromDb(rows)
 }
 
 // Get Attraction By City String where City is converted to lowercase always
@@ -252,20 +215,7 @@ func GetAttractionsByCity(city string) ( []Attraction,error) {
 		return attractions,err
 	}
 	defer rows.Close()
-	nodata_found := true
-	for rows.Next() {
-		nodata_found = false
-		a := Attraction{};
-		rows.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Street,&a.Housenumber,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars,&a.Img_url)
-		attractions = append(attractions, a)
-	}	
-
-	if(err != nil){
-		return attractions,err
-	}else if(nodata_found){
-		return nil,ErrNoAttraction
-	}
-	return attractions,nil
+	return getAttractionsFromDb(rows)
 }
 
 /* 
@@ -283,26 +233,5 @@ func GetAttractionsByTitle(title string) ( []Attraction,error){
 		return attractions,err
 	}
 	defer rows.Close()
-	nodata_found := true
-
-	for rows.Next() {
-		nodata_found = false
-		a := Attraction{};
-		rows.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Street,&a.Housenumber,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars,&a.Img_url)
-		attractions = append(attractions, a)
-	}	
-
-	if(err != nil){
-		return attractions,err
-	}else if(nodata_found){
-		return nil,ErrNoAttraction
-	}
-	return attractions,nil
+	return getAttractionsFromDb(rows)
 }
-
-
-// TODO: Implement some Kind of Filtering as generic as possible
-func GetAttractionsWithFilters(filters []Filter)([]Attraction,error){
-	return nil,nil
-}
-
