@@ -81,7 +81,7 @@ func get(req *http.Request) (string,error){
 		convertedID,err = strconv.Atoi(id)
 		attraction,err = GetAttraction(convertedID)
 		if(err != nil){
-			output = "{\"info\":\"Attraction does not exist\"}"
+			output = "{\"info\":\"Attraction with that ID does not exist\"}"
 		}
 		attractions = append(attractions,attraction)
 	}else if(categoryIsSet){ // by category
@@ -95,7 +95,7 @@ func get(req *http.Request) (string,error){
 	}
 	
 	if(err != nil){
-		return "{\"success\":false,\"info\":\"Attraction does not exist\"}",err
+		return "{\"success\":false,\"info\":\"No Attractions were found\"}",err
 	}else{
 		json_bytes , json_err := json.Marshal(attractions)	
 		if(json_err != nil){
