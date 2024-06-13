@@ -13,6 +13,8 @@ type Attraction struct{
 	Type  			  string    `json:"type"` 
 	Recommended_count int 	    `json:"recommended_count"`
 	City 			  string    `json:"city"`
+	Street		      string    `json:street`
+	Housenumber		  string 	`json:housenumber`
 	Info 			  string    `json:"info"`
 	Approved		  bool	    `json:approved`		
 	PosX 			  float32   `json:"posX"`
@@ -50,12 +52,12 @@ func RemoveAttraction(id int64) error{
 // This function Also Makes sure that the City string is made to be lowercase
 func InsertAttraction(a Attraction) error{
 	var db *sql.DB = db_utils.DB
-	prepared_stmt,err := db.Prepare("INSERT INTO ATTRACTION_ENTRY(title,type,recommended_count,city,info,PosX,PosY,stars) VALUES(?,?,?,?,?,?,?,?,?)")
+	prepared_stmt,err := db.Prepare("INSERT INTO ATTRACTION_ENTRY(title,type,recommended_count,city,street,housenumber,info,PosX,PosY,stars,img_url) VALUES(?,?,?,?,?,?,?,?,?,?,?)")
 	if(err != nil){
 		fmt.Println("Couldnt Insert Attraction")
 		return err
 	}
-	result,err := prepared_stmt.Exec(a.Title,a.Type,a.Recommended_count,a.City,a.Info,a.PosX,a.PosY,a.Stars,a.Img_url)
+	result,err := prepared_stmt.Exec(a.Title,a.Type,a.Recommended_count,a.City,a.Street,a.Housenumber,a.Info,a.PosX,a.PosY,a.Stars,a.Img_url)
 	_ = result
 	if err != nil {
 		return err
@@ -66,12 +68,12 @@ func InsertAttraction(a Attraction) error{
 // This function Also Makes sure that the City string is made to be lowercase
 func UpdateAttraction(a Attraction) error{
 	var db *sql.DB = db_utils.DB
-	prepared_stmt,err := db.Prepare("UPDATE ATTRACTION_ENTRY SET title=?,type=?,recommended_count=?,city=?,info=?,PosX=?,PosY=? WHERE id=?")
+	prepared_stmt,err := db.Prepare("UPDATE ATTRACTION_ENTRY SET title=?,type=?,recommended_count=?,city=?,street=?,housenumber=?,info=?,PosX=?,PosY=?,img_url=? WHERE id=?")
 	if(err != nil){
 		fmt.Println("Couldnt Insert Attraction")
 		return err
 	}
-	result,err := prepared_stmt.Exec(a.Title,a.Type,a.Recommended_count,a.City,a.Info,a.PosX,a.PosY,a.Id)
+	result,err := prepared_stmt.Exec(a.Title,a.Type,a.Recommended_count,a.City,a.Street,a.Housenumber,a.Info,a.PosX,a.PosY,a.Img_url,a.Id)
 	_ = result
 	if err != nil {
 		return err
@@ -97,7 +99,7 @@ func ChangeAttractionApproval(approved bool,id int64) error{
 
 func GetAttraction(id int) (Attraction,error){
 	var db *sql.DB = db_utils.DB
-	row, err := db.Query("SELECT id,title,type,recommended_count,city,info,approved,PosX,PosY,stars,img_url FROM ATTRACTION_ENTRY WHERE id = ?", id)
+	row, err := db.Query("SELECT id,title,type,recommended_count,city,street,housenumber,info,approved,PosX,PosY,stars,img_url FROM ATTRACTION_ENTRY WHERE id = ?", id)
 	
 	if(err != nil){
 		return Attraction{},err
@@ -107,7 +109,7 @@ func GetAttraction(id int) (Attraction,error){
 
 	nodata_found := true
 	for row.Next() {
-		row.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars)
+		row.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Street,&a.Housenumber,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars,&a.Img_url)
 		nodata_found = false
 	}	
 
@@ -134,9 +136,8 @@ func GetRecommendationForUser(id int32,city string,pref_type string) ([]Attracti
 	var a Attraction 
 	for rows.Next() {
 		nodata_found = false
-		rows.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars,&a.Img_url)
+		rows.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Street,&a.Housenumber,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars,&a.Img_url)
 		recommended_attractions = append(recommended_attractions, a)
-		fmt.Println(a)
 	}	
 	if(nodata_found){
 		return nil,ErrNoRecommendation 
@@ -158,7 +159,7 @@ func GetAttractions() ([]Attraction,error){
 	for rows.Next(){
 		nodata_found = false
 		a := Attraction{};
-		rows.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars,&a.Img_url)
+		rows.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Street,&a.Housenumber,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars,&a.Img_url)
 		attractions = append(attractions, a)
 	}	
 	if(err != nil){
@@ -183,7 +184,7 @@ func GetAttractionsByPos(posx float32,posy float32) ([]Attraction,error){
 	for rows.Next() {
 		nodata_found = false
 		a := Attraction{};
-		rows.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars,&a.Img_url)
+		rows.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Street,&a.Housenumber,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars,&a.Img_url)
 		attractions = append(attractions, a)
 	}	
 
@@ -211,7 +212,7 @@ func GetAttractionsByCategory(category string) ([]Attraction,error){
 	for rows.Next() {
 		nodata_found = false
 		a := Attraction{};
-		rows.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars,&a.Img_url)
+		rows.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Street,&a.Housenumber,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars,&a.Img_url)
 		attractions = append(attractions, a)
 	}	
 
@@ -242,7 +243,7 @@ func GetAttractionsByCity(city string) ( []Attraction,error) {
 	for rows.Next() {
 		nodata_found = false
 		a := Attraction{};
-		rows.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars,&a.Img_url)
+		rows.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Street,&a.Housenumber,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars,&a.Img_url)
 		attractions = append(attractions, a)
 	}	
 
@@ -274,7 +275,7 @@ func GetAttractionsByTitle(title string) ( []Attraction,error){
 	for rows.Next() {
 		nodata_found = false
 		a := Attraction{};
-		rows.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars,&a.Img_url)
+		rows.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Street,&a.Housenumber,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars,&a.Img_url)
 		attractions = append(attractions, a)
 	}	
 

@@ -45,3 +45,22 @@ func LoginUser(email string,password string) bool{
 	}
 	return correct
 }
+
+func LoginModerator(email string,password string) bool{
+	// type here is going to be Row instead of Rows
+		var db *sql.DB = db_utils.DB
+		row, err := db.Query("SELECT password from CITY_MODERATOR where email=? LIMIT 1", email)
+		if(err != nil){
+			return false
+		}
+		defer row.Close()
+		var hashedPassword string
+		for row.Next() {
+			row.Scan(&hashedPassword)
+		}
+		correct,err := crypto_utils.CheckPasswordCorrect(password,hashedPassword)
+		if(err != nil){
+			return	false
+		}
+		return correct
+	}

@@ -37,7 +37,10 @@ func testPublicTransport() {
 	}
 }
 
-func debug(res http.ResponseWriter, req *http.Request) {
+
+
+
+func checkUserLoggedIn(res http.ResponseWriter, req *http.Request) {
 	if sessions.CheckLoggedIn(req) == true {
 		fmt.Fprintf(res, "{\"success\":true}")
 	} else {
@@ -87,8 +90,7 @@ func main() {
 	publicDir := "/opt/app/public"
 	// ########### apis #############
 	http.HandleFunc("/api/login", loginUser)
-	http.HandleFunc("/api/debug", debug)
-
+	http.HandleFunc("/api/logged_in", checkUserLoggedIn)
 	http.HandleFunc("/api/attractions", attractions.HandleAttractionsREST)
 	http.HandleFunc("/api/users", users.HandleUsersREST)
 	http.HandleFunc("/api/favorites", favorites.HandleFavoritesREST)
