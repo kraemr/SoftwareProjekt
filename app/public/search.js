@@ -1,7 +1,9 @@
-function searchLocation() {
+function searchBox() {
     // Lesen des Inhalts der Input-Box
     var query = document.getElementById('search-input').value;
-
+    searchLocation(query);
+}
+function searchLocation(query) {
     // Überprüfen, ob die Suchanfrage nicht leer ist
     if (query.trim() === "") {
         alert("Bitte geben Sie einen Suchbegriff ein.");
@@ -27,7 +29,9 @@ function searchLocation() {
     fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
-            loadAttractionsByCity(query);
+            if (query != "Deutschland") {
+                loadAttractionsByCity(query);
+            }
             updateGeoJsonLayer(data);
             document.getElementById('search-input').value = "";
         })
@@ -43,32 +47,6 @@ function loadAttractionsByCity(city) {
     fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
-            console.log(data);
-            // Löschen aller Marker
-            allMarkersLayer.clearLayers();
-            // Hinzufügen der neuen Marker
-            placeMarkers(data);
-        })
-        .catch(error => {
-            console.error('Fehler bei der API-Abfrage:', error);
-        });
-}
-// TODO: Implement api call to get attractions by bbox
-// Funktion um aus der API-Abfrage die nächsten Attraktionen zu finden (not api yet)
-function findNearestAttractions() {
-    // Lesen der aktuellen Kartenansicht
-    var bounds = map.getBounds();
-    var bbox = bounds.toBBoxString();
-
-    // Erstellen der API-URL
-    var apiUrl = document.location.origin + '/api/attractions?bbox=' + bbox;
-    console.log(apiUrl);
-
-    // Ausführen der API-Abfrage
-    fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
             // Löschen aller Marker
             allMarkersLayer.clearLayers();
             // Hinzufügen der neuen Marker
@@ -98,9 +76,6 @@ function updateGeoJsonLayer(data) {
 }
 
 function displayGermanyonStartup() {
-
-    var apiUrl = 'https://nominatim.openstreetmap.org/search.php?q=Deutschland&polygon_geojson=1&format=geojson&limit=1&countrycodes=de';
-    console.log(apiUrl);
     // Check if geolocation is supported by the browser
     if ("geolocation" in navigator) {
         // Prompt user for permission to access their location
@@ -113,9 +88,14 @@ function displayGermanyonStartup() {
 
                 // Do something with the location data, e.g. display on a map
                 console.log(`Latitude: ${lat}, longitude: ${lng}`);
-                newApiUrl = 'https://nominatim.openstreetmap.org/reverse?format=geojson&lat=' + lat + '&lon=' + lng;
-                // Get the city name from the API response
-                executeAPICall(newApiUrl);
+                var getUserLocationByApi = 'https://nominatim.openstreetmap.org/reverse?format=geojson&polygon_geojson=1&format=geojson&limit=1&lat=' + lat + '&lon=' + lng;
+                fetch(getUserLocationByApi)
+                    .then(response => response.json())
+                    .then(data => {
+                        // get the city name
+                        var city = data.features[0].properties.address.city;
+                        searchLocation(city);
+                    })
                 // Create a custom icon for the user's location marker
                 var userLocationIcon = L.icon({
                     iconUrl: 'leaflet/images/marker-icon-red.png',
@@ -129,6 +109,7 @@ function displayGermanyonStartup() {
                     icon: userLocationIcon,
                     clickable: true,
                 }).addTo(map);
+
                 // Set the popup content for the user's location marker
                 var popupContent = `
             <div>
@@ -143,45 +124,14 @@ function displayGermanyonStartup() {
             (error) => {
                 // Handle errors, e.g. user denied location sharing permissions
                 console.error("Error getting user location:", error);
-                executeAPICall(apiUrl);
+                searchLocation("Deutschland");
             }
 
         );
     } else {
         // Geolocation is not supported by the browser
         console.error("Geolocation is not supported by this browser.");
-        executeAPICall(apiUrl);
+        searchLocation("Deutschland");
     }
-}
-// Ausführen der API-Abfrage
-function executeAPICall(apiUrl) {
-    fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-            // GeoJSON-Schicht erstellen oder aktualisieren
-            if (geoJsonLayer) {
-                geoJsonLayer.clearLayers(); // Falls die Schicht bereits vorhanden ist, lösche sie
-            }
-            geoJsonLayer = L.geoJSON(data, {
-                style: {
-                    fillColor: 'lightblue',
-                    fillOpacity: 0,
-                    color: 'black',
-                    weight: 2
-                }
-            }).addTo(map);
-
-            // Zoom to the nearest city
-            const cityCoordinates = data.features[0].geometry.coordinates;
-            const cityLatLng = L.latLng(cityCoordinates[1], cityCoordinates[0]);
-            map.setView(cityLatLng, 10); // Adjust the zoom level as needed
-            // get the city name
-            var city = data.features[0].properties.address.city;
-            console.log(city);
-            loadAttractionsByCity(city);
-        })
-        .catch(error => {
-            console.error('Fehler bei der API-Abfrage:', error);
-        });
 }
 
