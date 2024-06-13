@@ -12,6 +12,7 @@
   <script src="search.js"></script>
   <script src="map.js"></script>
   <script src="sidebar.js"></script>
+  <script src="user.js"></script>
   <!-- Leaflet -->
   <script src="leaflet/leaflet.js"></script>
   <link href="leaflet/leaflet.css" rel="stylesheet" />
@@ -33,27 +34,6 @@
       top: 10px;
       left: 10px;
       z-index: 1000;
-    }
-
-    .user-container {
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      z-index: 1000;
-      /* Ensure it stays on top of other elements */
-    }
-
-    .user-icon {
-      width: 2em;
-      height: 2em;
-      border-radius: 50%;
-      background-color: #A64C79;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: white;
-      font-size: 20px;
-      cursor: pointer;
     }
 
     .sidepanel {
@@ -110,20 +90,25 @@
     .scrolling-wrapper {
       overflow-x: auto;
     }
+
     .btn-categories {
       background-color: #A64C79;
       color: white;
       border: none;
       width: auto;
       border-radius: 4px;
-      padding: 0px 4px;;
+      padding: 0px 4px;
+      ;
     }
-    .categories{
+
+    .categories {
       margin: 5px;
     }
+
     .btn-categories:hover {
       background-color: #734079;
     }
+
     @media (max-width: 768px) {
       .sidepanel {
         bottom: 0px;
@@ -137,6 +122,45 @@
         bottom: 2px;
         left: 50%;
       }
+    }
+
+    .user-icon {
+      width: 2em;
+      height: 2em;
+      border-radius: 50%;
+      background-color: #A64C79;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .user-icon-src {
+      background-image: url('resources/user.svg');
+      background-size: cover;
+      width: 1.5em;
+      height: 1.5em;
+    }
+    .user-container {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 1000;
+      background-color: white;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: end;
+    }
+
+    .settings-container {
+      display: none;
+      width: 100%;
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -168,18 +192,25 @@
     <i class="bi bi-list"></i>
   </button>
   <div id="map"></div>
-  <!--Floating User Icon-->
+
   <div class="user-container">
-    <span class="user-icon" onclick="openUserSettings()">
-      <i class="bi bi-person"></i>
+    <span class="user-icon" onclick="toggleSettings()">
+      <i class="user-icon-src"></i>
     </span>
-    <div class="toggle-settings">
-      <div class="settings">
-        <a href="login.html" class="btn btn-primary">Login</a>
-        <a href="register.html" class="btn btn-primary">Register</a>
+    <div class="settings-container">
+      <div class="row settings">
+        <div class="col-12 mb-2">
+          <a href="login.html" class="btn btn-primary w-100">Login</a>
+        </div>
+        <div class="col-12">
+          <a href="register.html" class="btn btn-primary w-100">Register</a>
+        </div>
       </div>
     </div>
   </div>
+
+
+
   <script>
     createMap();
   </script>
