@@ -58,3 +58,23 @@ function toggleNav() {
         }
     }
 }
+// Function to fill the sidebar categories from the database
+function fillCategories() {
+    const categoriesWrapper = document.getElementById("categories-scroller");
+    // Use test data 
+    const data = [
+        "Cafes",
+        "Restaurants",
+        "Bars",
+        "Parks",
+        "Museums",
+        "Galleries",
+        "Hotels"
+    ];
+    data.forEach(category => {
+        const button = document.createElement("button");
+        button.className = "btn-categories m-2";
+        button.innerHTML = category;
+        categoriesWrapper.appendChild(button);
+    });
+}

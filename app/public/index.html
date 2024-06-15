@@ -174,14 +174,7 @@
       <input type="text" id="search-input" class="rounded" placeholder="Search..."
         onkeydown="if(event.keyCode==13) searchBox  ()" />
     </div>-->
-    <div class="scrolling-wrapper categories row flex-row flex-nowrap mt-4 pb-4 pt-2">
-      <button class="btn-categories m-2">Cafes</button>
-      <button class="btn-categories m-2">Restaurants</button>
-      <button class="btn-categories m-2">Bars</button>
-      <button class="btn-categories m-2">Parks</button>
-      <button class="btn-categories m-2">Museums</button>
-      <button class="btn-categories m-2">Galleries</button>
-      <button class="btn-categories m-2">Hotels</button>
+    <div class="scrolling-wrapper categories row flex-row flex-nowrap mt-4 pb-4 pt-2" id="categories-scroller">
     </div>
   </div>
   <!--Floating Search-->
@@ -213,6 +206,7 @@
 
 
   <script>
+    fillCategories();
     createMap();
   </script>
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
