@@ -40,7 +40,6 @@ function loadAllMarkers() {
     });
 }
 
-
 function placeMarkers(data) {
   for (var elem of data) {
     let marker = createBlueMarker(elem);
@@ -48,8 +47,6 @@ function placeMarkers(data) {
   }
   console.log(data);
 }
-
-
 //Blauer Marker
 function createBlueMarker(attraction) {
   var latlng = L.latLng(attraction.posX, attraction.posY);

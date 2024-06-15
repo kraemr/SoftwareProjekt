@@ -71,10 +71,28 @@ function fillCategories() {
         "Galleries",
         "Hotels"
     ];
+    
+    // Variable to keep track of the currently selected button
+    let selectedButton = null;
+
     data.forEach(category => {
         const button = document.createElement("button");
-        button.className = "btn-categories m-2";
+        button.className = "btn-secondary btn-categories m-2";
         button.innerHTML = category;
         categoriesWrapper.appendChild(button);
+        
+        // Add event listener to each button to filter attraction by that category
+        button.addEventListener("click", function () {
+            // Remove 'selected' class from the previously selected button, if any
+            if (selectedButton) {
+                selectedButton.classList.remove("selected");
+            }
+            // Add 'selected' class to the clicked button
+            button.classList.add("selected");
+            // Update the selectedButton variable
+            selectedButton = button;
+            placeMarkersByCategory(category);
+        });
     });
 }
+
