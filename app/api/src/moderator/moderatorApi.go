@@ -50,7 +50,7 @@ func post(req *http.Request) (string, error) {
 	if err != nil {
 		return "{\"success\":false}", err
 	}
-	_, err = InsertModerator(moderator)
+	err = InsertModerator(moderator)
 	if err != nil {
 		return "{\"success\":false}", err
 	}
@@ -61,14 +61,47 @@ func post(req *http.Request) (string, error) {
 func get(req *http.Request) (string, error) {
 	var city string = req.URL.Query().Get("city")
 	var id string = req.URL.Query().Get("id")
+	var email string = req.URL.Query().Get("email")
+
 	id_is_set := id != ""
 	city_is_set := city != ""
+	email_is_set := email != ""
+	var mods []Moderator
+	var mod Moderator
+	var output string
+	var err error
+
 	if id_is_set {
-
+		var convertedID int64
+		convertedID, err = strconv.ParseInt(id, 10, 64)
+		if(err != nil){
+			return "{\"success\":false}", err
+		}
+		mod,err = GetModeratorById(convertedID)
+		if(err != nil){
+			return "{\"success\":false}", err
+		}
+		mods = append(mods,mod)
 	} else if city_is_set {
-
+		mods,err = GetModeratorsCity(city)
+		if(err != nil){
+			return "{\"success\":false}", err
+		}
+	}else if email_is_set {
+		mod,err = GetModeratorByEmail(email)
+		if(err != nil){
+			return "{\"success\":false}", err
+		}
+		mods = append(mods,mod)
 	}
-	return "", nil
+
+
+	json_bytes , json_err := json.Marshal(mods)	
+	if(json_err != nil){
+		fmt.Println("error");
+	}
+	output = string(json_bytes)
+	return output,nil
 }
 
 func HandleModeratorsREST(res http.ResponseWriter, req *http.Request) {
