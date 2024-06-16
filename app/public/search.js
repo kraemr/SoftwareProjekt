@@ -1,3 +1,4 @@
+var currentCity;
 function searchBox() {
     // Lesen des Inhalts der Input-Box
     var query = document.getElementById('search-input').value;
@@ -31,6 +32,7 @@ function searchLocation(query) {
         .then(data => {
             if (query != "Deutschland") {
                 loadAttractionsByCity(query);
+                currentCity = query;
             }
             updateGeoJsonLayer(data);
             document.getElementById('search-input').value = "";
@@ -39,6 +41,26 @@ function searchLocation(query) {
             console.error('Fehler bei der API-Abfrage:', error);
         });
 }
+// Place markers by category and city
+function placeMarkersByCategory(category) {
+    var apiUrl = document.location.origin + '/api/attractions?category=' + encodeURIComponent(category) + '&city=' + encodeURIComponent(currentCity);
+    console.log(apiUrl);
+
+    // Ausführen der API-Abfrage
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            // Löschen aller Marker
+            allMarkersLayer.clearLayers();
+            // Hinzufügen der neuen Marker
+            placeMarkers(data);
+        })
+        .catch(error => {
+            console.error('Fehler bei der API-Abfrage:', error);
+        });
+}
+
 function loadAttractionsByCity(city) {
     var apiUrl = document.location.origin + '/api/attractions?city=' + encodeURIComponent(city);
     console.log(apiUrl);
