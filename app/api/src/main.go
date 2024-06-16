@@ -70,6 +70,16 @@ func loginUser(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
+var categories [7]string
+
+func handleCategories(res http.ResponseWriter, req *http.Request){
+	json_bytes,json_err := json.Marshal(categories)
+	if(json_err != nil){
+		fmt.Fprintf(res,"{\"success\":false}")
+	}
+	output := string(json_bytes)
+	fmt.Fprintf(res,output)
+}
 
 func loginModerator(res http.ResponseWriter, req *http.Request) {
 	decoder := json.NewDecoder(req.Body)
@@ -113,7 +123,7 @@ func main() {
 		// run tests
 	}
 	publicDir := "/opt/app/public"
-
+	categories = [...]string{"Monument","Castle","Cathedral","Palace","Museum","Mountain","Park"}
 
 
 
@@ -123,7 +133,7 @@ func main() {
 
 	http.HandleFunc("/api/ban",moderator.BanUser)
 	http.HandleFunc("/api/banned",moderator.GetBannedUsers)
-
+	http.HandleFunc("/api/categories",handleCategories)
 
 
 	// ########### Rest apis #############
