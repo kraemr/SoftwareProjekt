@@ -42,8 +42,8 @@ function searchLocation(query) {
         });
 }
 // Place markers by category and city
-function placeMarkersByCategory(category) {
-    var apiUrl = document.location.origin + '/api/attractions?category=' + encodeURIComponent(category) + '&city=' + encodeURIComponent(currentCity);
+function loadAttractionsByCategory(category) {
+    var apiUrl = document.location.origin + '/api/attractions?category=' + encodeURIComponent(category);
     console.log(apiUrl);
 
     // Ausführen der API-Abfrage

@@ -59,7 +59,7 @@ function toggleNav() {
     }
 }
 function getCategories() {
-    var apiUrl = document.location.origin + '/api/categories' + encodeURIComponent(city);
+    var apiUrl = document.location.origin + '/api/categories';
     console.log(apiUrl);
 
     // Ausführen der API-Abfrage
@@ -94,7 +94,7 @@ function getCategories() {
                 button.classList.add("selected");
                 // Update the selectedButton variable
                 selectedButton = button;
-                placeMarkersByCategory(category);
+                loadAttractionsByCategory(category);
             });
         });
     }
