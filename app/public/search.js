@@ -1,17 +1,17 @@
 var currentCity;
 function searchBox() {
-    // Lesen des Inhalts der Input-Box
+    // Read Input Box
     var query = document.getElementById('search-input').value;
-    searchLocation(query);
+    searchLocation(query, true);
 }
-function searchLocation(query) {
-    // Überprüfen, ob die Suchanfrage nicht leer ist
+function searchLocation(query, clearSearchInput = false) {
+    // Check for empty string in query
     if (query.trim() === "") {
         alert("Bitte geben Sie einen Suchbegriff ein.");
         return;
     }
 
-    // Regex-Ausdruck für GPS-Koordinaten-Überprüfung
+    // Regex for GPS coordinates
     var coordinatesRegex = /^([-+]?\d{1,2}(?:[.,]\d+)?)[\s,]+([-+]?\d{1,3}(?:[.,]\d+)?)$/;
     var match = query.match(coordinatesRegex);
 
@@ -22,7 +22,7 @@ function searchLocation(query) {
         return;
     }
 
-    // Erstellen der API-URL
+    // API-URL
     var apiUrl = 'https://nominatim.openstreetmap.org/search.php?q=' + encodeURIComponent(query) + '&polygon_geojson=1&format=geojson&limit=1&countrycodes=de';
     console.log(apiUrl);
 
@@ -35,7 +35,9 @@ function searchLocation(query) {
                 currentCity = query;
             }
             updateGeoJsonLayer(data);
-            document.getElementById('search-input').value = "";
+            if (clearSearchInput) {
+                document.getElementById('search-input').value = "";
+            }
         })
         .catch(error => {
             console.error('Fehler bei der API-Abfrage:', error);
@@ -109,7 +111,7 @@ function displayGermanyonStartup() {
                 const lat = position.coords.latitude;
                 const lng = position.coords.longitude;
 
-                // Do something with the location data, e.g. display on a map
+                // Display the user location on the map
                 console.log(`Latitude: ${lat}, longitude: ${lng}`);
                 var getUserLocationByApi = 'https://nominatim.openstreetmap.org/reverse?format=geojson&polygon_geojson=1&format=geojson&limit=1&lat=' + lat + '&lon=' + lng;
                 fetch(getUserLocationByApi)
@@ -124,7 +126,7 @@ function displayGermanyonStartup() {
                             city = data.features[0].properties.address.city;
                         }
                         console.log(city);
-                        searchLocation(city);
+                        searchLocation(city, false);
                     })
                 // Create a custom icon for the user's location marker
                 var userLocationIcon = L.icon({
@@ -154,14 +156,14 @@ function displayGermanyonStartup() {
             (error) => {
                 // Handle errors, e.g. user denied location sharing permissions
                 console.error("Error getting user location:", error);
-                searchLocation("Deutschland");
+                searchLocation("Deutschland", false);
             }
 
         );
     } else {
         // Geolocation is not supported by the browser
         console.error("Geolocation is not supported by this browser.");
-        searchLocation("Deutschland");
+        searchLocation("Deutschland", false);
     }
 }
 
