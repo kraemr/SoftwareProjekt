@@ -86,16 +86,25 @@ function getCategories() {
 
             // Add event listener to each button to filter attraction by that category
             button.addEventListener("click", function () {
-                // Remove 'selected' class from the previously selected button, if any
-                if (selectedButton) {
-                    selectedButton.classList.remove("selected");
+                // If the clicked button is already selected, unselect it
+                if (selectedButton === button) {
+                    button.classList.remove("selected");
+                    selectedButton = null;
+                    // Optionally, you can call a function to handle the unselection case, e.g., showing all markers or clearing the map
+                    loadAttractionsByCity(currentCity);
+                } else {
+                    // Remove 'selected' class from the previously selected button
+                    if (selectedButton) {
+                        selectedButton.classList.remove("selected");
+                    }
+                    // Add 'selected' class to the clicked button
+                    button.classList.add("selected");
+                    // Update the selectedButton variable
+                    selectedButton = button;
+                    loadAttractionsByCategory(category);
                 }
-                // Add 'selected' class to the clicked button
-                button.classList.add("selected");
-                // Update the selectedButton variable
-                selectedButton = button;
-                loadAttractionsByCategory(category);
             });
         });
+
     }
 }
