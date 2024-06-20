@@ -4,7 +4,7 @@ function searchBox() {
     var query = document.getElementById('search-input').value;
     searchLocation(query, true);
 }
-function searchLocation(query, clearSearchInput = false) {
+function searchLocation(query, clearSearchInput) {
     // Check for empty string in query
     if (query.trim() === "") {
         alert("Bitte geben Sie einen Suchbegriff ein.");
@@ -52,9 +52,10 @@ function loadAttractionsByCategory(category) {
     fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
-            console.log(data);
+            console.log(currentCity);
             // Löschen aller Marker
             allMarkersLayer.clearLayers();
+            data = data.filter(attraction => attraction.city === currentCity);
             // Hinzufügen der neuen Marker
             placeMarkers(data);
         })

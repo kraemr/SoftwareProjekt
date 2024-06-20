@@ -18,34 +18,29 @@ function createMap() {
   L.control.zoom({ position: "bottomright" }).addTo(map);
 
   allMarkersLayer = L.markerClusterGroup().addTo(map);
-  //loadAllMarkers();
+  //loadAllAttractions();
 }
-function loadAllMarkers() {
-  fetch(document.location.origin + "/api/attractions", {
-    method: "GET",
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.json();
+  function loadAllAttractions() {
+    fetch(document.location.origin + "/api/attractions", {
+      method: "GET",
     })
-    .then((data) => {
-      console.log(data);
-      placeMarkers(data);
-    })
-    .catch((error) => {
-      console.error("There was a problem with the request:", error);
-      alert("Failed to load markers. Please try again.");
-    });
-}
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .catch((error) => {
+        console.error("There was a problem with the request:", error);
+        alert("Failed to load markers. Please try again.");
+      });
+  }
 
 function placeMarkers(data) {
   for (var elem of data) {
     let marker = createBlueMarker(elem);
     allMarkersLayer.addLayer(marker);
   }
-  console.log(data);
 }
 //Blauer Marker
 function createBlueMarker(attraction) {
@@ -85,6 +80,7 @@ function setPopUp(data, marker) {
       <strong>Info: </strong> ${data.info}<br>
       <strong>Stars: </strong> ${data.Stars}&#11088;<br>
       <strong>Recommended Count: </strong> ${data.recommended_count}
+      ${data.image ? `<img src="${data.image}" alt="Image" style="width: 100%; height: auto;">` : ""}
     </div>
   `;
   // Create a new popup instance for the marker
