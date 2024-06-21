@@ -20,21 +20,21 @@ function createMap() {
   allMarkersLayer = L.markerClusterGroup().addTo(map);
   //loadAllAttractions();
 }
-  function loadAllAttractions() {
-    fetch(document.location.origin + "/api/attractions", {
-      method: "GET",
+function loadAllAttractions() {
+  fetch(document.location.origin + "/api/attractions", {
+    method: "GET",
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
     })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .catch((error) => {
-        console.error("There was a problem with the request:", error);
-        alert("Failed to load markers. Please try again.");
-      });
-  }
+    .catch((error) => {
+      console.error("There was a problem with the request:", error);
+      alert("Failed to load markers. Please try again.");
+    });
+}
 
 function placeMarkers(data) {
   for (var elem of data) {
@@ -63,7 +63,7 @@ function createBlueMarker(attraction) {
   marker.on("click", function () {
     setPopUp(marker.attractionData, marker);
     marker.openPopup();
-  });
+x  });
 
   return marker;
 }
@@ -92,5 +92,6 @@ function setPopUp(data, marker) {
   // Open the popup when the marker is clicked
   marker.on("click", function () {
     marker.openPopup();
-  });
+    loadMarkerInfoToSidebar(marker.attractionData);
+    });
 }

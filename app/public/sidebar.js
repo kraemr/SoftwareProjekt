@@ -108,3 +108,8 @@ function getCategories() {
 
     }
 }
+function loadMarkerInfoToSidebar(attractionData){
+    const sidebar = document.getElementById("sidebar");
+    sidebar.innerHTML = attractionData.name;
+    console.log("success clicking loadMarkerInfoToSidebar");
+}

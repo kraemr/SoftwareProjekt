@@ -24,3 +24,8 @@ function setUserSettings() {
     const settingsContainer = document.querySelector('.user-icon-src');
     settingsContainer.style.backgroundImage = "url('/images/user-icon.png')";
 }
+function isLoggedIn(){
+    fetch(document.location.origin + "/api/users?id=" + userID, {
+        method: "GET",
+    })
+}
