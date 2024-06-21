@@ -37,7 +37,7 @@ window.addEventListener('resize', function () {
     }
 });
 // Toggle left sidebar
-function toggleNav() {
+function toggleSidepanel() {
     const sidepanel = document.getElementById("sidepanel-toggle");
     const button = document.getElementById("toggleButton");
     if (window.innerWidth <= 768) { // Check if the screen size is small
@@ -54,7 +54,7 @@ function toggleNav() {
             button.style.left = "2px";
         } else {
             sidepanel.style.width = "25%";
-            button.style.left = "20%";
+            button.style.left = "25%";
         }
     }
 }
@@ -108,8 +108,60 @@ function getCategories() {
 
     }
 }
-function loadMarkerInfoToSidebar(attractionData){
-    const sidebar = document.getElementById("sidebar");
+function loadSidebarInfo() {
+    const selectedAttractionsInfo = document.getElementById("selectedAttractionsInformation");
+    const noAttractionSelected = document.getElementById("NoAttractionSelected");
+    if (selectedAttractionsInfo.style.display === "") {
+        console.log("No attraction selected");
+        noAttractionSelected.style.display = "block";
+        noAttractionSelected.innerHTML = `
+<div class="card bg-black m-2">
+  <div class="card-body">
+  <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+  <div class="carousel-inner">
+    ${loadCarouselImages()}
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+    <h5 class="card-title">Attraction Name</h5>
+    <p class="card-text">Some quick example text to build on the attraction name and make up the bulk of the card's content.</p>
+    <a href="#" class="btn btn-primary">Go somewhere</a>
+  </div>
+</div>
+
+`;
+    } else {
+        noAttractionSelected.style.display = "none";
+        selectedAttractionsInfo.style.display = "block";
+        selectedAttractionsInfo.innerHTML = `
+    <div>
+        Test2
+    </div>
+`;
+    }
+}
+
+function loadCarouselImages() {
+    const images = [
+        { src: "path_to_first_image.jpg", alt: "First slide" },
+        { src: "path_to_second_image.jpg", alt: "Second slide" },
+        { src: "path_to_third_image.jpg", alt: "Third slide" }
+    ];
+    return images.map((img, index) => `
+        <div class="carousel-item ${index === 0 ? 'active' : ''}">
+            <img src="${img.src}" class="d-block w-100" alt="${img.alt}">
+        </div>
+    `).join('');
+}
+function loadMarkerInfoToSidebar(attractionData) {
+    const sidebar = document.getElementById("selectedAttractionsInformation");
     sidebar.innerHTML = attractionData.name;
     console.log("success clicking loadMarkerInfoToSidebar");
 }

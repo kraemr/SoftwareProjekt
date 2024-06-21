@@ -37,6 +37,7 @@
     }
 
     .sidepanel {
+      overflow-x: auto;
       width: 0;
       position: fixed;
       z-index: 1;
@@ -66,24 +67,22 @@
       color: #f1f1f1;
     }
 
-    .openbtn {
+    .sidepanelOpenBtn {
       font-size: 20px;
       cursor: pointer;
       background-color: #111;
       color: white;
-      padding: 10px 15px;
+      padding: 10px;
       border: none;
       position: fixed;
-      top: 10px;
-      left: 2px;
-      width: 2.5em;
-      height: 2.5em;
       z-index: 2;
       transition: left 0.05s;
       margin-top: 25%;
+      left: 2px;
+      text-align: center;
     }
 
-    .openbtn:hover {
+    .sidepanelOpenBtn:hover {
       background-color: #111;
       color: white;
     }
@@ -188,11 +187,15 @@
         right: 0px;
       }
 
-      .openbtn {
+      .sidepanelOpenBtn {
         bottom: 2px;
         margin-top: auto;
         left: 50%;
       }
+    }
+
+    .selectedAttractionsInformation {
+      display: none;
     }
   </style>
 </head>
@@ -200,20 +203,20 @@
 <body>
 
   <div id="sidepanel-toggle" class="sidepanel">
-    <!--Sidepanel Search
-    <div class="search-container bg-white sidepanel-search m-2">
-      <input type="text" id="search-input" class="rounded" placeholder="Search..."
-        onkeydown="if(event.keyCode==13) searchBox  ()" />
-    </div>-->
-    <div class="scrolling-wrapper categories row flex-row flex-nowrap mt-4 pb-4 pt-2" id="categories-scroller">
+    <div class="scrolling-wrapper categories row flex-row flex-nowrap mt-4 pb-4 pt-2" id="categories-scroller"></div>
+    <div id="selectedAttractionsInformation" class="selectedAttractionsInformation">
+      <!-- Generated in sidebar.js -->
+    </div>
+    <div id="NoAttractionSelected" class="NoAttractionSelected">
+      <!-- Generated in sidebar.js -->
     </div>
   </div>
   <!--Floating Search-->
   <div class="search-container m-2">
     <input type="text" id="search-input" class="rounded" placeholder="Search..."
-      onkeydown="if(event.keyCode==13) searchBox  ()" />
+      onkeydown="if(event.keyCode==13) searchBox()" />
   </div>
-  <button id="toggleButton" class="btn openbtn" onclick="toggleNav()">
+  <button id="toggleButton" class="btn sidepanelOpenBtn" onclick="toggleSidepanel()">
     <i class="bi bi-list"></i>
   </button>
   <div id="map"></div>
@@ -235,6 +238,7 @@
     getCategories();
     createMap();
     loadUserSettings();
+    loadSidebarInfo();
   </script>
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
