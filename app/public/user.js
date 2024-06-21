@@ -25,7 +25,22 @@ function setUserSettings() {
     settingsContainer.style.backgroundImage = "url('/images/user-icon.png')";
 }
 function isLoggedIn(){
-    fetch(document.location.origin + "/api/users?id=" + userID, {
+    return fetch(document.location.origin + "/api/logged_in", {
         method: "GET",
     })
+    .then((response) => {
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+        return response.status === 200;
+    })
+    .catch((error) => {
+        console.error("Error checking login status:", error);
+        return false;
+    });
+}
+function logoutCurrentUser() {
+    fetch(document.location.origin + "/api/logout", {
+        method: "GET",
+    });
 }
