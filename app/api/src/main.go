@@ -22,7 +22,6 @@ func testPublicTransport() {
 	// Definiert die Koordinaten für den Startpunkt und den Zielpunkt.
 	fromLat, fromLon := 49.9179102, 8.3430285 // Beispielkoordinaten für irgendwo in Nackenheim
 	toLat, toLon := 49.987809, 8.2272517      // Beispielkoordinaten für Lucy-Hillebrand-Straße, Mainz
-
 	// Holt die beste Route zwischen den beiden Standorten.
 	journeys, err := public_transport.FetchFullRouteLongLat(fromLat, fromLon, toLat, toLon)
 
@@ -30,7 +29,6 @@ func testPublicTransport() {
 		fmt.Println("Error fetching route:", err)
 		return
 	}
-
 	// Gibt die gefundene Route aus.
 	for _, journey := range journeys {
 		fmt.Println(journey)
