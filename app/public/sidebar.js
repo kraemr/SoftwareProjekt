@@ -1,4 +1,3 @@
-
 function toggleSettings() {
     const settingsContainer = document.querySelector('.settings-container');
     settingsContainer.style.display = (settingsContainer.style.display === 'block') ? 'none' : 'block';
@@ -108,14 +107,11 @@ function getCategories() {
 
     }
 }
-function loadSidebarInfo() {
+function loadMarkerInfoToSidebar(attractionData) {
     const selectedAttractionsInfo = document.getElementById("selectedAttractionsInformation");
     const noAttractionSelected = document.getElementById("NoAttractionSelected");
-    if (selectedAttractionsInfo.style.display === "") {
-        console.log("No attraction selected");
-        noAttractionSelected.style.display = "block";
-        noAttractionSelected.innerHTML = `
-<div class="card bg-black m-2">
+    selectedAttractionsInfo.innerHTML = `
+<div class="card text-light bg-transparent m-2">
   <div class="card-body">
   <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
   <div class="carousel-inner">
@@ -130,38 +126,60 @@ function loadSidebarInfo() {
     <span class="visually-hidden">Next</span>
   </button>
 </div>
-    <h5 class="card-title">Attraction Name</h5>
-    <p class="card-text">Some quick example text to build on the attraction name and make up the bulk of the card's content.</p>
-    <a href="#" class="btn btn-primary">Go somewhere</a>
+    <h5 class="card-title">${attractionData.title}</h5>
+    <p class="card-text">${attractionData.info}</p>
+    <p class="card-text">${attractionData.city}</p>
+    <p class="card-text">${attractionData.category}</p>
+    <p class="card-text">${attractionData.Stars}</p>
+    <p class="card-text">${attractionData.recommended_count}</p>
+    
+    <a href="#" class="btn btn-primary">Route Planen</a>
+    <div class="review-section">
+      <h6>Leave a Review:</h6>
+      <div class="star-rating">
+        ${[1, 2, 3, 4, 5].map(star => `
+          <span class="star" data-value="${star}">&#9733;</span>
+        `).join('')}
+      </div>
+      <textarea class="form-control mt-2" placeholder="Write your review here..."></textarea>
+      <button class="btn btn-secondary mt-2">Submit Review</button>
+    </div>
+    <div class="favourite-section mt-3">
+      <button class="btn btn-warning" id="favouriteButton">
+        <i class="fas fa-star"></i> Favourite
+      </button>
+    </div>
   </div>
 </div>
 
 `;
-    } else {
-        noAttractionSelected.style.display = "none";
-        selectedAttractionsInfo.style.display = "block";
-        selectedAttractionsInfo.innerHTML = `
-    <div>
-        Test2
-    </div>
-`;
-    }
+    // Add event listener for the favourite button
+    document.getElementById("favouriteButton").addEventListener("click", function () {
+        attractionData.recommended_count += 1;
+        // Optionally, update the UI to reflect the new recommended count
+        console.log(`Attraction recommended count: ${attractionData.recommended_count}`);
+        // Add to user's favourites (this would typically involve an API call)
+    });
+
+    // Add event listeners for the star rating
+    document.querySelectorAll(".star-rating .star").forEach(star => {
+        star.addEventListener("click", function () {
+            const rating = this.getAttribute("data-value");
+            console.log(`User rated: ${rating} stars`);
+            // Optionally, submit the rating (this would typically involve an API call)
+        });
+    });
 }
 
 function loadCarouselImages() {
     const images = [
-        { src: "path_to_first_image.jpg", alt: "First slide" },
-        { src: "path_to_second_image.jpg", alt: "Second slide" },
-        { src: "path_to_third_image.jpg", alt: "Third slide" }
+        { src: "images/image1.jpg", alt: "First slide" },
+        { src: "images/image2.jpg", alt: "Second slide" },
+        { src: "images/image3.jpg", alt: "Third slide" }
     ];
     return images.map((img, index) => `
         <div class="carousel-item ${index === 0 ? 'active' : ''}">
-            <img src="${img.src}" class="d-block w-100" alt="${img.alt}">
+            <img src="${img.src}" class="d-block object-fit-cover carousel-images w-100" alt="${img.alt}">
         </div>
     `).join('');
-}
-function loadMarkerInfoToSidebar(attractionData) {
-    const sidebar = document.getElementById("selectedAttractionsInformation");
-    sidebar.innerHTML = attractionData.name;
-    console.log("success clicking loadMarkerInfoToSidebar");
 }

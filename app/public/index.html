@@ -178,6 +178,10 @@
       background: #414956
     }
 
+    .carousel-images {
+      height: 20em;
+    }
+
     @media (max-width: 768px) {
       .sidepanel {
         bottom: 0px;
@@ -192,10 +196,10 @@
         margin-top: auto;
         left: 50%;
       }
-    }
 
-    .selectedAttractionsInformation {
-      display: none;
+      .carousel-images {
+        height: 7em;
+      }
     }
   </style>
 </head>
@@ -238,7 +242,6 @@
     getCategories();
     createMap();
     loadUserSettings();
-    loadSidebarInfo();
   </script>
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>

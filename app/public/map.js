@@ -63,7 +63,8 @@ function createBlueMarker(attraction) {
   marker.on("click", function () {
     setPopUp(marker.attractionData, marker);
     marker.openPopup();
-x  });
+    loadMarkerInfoToSidebar(marker.attractionData);
+ });
 
   return marker;
 }
@@ -92,6 +93,5 @@ function setPopUp(data, marker) {
   // Open the popup when the marker is clicked
   marker.on("click", function () {
     marker.openPopup();
-    loadMarkerInfoToSidebar(marker.attractionData);
     });
 }
