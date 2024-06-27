@@ -129,7 +129,7 @@ function loadMarkerInfoToSidebar(attractionData) {
     <h5 class="card-title">${attractionData.title}</h5>
     <p class="card-text">${attractionData.info}</p>
     <p class="card-text">${attractionData.city}</p>
-    <p class="card-text">${attractionData.category}</p>
+    <p class="card-text">${attractionData.type}</p>
     <p class="card-text">${attractionData.Stars}</p>
     <p class="card-text">${attractionData.recommended_count}</p>
     
