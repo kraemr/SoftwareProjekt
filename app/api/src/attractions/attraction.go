@@ -185,8 +185,6 @@ func GetAttractionsAddedBy(user_id int32) ([]Attraction,error){
 	return getAttractionsFromDb(rows)
 }
 
-
-
 func GetAttractionsUnapprovedCity(city string) ([]Attraction,error){
 	var db *sql.DB = db_utils.DB
 	var attractions []Attraction
@@ -198,6 +196,8 @@ func GetAttractionsUnapprovedCity(city string) ([]Attraction,error){
 	return getAttractionsFromDb(rows)
 }
 
+
+// isnt really used
 func GetAttractionsByPos(posx float32, posy float32) ([]Attraction, error) {
 	var db *sql.DB = db_utils.DB
 	var attractions []Attraction

@@ -24,7 +24,6 @@ func GetRecommendationForUser(id int32,city string,pref_type string) ([]attracti
 		nodata_found = false
 		rows.Scan(&a.Id,&a.Title,&a.Type,&a.Recommended_count,&a.City,&a.Info,&a.Approved,&a.PosX,&a.PosY,&a.Stars)
 		recommended_attractions = append(recommended_attractions, a)
-		fmt.Println(a)
 
 	}	
 	if(nodata_found){
