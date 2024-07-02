@@ -46,7 +46,7 @@
         <h4 class="text-center">Moderator Panel</h4>
         <ul class="nav nav-pills flex-column">
             <li class="nav-item">
-                <a class="nav-link active" id="approve-attractions-tab" onclick="displayPendingAttractions()"
+                <a class="nav-link active" id="approve-attractions-tab" onclick="getAllUnapprovedAttractions()"
                     href="#">Approve Attractions</a>
             </li>
             <li class="nav-item">
@@ -64,15 +64,15 @@
             <h2>Approve Attractions</h2>
             <div id="attractions-list" class="row row-cols-1 row-cols-md-3 g-4">
                 <script>
-                    function loadAllAttractions() {
-                        fetch(document.location.origin + "/api/attractions", {
+                    function getAllUnapprovedAttractions() {
+                        fetch(document.location.origin + "/api/attractions?unapproved", {
                             method: "GET",
                         })
                             .then((response) => {
                                 if (!response.ok) {
                                     throw new Error("Network response was not ok");
                                 }
-                                return response.json();
+                                console.log(response);
                             })
                             .catch((error) => {
                                 console.error("There was a problem with the request:", error);
