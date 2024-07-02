@@ -4,17 +4,18 @@ import "testing"
 
 
 // This should return an error
-TestGetHashedPassword_Empty(t *testing.T){
+func TestGetHashedPassword_Empty(t *testing.T){
 	str := ""
 	b64hash,err := crypto_utils.GetHashedPassword(str)
 	if(err == nil){
 		t.Fatalf("GetHashedPassword() Empty Password did not fail !: %v", err)
 	}
+	_ = b64hash
 }
 
 
 // This should not return an error
-TestGetHashedPassword(t *testing.T){
+func TestGetHashedPassword(t *testing.T){
 	str := "test1234"
 	b64hash,err := crypto_utils.GetHashedPassword(str)
 	_ = b64hash
@@ -24,7 +25,7 @@ TestGetHashedPassword(t *testing.T){
 }
 
 // This should not return an error
-TestGetHashedPassword_Large(t *testing.T){
+func TestGetHashedPassword_Large(t *testing.T){
 	// Str is bigger than 64 which should throw an error
 	str := "7cwsrd63QIAXGlZorJzNdIeBuB4ClWLC2NUotWGhtEn3fhE8WUEmEWrvavj4mj0qN"
 	b64hash,err := crypto_utils.GetHashedPassword(str)
@@ -34,7 +35,7 @@ TestGetHashedPassword_Large(t *testing.T){
 	_ = b64hash
 }
 
-TestCheckPasswordCorrect_Correct(t *testing.T){
+func TestCheckPasswordCorrect_Correct(t *testing.T){
 	str := "test1234"
 	b64hash,err := crypto_utils.GetHashedPassword(str)
 	if(err != nil){
@@ -51,7 +52,7 @@ TestCheckPasswordCorrect_Correct(t *testing.T){
 }
 
 
-TestCheckPasswordCorrect_Wrong(t *testing.T){
+func TestCheckPasswordCorrect_Wrong(t *testing.T){
 	str := "test1234"
 	b64hash,err := crypto_utils.GetHashedPassword(str)
 	if(err != nil){
