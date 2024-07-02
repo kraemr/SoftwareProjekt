@@ -5,40 +5,48 @@ import (
 	"fmt"
 	"src/db_utils"
 )
+
 type User struct {
-	UserId   int64
-	Email    string `json:email`
-	Password string  `json:password`
-	City     string `json:city`
-	Username string `json:username`
+	UserId    int64
+	Email     string `json:email`
+	Password  string `json:password`
+	City      string `json:city`
+	Username  string `json:username`
 	Activated string `json:activated`
 }
 type UserLoginInfo struct {
 	Email    string `json:email`
 	Password string `json:password`
 }
+
 var ErrNoUser = fmt.Errorf("No User Found")
 
-func GetUsersByCityAndBanned(city string) ([]User,error){
+func GetUsersByCityAndBanned(city string) ([]User, error) {
 	var db *sql.DB = db_utils.DB
-	var user User
 	var users []User
-	rows, err := db.Query("SELECT city from USER WHERE city=? and activated = FALSE LIMIT 1", city)
+
+	query := "SELECT UserId, Email, Password, City, Username, Activated FROM USER WHERE city=? AND activated='FALSE'"
+	rows, err := db.Query(query, city)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
-	nodata_found := true
-	for rows.Next(){
-		nodata_found = false
-		rows.Scan(&user.UserId, &user.Email, &user.Password, &user.City, &user.Username,&user.Activated)
-		users = append(users,user)
+	defer rows.Close()
+
+	var found bool
+	for rows.Next() {
+		var user User
+		err := rows.Scan(&user.UserId, &user.Email, &user.Password, &user.City, &user.Username, &user.Activated)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+		found = true
 	}
-	
-	if(nodata_found){
-		return users,nil
-	}else{
-		return nil,ErrNoUser
+
+	if !found {
+		return nil, ErrNoUser
 	}
+	return users, nil
 }
 
 func GetUserCityById(id int32) (string, error) {
@@ -62,8 +70,6 @@ func GetUserCityById(id int32) (string, error) {
 	}
 }
 
-
-// ???????? Chris wtf XD
 func GetUserByEmail(email string) (User, error) {
 	var db *sql.DB = db_utils.DB
 	rows, err := db.Query("SELECT id from USER WHERE email=? LIMIT 1", email)
@@ -137,10 +143,20 @@ func GetUserByID(userId int64) (User, error) {
 func DeleteUser(userId int64) error {
 	var db *sql.DB = db_utils.DB
 	query := "DELETE FROM USER WHERE id=?"
-	_, err := db.Exec(query, userId)
+	result, err := db.Exec(query, userId)
 	if err != nil {
 		return err
 	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return ErrNoUser // Make sure ErrNoUser is properly defined in your package
+	}
+
 	return nil
 }
 
@@ -148,10 +164,21 @@ func DeleteUser(userId int64) error {
 func UpdateUser(newInfo User) error {
 	var db *sql.DB = db_utils.DB
 	query := "UPDATE USER SET email=?, password=?, city=?, username=? WHERE id=?"
-	_, err := db.Exec(query, newInfo.Email, newInfo.Password, newInfo.City, newInfo.Username, newInfo.UserId)
+	result, err := db.Exec(query, newInfo.Email, newInfo.Password, newInfo.City, newInfo.Username, newInfo.UserId)
 	if err != nil {
 		return err
 	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return ErrNoUser // Make sure ErrNoUser is properly defined in your package
+	}
+
+	// Update was successful
 	return nil
 }
 

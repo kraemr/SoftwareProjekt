@@ -70,13 +70,13 @@ func loginUser(res http.ResponseWriter, req *http.Request) {
 
 var categories [7]string
 
-func handleCategories(res http.ResponseWriter, req *http.Request){
-	json_bytes,json_err := json.Marshal(categories)
-	if(json_err != nil){
-		fmt.Fprintf(res,"{\"success\":false}")
+func handleCategories(res http.ResponseWriter, req *http.Request) {
+	json_bytes, json_err := json.Marshal(categories)
+	if json_err != nil {
+		fmt.Fprintf(res, "{\"success\":false}")
 	}
 	output := string(json_bytes)
-	fmt.Fprintf(res,output)
+	fmt.Fprintf(res, output)
 }
 
 func loginModerator(res http.ResponseWriter, req *http.Request) {
@@ -104,7 +104,6 @@ func loginModerator(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
-
 func startServer(port string) {
 	fmt.Println("Http Server is running on port: " + port)
 	err := http.ListenAndServe(":"+port, nil)
@@ -121,18 +120,15 @@ func main() {
 		// run tests
 	}
 	publicDir := "/opt/app/public"
-	categories = [...]string{"Monument","Castle","Cathedral","Palace","Museum","Mountain","Park"}
-
-
+	categories = [...]string{"Monument", "Castle", "Cathedral", "Palace", "Museum", "Mountain", "Park"}
 
 	http.HandleFunc("/api/login", loginUser)
 	http.HandleFunc("/api/logged_in", checkUserLoggedIn)
-	http.HandleFunc("/api/login_moderator",loginModerator)
+	http.HandleFunc("/api/login_moderator", loginModerator)
 
-	http.HandleFunc("/api/ban",moderator.BanUser)
-	http.HandleFunc("/api/banned",moderator.GetBannedUsers)
-	http.HandleFunc("/api/categories",handleCategories)
-
+	http.HandleFunc("/api/ban", moderator.BanUser)
+	http.HandleFunc("/api/banned", moderator.GetBannedUsers)
+	http.HandleFunc("/api/categories", handleCategories)
 
 	// ########### Rest apis #############
 	http.HandleFunc("/api/attractions", attractions.HandleAttractionsREST)
@@ -150,6 +146,6 @@ func main() {
 
 	//_,_ = recommendations.GetRecommendationForUser(100,"Berlin","Landmark");
 
-	startServer("8000") // keeps running i.e blocks execution
 	testPublicTransport()
+	startServer("8000") // keeps running i.e blocks execution
 }

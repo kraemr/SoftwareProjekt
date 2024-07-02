@@ -18,6 +18,7 @@ type Moderator struct {
 	Username       string
 }
 var ErrNoModerator = fmt.Errorf("No Moderators Found")
+
 func GetModeratorById(id int64) (Moderator, error) {
 	var db *sql.DB = db_utils.DB
 	sql := "Select * from CITY_MODERATOR where id = ?"

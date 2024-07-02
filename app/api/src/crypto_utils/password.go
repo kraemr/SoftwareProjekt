@@ -12,6 +12,8 @@ import (
 var (
     ErrInvalidHash         = errors.New("the encoded hash is not in the correct format")
     ErrIncompatibleVersion = errors.New("incompatible version of argon2")
+    ErrInvalidPassword         = errors.New("the Password is empty or has invalid characters")
+
 )
 
 type params struct{
@@ -33,9 +35,11 @@ type hash struct {
 }
 
 
+
+
+
 func decodeHash(encodedHash string) (p *params, salt, hash []byte, err error) {
     vals := strings.Split(encodedHash, "$")
-	fmt.Println(vals)
     if len(vals) != 6 {
         return nil, nil, nil, ErrInvalidHash
     }
@@ -86,7 +90,11 @@ func formatBase64Argon2(hash []byte,salt []byte) string{
 }
 
 func getHashedPasswordWithParams(password string,argon2Params params) (string,error){
-	salt, err := generateSalt(saltLength)
+    if( len(password) == 0 || len(password) > 64){
+        return "",ErrInvalidPassword
+    }
+    
+    salt, err := generateSalt(saltLength)
     if err != nil {
         return "", err
     }
@@ -98,6 +106,9 @@ func getHashedPasswordWithParams(password string,argon2Params params) (string,er
 // returns hashed Password in base64
 // uses defaults defined here
 func GetHashedPassword(password string) (string,error) {
+    if( len(password) == 0 || len(password) > 64){
+        return "",ErrInvalidPassword
+    }
     salt, err := generateSalt(saltLength)
     if err != nil {
         return "", err
@@ -117,7 +128,6 @@ func CheckPasswordCorrect(password string, hashedPassword string) (bool,error){
     }
 	otherHash := argon2.IDKey([]byte(password), salt, p.iterations, p.memory, p.parallelism, p.keyLength)
 	if subtle.ConstantTimeCompare(hash, otherHash) == 1 {
-		// passwords match return true
 		return true, nil
     }
 	return false, nil
