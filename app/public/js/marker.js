@@ -36,10 +36,7 @@ function placeMarkers(data) {
       <div>
         <strong>City: </strong> ${data.city}<br>
         <strong>Title: </strong> ${data.title}<br>
-        <strong>ID: </strong> ${data.Id}<br>
         <strong>Type: </strong> ${data.type}<br>
-        <strong>Position X: </strong> ${data.posX}<br>
-        <strong>Position Y: </strong> ${data.posY}<br>
         <strong>Info: </strong> ${data.info}<br>
         <strong>Stars: </strong> ${data.Stars}&#11088;<br>
         <strong>Recommended Count: </strong> ${data.recommended_count}
