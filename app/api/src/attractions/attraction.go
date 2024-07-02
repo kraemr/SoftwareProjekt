@@ -6,6 +6,7 @@ import (
 	"src/reviews"
 	"fmt"
 )
+
 type Attraction struct{
 	Id   			  int64	    `json:id`
 	Title 			  string    `json:"title"`
@@ -20,15 +21,18 @@ type Attraction struct{
 	PosY 			  float32   `json:"posY"`
 	Stars			  float32   `json:stars`
 	Img_url			  string    `json:img_url`
-	Added_by		  string    `json:added_by`
+	Added_by		  int32    `json:added_by`
 	Reviews			  []reviews.Review  `json:reviews`
 }
+
 type Filter struct{
 	Filter_on string		`json:"filter_on"`
 	Filter_by string		`json:"filter_by"`
 	Filter_value string		`json:"filter_value"`
 }
+
 var ErrNoAttraction = fmt.Errorf("No Attractions Found")
+var ErrNotModerator = fmt.Errorf("Not a Moderator")
 
 func getAttractionsFromDb(rows *sql.Rows)  ([]Attraction,error){
 	var attr_list []Attraction
@@ -120,13 +124,11 @@ func ChangeAttractionApproval(approved bool,id int64) error{
 		return err
 	}
 	return nil
-
 }
 
 func GetAttraction(id int) (Attraction,error){
 	var db *sql.DB = db_utils.DB
 	row, err := db.Query("SELECT id,title,type,recommended_count,city,street,housenumber,info,approved,PosX,PosY,stars,img_url,added_by FROM ATTRACTION_ENTRY WHERE id = ? and approved=TRUE", id)
-	
 	if(err != nil){
 		return Attraction{},err
 	}
@@ -163,13 +165,26 @@ func GetRecommendationForUser(id int32,city string,pref_type string) ([]Attracti
 func GetAttractions() ([]Attraction,error){
 	var db *sql.DB = db_utils.DB
 	var attractions []Attraction
-	rows, err := db.Query("SELECT * FROM ATTRACTION_ENTRY and approved=TRUE")
+	rows, err := db.Query("SELECT * FROM ATTRACTION_ENTRY where approved=TRUE")
 	if(err != nil){
 		return attractions,err
 	}
 	defer rows.Close()
 	return getAttractionsFromDb(rows)
 }
+
+func GetAttractionsAddedBy(user_id int32) ([]Attraction,error){
+	var db *sql.DB = db_utils.DB
+	var attractions []Attraction
+	rows, err := db.Query("SELECT * FROM ATTRACTION_ENTRY Where added_by = ?",user_id)
+	if(err != nil){
+		return attractions,err
+	}
+	defer rows.Close()
+	return getAttractionsFromDb(rows)
+}
+
+
 
 func GetAttractionsUnapprovedCity(city string) ([]Attraction,error){
 	var db *sql.DB = db_utils.DB

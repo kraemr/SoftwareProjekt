@@ -1,4 +1,5 @@
 package reviews;
+
 import(
 	"fmt"
 	"net/http"
@@ -34,7 +35,6 @@ func put(req *http.Request) (string,error){
 	err := decoder.Decode(&review)
 	if(err != nil){
 		return "{\"success\":false}",err
-
 	}
 	err = UpdateReview(review)
 	if(err != nil){

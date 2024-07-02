@@ -1,4 +1,5 @@
 package recommendations;
+
 import(
 	"src/attractions"
 	"fmt"
@@ -6,22 +7,7 @@ import(
 	"database/sql"
 )
 
-/*
-If you name a variable equal to the name 
-of a package, then the variable will work,
-but the next call for something in the package will fail :)
-good to know i guess
-
-
-
-
-Good start but well have to consider favorites as well i guess
-*/
-
-
-
 var ErrNoRecommendation = fmt.Errorf("No Recommendations Found")
-
 func GetRecommendationForUser(id int32,city string,pref_type string) ([]attractions.Attraction,error){
 	var db *sql.DB = db_utils.DB
 	var recommended_attractions []attractions.Attraction 

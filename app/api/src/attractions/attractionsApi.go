@@ -5,42 +5,107 @@ import(
 	"strconv"
 	"encoding/json"
 	"src/sessions"
+	"src/moderator"
 )
-
 
 // delete attraction
 func delete(req *http.Request) (string,error){
+
+
+	id := req.URL.Query().Get("id")
+	convertedID,err := strconv.ParseInt(id, 10, 64)
+	a1,err1 := GetAttraction(int(convertedID))
+	if(err1 != nil){
+		return "{\"success\":false}",nil
+	}
+
+	if(err != nil){
+		return "{\"success\":false}",err
+	}
+
+	if(sessions.CheckModeratorLoggedIn(req)){
+		mod,err := moderator.GetModeratorById(convertedID)
+		if(err != nil){
+			return "{\"success\":false,\"info\":\"Not Logged in\"}",err 
+		}
+
+		if(a1.City == mod.City){
+			err = RemoveAttraction(convertedID)
+			return "{\"success\":true}",nil
+		}
+	}
+
 	if(!sessions.CheckLoggedIn(req)) {
 		return "{\"success\":false,\"info\":\"Not Logged in\"}",nil
 	}
-	id := req.URL.Query().Get("id")
-	convertedID,err := strconv.ParseInt(id, 10, 64)
+	userid := sessions.GetLoggedInUserId(req)
+	
+	if(a1.Added_by != userid){
+		return "{\"success\":false}",nil
+	}
+
 	err = RemoveAttraction(convertedID)
 	return "{\"success\":true}",err
 }
 
-// update existing attraction, check if logged in 
+// update existing attraction, check if logged in and added_by id is the users
 func put(req *http.Request) (string,error){
-	if(!sessions.CheckLoggedIn(req)) {
-		return "{\"success\":false,\"info\":\"Not Logged in\"}",nil
-	}
 	var attraction Attraction
 	decoder := json.NewDecoder(req.Body)
 	err := decoder.Decode(&attraction)
 	if(err != nil){
 		return "{\"success\":false}",err
-
 	}
-	err = UpdateAttraction(attraction)
-	if(err != nil){
-		return "{\"success\":false}",err
 
+	if(sessions.CheckModeratorLoggedIn(req)){
+		id := sessions.GetLoggedInUserId(req)
+		
+		mod,err := moderator.GetModeratorById(int64(id))
+		if(err != nil){
+			return "{\"success\":false,\"info\":\"Not Logged in\"}",err 
+		}
+		
+		a,err1 := GetAttraction(int(attraction.Id))
+		if(err1 != nil){
+			return "{\"success\":false}",err 
+		}
+
+		if(mod.City != a.City){
+			return "{\"success\":false}",nil 
+		}
+
+		err = UpdateAttraction(attraction)
+		if(err != nil){
+			return "{\"success\":false}",err
+		}
 	}
-	return "{\"success\":true}",nil
+
+	if(!sessions.CheckLoggedIn(req)) {
+		return "{\"success\":false,\"info\":\"Not Logged in\"}",nil
+	}
+	userid := sessions.GetLoggedInUserId(req)
+	a1,err1 := GetAttraction(int(attraction.Id))
+	if(err1 != nil){
+		return "{\"success\":false}",err1
+	}
+
+	if(a1.Added_by != userid){
+		return "{\"success\":false}",nil
+	}
+
+	if( err == nil ){
+		err = UpdateAttraction(attraction)
+		if(err != nil){
+			return "{\"success\":false}",err
+		}
+		return "{\"success\":true}",nil
+	}
+	return "{\"success\":false}",nil
+
 }
 
 // add attraction
-// check if logged in
+// check if logged in, attraction will not be approved, moderator must look at it first
 func post(req *http.Request) (string,error){
 	if(!sessions.CheckLoggedIn(req)) {
 		return "{\"success\":false,\"info\":\"Not Logged in\"}",nil

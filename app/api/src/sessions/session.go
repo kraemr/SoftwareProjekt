@@ -84,6 +84,33 @@ func CheckLoggedIn(r *http.Request) bool {
 }
 
 
+
+func CheckModeratorLoggedIn(r *http.Request) bool {
+	session, err := store.Get(r, "sessionid")
+	if(err != nil){
+		return false
+	}
+
+	if logged_in, ok := session.Values["logged_in"].(bool); !ok {
+		fmt.Println("session was nil or unexpected type")
+		_ = logged_in
+		return false
+	}
+	logged_in_state := false
+	
+	if logged_in, ok := session.Values["logged_in"].(bool); ok{
+		logged_in_state = logged_in
+	}
+
+	if is_moderator, ok := session.Values["moderator"].(bool); ok{
+		return is_moderator && logged_in_state
+	}
+
+	return false
+}
+
+
+
 func CheckModeratorAccessToCity(r *http.Request	, _city string) bool{
 	session, err := store.Get(r, "sessionid")
 	if(err != nil){
