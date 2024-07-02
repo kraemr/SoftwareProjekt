@@ -1,168 +1,67 @@
 package tests
 
 import (
-	"database/sql"
-	"fmt"
 	"src/db_utils"
+	"src/users"
+	"testing"
+
+	"github.com/DATA-DOG/go-sqlmock"
 )
 
-type User struct {
-	UserId    int64
-	Email     string `json:email`
-	Password  string `json:password`
-	City      string `json:city`
-	Username  string `json:username`
-	Activated string `json:activated`
-	Banned    string `json:banned`
-}
-type UserLoginInfo struct {
-	Email    string `json:email`
-	Password string `json:password`
-}
-
-var ErrNoUser = fmt.Errorf("No User Found")
-
-func GetUsersByCityAndBanned(city string) ([]User, error) {
-	var db *sql.DB = db_utils.DB
-	var user User
-	var users []User
-	rows, err := db.Query("SELECT city from USER WHERE city=? and activated = FALSE LIMIT 1", city)
+func TestCreateUser(t *testing.T) {
+	db, mock, err := sqlmock.New()
 	if err != nil {
-		return nil, err
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
-	nodata_found := true
-	for rows.Next() {
-		nodata_found = false
-		rows.Scan(&user.UserId, &user.Email, &user.Password, &user.City, &user.Username, &user.Activated)
-		users = append(users, user)
+	defer db.Close()
+
+	db_utils.DB = db
+
+	mock.ExpectExec("INSERT INTO USER \\(email, password, city, username\\)").
+		WithArgs("test@example.com", "password123", "TestCity", "testUser").
+		WillReturnResult(sqlmock.NewResult(1, 1))
+
+	user := users.User{Email: "test@example.com", Password: "password123", City: "TestCity", Username: "testUser"}
+	if err := users.CreateUser(user); err != nil {
+		t.Errorf("error was not expected while creating user: %s", err)
 	}
 
-	if nodata_found {
-		return users, nil
-	} else {
-		return nil, ErrNoUser
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
 	}
 }
 
-func GetUserCityById(id int32) (string, error) {
-	var db *sql.DB = db_utils.DB
-	rows, err := db.Query("SELECT city from USER WHERE id=? LIMIT 1", id)
+func TestGetUserByEmail(t *testing.T) {
+	db, mock, err := sqlmock.New()
 	if err != nil {
-		return "", err
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
-	defer rows.Close()
-	var city string
-	city = ""
+	defer db.Close()
 
-	for rows.Next() {
-		rows.Scan(&city)
-	}
+	db_utils.DB = db
 
-	if city == "" {
-		return "", ErrNoUser
-	} else {
-		return city, nil
-	}
-}
+	rows := sqlmock.NewRows([]string{"id", "email", "password", "city", "username"}).
+		AddRow(1, "test@example.com", "password123", "TestCity", "testUser")
 
-func GetUserByEmail(email string) (User, error) {
-	var db *sql.DB = db_utils.DB
-	rows, err := db.Query("SELECT id from USER WHERE email=? LIMIT 1", email)
+	mock.ExpectQuery("SELECT id from USER WHERE email=\\? LIMIT 1").
+		WithArgs("test@example.com").
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(1))
+
+	mock.ExpectQuery("SELECT id, email, password, city, username from USER WHERE id=\\? LIMIT 1").
+		WithArgs(1).
+		WillReturnRows(rows)
+
+	user, err := users.GetUserByEmail("test@example.com")
 	if err != nil {
-		return User{}, err
-	}
-	defer rows.Close()
-	var id int32
-	id = 0
-
-	for rows.Next() {
-		rows.Scan(&id)
+		t.Errorf("error was not expected while fetching user: %s", err)
 	}
 
-	if id == 0 {
-		return User{}, ErrNoUser
-	} else {
-		rows, err := db.Query("SELECT id, email, password, city, username from USER WHERE id=? LIMIT 1", id)
-		if err != nil {
-			return User{}, err
-		}
-		defer rows.Close()
-		var user User
-		user.UserId = int64(id)
-		for rows.Next() {
-			rows.Scan(&user.UserId, &user.Email, &user.Password, &user.City, &user.Username)
-		}
-		return user, nil
-	}
-}
-
-func GetUserIdByEmail(email string) (int32, error) {
-	var db *sql.DB = db_utils.DB
-	rows, err := db.Query("SELECT id from USER WHERE email=? LIMIT 1", email)
-	if err != nil {
-		return 0, err
-	}
-	defer rows.Close()
-	var id int32
-	id = 0
-
-	for rows.Next() {
-		rows.Scan(&id)
+	expected := users.User{UserId: 1, Email: "test@example.com", Password: "password123", City: "TestCity", Username: "testUser"}
+	if user != expected {
+		t.Errorf("expected %v, got %v", expected, user)
 	}
 
-	if id == 0 {
-		return 0, ErrNoUser
-	} else {
-		return id, nil
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
 	}
-}
-
-// get user by id (assuming function needed)
-func GetUserByID(userId int64) (User, error) {
-	var db *sql.DB = db_utils.DB
-	query := "SELECT id, email, password, city, username FROM USER WHERE id=? LIMIT 1"
-	row := db.QueryRow(query, userId)
-
-	var user User
-	err := row.Scan(&user.UserId, &user.Email, &user.Password, &user.City, &user.Username)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return user, ErrNoUser
-		}
-		return user, err
-	}
-	return user, nil
-}
-
-// delete a user
-func DeleteUser(userId int64) error {
-	var db *sql.DB = db_utils.DB
-	query := "DELETE FROM USER WHERE id=?"
-	_, err := db.Exec(query, userId)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-// update user information
-func UpdateUser(newInfo User) error {
-	var db *sql.DB = db_utils.DB
-	query := "UPDATE USER SET email=?, password=?, city=?, username=? WHERE id=?"
-	_, err := db.Exec(query, newInfo.Email, newInfo.Password, newInfo.City, newInfo.Username, newInfo.UserId)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-// create a new user
-func CreateUser(user User) error {
-	var db *sql.DB = db_utils.DB
-	query := "INSERT INTO USER (email, password, city, username) VALUES (?, ?, ?, ?)"
-	_, err := db.Exec(query, user.Email, user.Password, user.City, user.Username)
-	if err != nil {
-		return err
-	}
-	return nil
 }

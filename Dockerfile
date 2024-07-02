@@ -16,6 +16,7 @@ RUN go get github.com/go-sql-driver/mysql
 RUN go get github.com/gorilla/sessions
 RUN go get golang.org/x/crypto/argon2
 RUN go get github.com/gorilla/websocket
+RUN go get github.com/DATA-DOG/go-sqlmock
 RUN go build -o ../build/api main.go
 # BUILD
 
