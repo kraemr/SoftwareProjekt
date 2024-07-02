@@ -8,6 +8,7 @@ import(
 )
 
 var ErrNoRecommendation = fmt.Errorf("No Recommendations Found")
+
 func GetRecommendationForUser(id int32,city string,pref_type string) ([]attractions.Attraction,error){
 	var db *sql.DB = db_utils.DB
 	var recommended_attractions []attractions.Attraction 

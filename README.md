@@ -78,3 +78,15 @@ In Docker-Compose Output werden Print statements ohne newline nicht angezeigt!!!
 # Testing Websocket Locally
 
 In firefox you need to add an exception in certificates for localhost
+
+# Testing:
+
+**Important** When changing the test files, the Docker must always be re-composed!
+
+```bash
+docker exec -it softwareprojekt-webserver-1 bash
+
+cd tests/
+
+go test -v 
+```
