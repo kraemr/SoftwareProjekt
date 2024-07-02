@@ -136,11 +136,11 @@ function loadMarkerInfoToSidebar(attractionData) {
     <a href="#" class="btn btn-primary">Route Planen</a>
     <div class="review-section">
       <h6>Leave a Review:</h6>
-      <div class="star-rating">
-        ${[1, 2, 3, 4, 5].map(star => `
-          <span class="star" data-value="${star}">&#9733;</span>
-        `).join('')}
-      </div>
+  <div class="star-rating">
+      ${[1, 2, 3, 4, 5].map(star => `
+        <span class="star" data-value="${star}">&#9733;</span>
+      `).join('')}
+    </div>
       <textarea class="form-control mt-2" placeholder="Write your review here..."></textarea>
       <button class="btn btn-secondary mt-2">Submit Review</button>
     </div>
@@ -166,6 +166,13 @@ function loadMarkerInfoToSidebar(attractionData) {
         star.addEventListener("click", function () {
             const rating = this.getAttribute("data-value");
             console.log(`User rated: ${rating} stars`);
+            // Update star filling based on rating
+            document.querySelectorAll(".star-rating .star").forEach(s => {
+                s.classList.remove('filled');
+                if (s.getAttribute("data-value") <= rating) {
+                    s.classList.add('filled');
+                }
+            });
             // Optionally, submit the rating (this would typically involve an API call)
         });
     });
@@ -182,4 +189,10 @@ function loadCarouselImages() {
             <img src="${img.src}" class="d-block object-fit-cover carousel-images w-100" alt="${img.alt}">
         </div>
     `).join('');
+}
+function hideSidebarContent() {
+    const selectedAttractionsInfo = document.getElementById("selectedAttractionsInformation");
+    const noAttractionSelected = document.getElementById("NoAttractionSelected");
+    selectedAttractionsInfo.style.display = "none";
+    noAttractionSelected.style.display = "block";
 }
