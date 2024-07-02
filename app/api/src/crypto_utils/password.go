@@ -106,6 +106,9 @@ func getHashedPasswordWithParams(password string,argon2Params params) (string,er
 // returns hashed Password in base64
 // uses defaults defined here
 func GetHashedPassword(password string) (string,error) {
+    if( len(password) == 0 || len(password) > 64){
+        return "",ErrInvalidPassword
+    }
     salt, err := generateSalt(saltLength)
     if err != nil {
         return "", err

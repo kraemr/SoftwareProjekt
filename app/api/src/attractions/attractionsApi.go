@@ -6,13 +6,14 @@ import (
 	"net/http"
 	"src/sessions"
 	"src/moderator"
+	"strconv"
 )
 
 // delete attraction
 func delete(req *http.Request) (string,error){
 	id := req.URL.Query().Get("id")
 	convertedID,err := strconv.ParseInt(id, 10, 64)
-	a1,err1 := GetAttraction(int(convertedID))
+	a1,err1 := GetAttraction(convertedID)
 	if(err1 != nil){
 		return "{\"success\":false}",nil
 	}
@@ -63,7 +64,7 @@ func put(req *http.Request) (string,error){
 			return "{\"success\":false,\"info\":\"Not Logged in\"}",err 
 		}
 		
-		a,err1 := GetAttraction(int(attraction.Id))
+		a,err1 := GetAttraction(attraction.Id)
 		if(err1 != nil){
 			return "{\"success\":false}",err 
 		}
@@ -77,13 +78,12 @@ func put(req *http.Request) (string,error){
 			return "{\"success\":false}",err
 		}
 	}
-<<<<<<< HEAD
 
 	if(!sessions.CheckLoggedIn(req)) {
 		return "{\"success\":false,\"info\":\"Not Logged in\"}",nil
 	}
 	userid := sessions.GetLoggedInUserId(req)
-	a1,err1 := GetAttraction(int(attraction.Id))
+	a1,err1 := GetAttraction(attraction.Id)
 	if(err1 != nil){
 		return "{\"success\":false}",err1
 	}
@@ -108,16 +108,6 @@ func put(req *http.Request) (string,error){
 func post(req *http.Request) (string,error){
 	if(!sessions.CheckLoggedIn(req)) {
 		return "{\"success\":false,\"info\":\"Not Logged in\"}",nil
-=======
-	return "{\"success\":true}", nil
-}
-
-// add attraction
-// check if logged in
-func post(req *http.Request) (string, error) {
-	if !sessions.CheckLoggedIn(req) {
-		return "{\"success\":false,\"info\":\"Not Logged in\"}", nil
->>>>>>> 6243376aa92208686ec8c6b720b1b82763f261b4
 	}
 	var attraction Attraction
 	decoder := json.NewDecoder(req.Body)

@@ -8,7 +8,6 @@ import (
 	"src/reviews"
 )
 
-<<<<<<< HEAD
 type Attraction struct{
 	Id   			  int64	    `json:id`
 	Title 			  string    `json:"title"`
@@ -31,29 +30,6 @@ type Filter struct{
 	Filter_on string		`json:"filter_on"`
 	Filter_by string		`json:"filter_by"`
 	Filter_value string		`json:"filter_value"`
-=======
-type Attraction struct {
-	Id                int64            `json:id`
-	Title             string           `json:"title"`
-	Type              string           `json:"type"`
-	Recommended_count int              `json:"recommended_count"`
-	City              string           `json:"city"`
-	Street            string           `json:street`
-	Housenumber       string           `json:housenumber`
-	Info              string           `json:"info"`
-	Approved          bool             `json:approved`
-	PosX              float32          `json:"posX"`
-	PosY              float32          `json:"posY"`
-	Stars             float32          `json:stars`
-	Img_url           string           `json:img_url`
-	Added_by          int64            `json:added_by`
-	Reviews           []reviews.Review `json:reviews`
-}
-type Filter struct {
-	Filter_on    string `json:"filter_on"`
-	Filter_by    string `json:"filter_by"`
-	Filter_value string `json:"filter_value"`
->>>>>>> 6243376aa92208686ec8c6b720b1b82763f261b4
 }
 
 var ErrNoAttraction = fmt.Errorf("No Attractions Found")
@@ -153,14 +129,8 @@ func ChangeAttractionApproval(approved bool, id int64) error {
 func GetAttraction(id int64) (Attraction, error) {
 	var db *sql.DB = db_utils.DB
 	row, err := db.Query("SELECT id,title,type,recommended_count,city,street,housenumber,info,approved,PosX,PosY,stars,img_url,added_by FROM ATTRACTION_ENTRY WHERE id = ? and approved=TRUE", id)
-<<<<<<< HEAD
 	if(err != nil){
 		return Attraction{},err
-=======
-
-	if err != nil {
-		return Attraction{}, err
->>>>>>> 6243376aa92208686ec8c6b720b1b82763f261b4
 	}
 	defer row.Close()
 	var a Attraction
@@ -196,21 +166,14 @@ func GetRecommendationForUser(id int32, city string, pref_type string) ([]Attrac
 func GetAttractions() ([]Attraction, error) {
 	var db *sql.DB = db_utils.DB
 	var attractions []Attraction
-<<<<<<< HEAD
 	rows, err := db.Query("SELECT * FROM ATTRACTION_ENTRY where approved=TRUE")
 	if(err != nil){
 		return attractions,err
-=======
-	rows, err := db.Query("SELECT * FROM ATTRACTION_ENTRY and approved=TRUE")
-	if err != nil {
-		return attractions, err
->>>>>>> 6243376aa92208686ec8c6b720b1b82763f261b4
 	}
 	defer rows.Close()
 	return getAttractionsFromDb(rows)
 }
 
-<<<<<<< HEAD
 func GetAttractionsAddedBy(user_id int32) ([]Attraction,error){
 	var db *sql.DB = db_utils.DB
 	var attractions []Attraction
@@ -225,9 +188,6 @@ func GetAttractionsAddedBy(user_id int32) ([]Attraction,error){
 
 
 func GetAttractionsUnapprovedCity(city string) ([]Attraction,error){
-=======
-func GetAttractionsUnapprovedCity(city string) ([]Attraction, error) {
->>>>>>> 6243376aa92208686ec8c6b720b1b82763f261b4
 	var db *sql.DB = db_utils.DB
 	var attractions []Attraction
 	rows, err := db.Query("SELECT * FROM ATTRACTION_ENTRY WHERE city = ? and approved=FALSE", city)
