@@ -4,7 +4,6 @@ import (
 	"src/db_utils"
 	"src/users"
 	"testing"
-
 	"github.com/DATA-DOG/go-sqlmock"
 )
 
