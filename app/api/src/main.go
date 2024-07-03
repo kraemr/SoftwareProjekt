@@ -12,7 +12,7 @@ import (
 	_ "time"
 )
 
-var categories [7]string
+var categories [8]string
 
 func handleCategories(res http.ResponseWriter, req *http.Request) {
 	json_bytes, json_err := json.Marshal(categories)
@@ -39,7 +39,7 @@ func main() {
 		// run tests
 	}
 	publicDir := "/opt/app/public"
-	categories = [...]string{"Monument", "Castle", "Cathedral", "Palace", "Museum", "Mountain", "Park"}
+	categories = [...]string{"Historical", "Museum", "Nature", "Culture", "Zoo", "Shopping", "Observation", "Other"}
 
 	http.HandleFunc("/api/login", apis.LoginUser)
 	http.HandleFunc("/api/logged_in", apis.CheckUserLoggedIn)
