@@ -29,10 +29,16 @@ function isLoggedIn(){
         method: "GET",
     })
     .then((response) => {
+        console.log(response);
         if (!response.ok) {
             throw new Error("Network response was not ok");
         }
-        return response.status === 200;
+        if (response.ok == true) {
+            return true;
+        } else 
+        {
+            return false;
+        }
     })
     .catch((error) => {
         console.error("Error checking login status:", error);

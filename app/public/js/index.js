@@ -10,7 +10,7 @@ function loadUserSettings() {
             <span class="user-settings-button w-100" onclick="OpenFavourites()">Favourites</span>
         </div>
         <div class="col-12">
-            <span class="user-settings-button w-100" onclick="OpenLogout()">Sign out</span>
+            <span class="user-settings-button w-100" onclick="logoutBtnClick()">Sign out</span>
         </div>
     `;
         } else {
@@ -25,36 +25,42 @@ function loadUserSettings() {
         }
     });
 }
+
 function OpenProfile() {
     window.location.href = "your_Profile.html";
 }
 function OpenFavourites() {
     hideSidebarContent();
-    var apiUrl = document.location.origin + '/api/faourites';
+    var apiUrl = document.location.origin + '/api/favorites';
     fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
+            const sidebarContent = document.getElementById("showFavourites");
             console.log(data);
-            document.getElementById('sidebar-content').innerHTML = `
-        <div class="col-12">
-            <h4 class="mb-3">Favourites</h4>
-        </div>
-        ${data.map(favourite => `
-            <div class="col-12">
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">${favourite.title}</h5>
-                        <p class="card-text">${favourite.info}</p>
-                        <p class="card-text">${favourite.city}</p>
-                        <p class="card-text">${favourite.type}</p>
-                        <p class="card-text">${favourite.Stars}</p>
-                        <p class="card-text">${favourite.recommended_count}</p>
-                    </div>
-                </div>
-            </div>
-        `).join('')}
-    `;
-        }
-        );
+            data.forEach(favorite => {
+                const card = document.createElement("div");
+                card.className = "card mb-2";
+                
+                const cardBody = document.createElement("div");
+                cardBody.className = "card-body";
+                
+                const cardTitle = document.createElement("h5");
+                cardTitle.className = "card-title";
+                cardTitle.innerHTML = favorite.name;
+                
+                const cardText = document.createElement("p");
+                cardText.className = "card-text";
+                cardText.innerHTML = favorite.description;
+                
+                cardBody.appendChild(cardTitle);
+                cardBody.appendChild(cardText);
+                card.appendChild(cardBody);
+                sidebarContent.appendChild(card);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching favorites:', error);
+        });
 }
+
 
