@@ -127,14 +127,14 @@ function addAttraction() {
     cancelButton.style.cursor = 'pointer';
 
     // Append form elements to form container
+    formContainer.appendChild(titleLabel);
+    formContainer.appendChild(titleInput);
     formContainer.appendChild(cityLabel);
     formContainer.appendChild(cityInput);
     formContainer.appendChild(addressLabel);
     formContainer.appendChild(addressInput);
     formContainer.appendChild(houseNumber);
     formContainer.appendChild(houseNumberInput);
-    formContainer.appendChild(titleLabel);
-    formContainer.appendChild(titleInput);
     formContainer.appendChild(typeLabel);
     formContainer.appendChild(typeSelect);
     formContainer.appendChild(infoLabel);
