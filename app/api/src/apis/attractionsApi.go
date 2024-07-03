@@ -48,8 +48,39 @@ func deleteAttraction(req *http.Request) (string,error){
 	return "{\"success\":true}", err
 }
 
+
+
+
+// is not really how you would normally do a PUT api
+func putModeratingAction(req *http.Request) error{
+	var action string = req.URL.Query().Get("action")
+	var id string = req.URL.Query().Get("id")
+	convertedID,err := strconv.ParseInt(id, 10, 64)
+	_ = err
+	switch action {
+		case "approve":
+			attractions.ChangeAttractionApproval(true,convertedID);
+		case "disapprove":
+			attractions.ChangeAttractionApproval(false,convertedID);
+	}
+	return nil
+
+}
+
+
+
 // update existing attraction, check if logged in and added_by id is the users
 func putAttraction(req *http.Request) (string,error){
+	if(req.URL.Query().Get("action") != ""){
+		e := putModeratingAction(req);
+		if(e != nil){
+			return "{\"success\":false}",e
+		}else{
+			return "{\"success\":true}",nil
+		}
+	}
+	
+	
 	var attraction attractions.Attraction
 	decoder := json.NewDecoder(req.Body)
 	err := decoder.Decode(&attraction)
@@ -59,7 +90,6 @@ func putAttraction(req *http.Request) (string,error){
 
 	if(sessions.CheckModeratorLoggedIn(req)){
 		id := sessions.GetLoggedInUserId(req)
-		
 		mod,err := moderator.GetModeratorById(int64(id))
 		if(err != nil){
 			return "{\"success\":false,\"info\":\"Not Logged in\"}",err 
