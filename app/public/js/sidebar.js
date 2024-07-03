@@ -272,7 +272,7 @@ function loadMarkerInfoToSidebar(attractionData) {
 <div class="card-body">
 <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
 <div class="carousel-inner">
-  ${loadCarouselImages()}
+  ${loadCarouselImages(attractionData.Img_url, attractionData.title)}
 </div>
 <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
   <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -365,11 +365,9 @@ function loadMarkerInfoToSidebar(attractionData) {
 }
 
 
-function loadCarouselImages() {
+function loadCarouselImages(url, altText) {
     const images = [
-        { src: "images/image1.jpg", alt: "First slide" },
-        { src: "images/image2.jpg", alt: "Second slide" },
-        { src: "images/image3.jpg", alt: "Third slide" },
+        { src: url, alt: altText }
     ];
     return images
         .map(
