@@ -159,6 +159,15 @@ VALUES
 (36, 'Mauerpark', 'Park', 410, 'Berlin', 'Bernauer Straße', '', 'A public park in the Prenzlauer Berg district, known for its flea market and karaoke sessions.', TRUE, 52.5437, 13.4023, 4.5, 'https://example.com/images/mauerpark.jpg', 911111);
 
 
+INSERT INTO ATTRACTION_ENTRY (id, title, type, recommended_count, city, street, housenumber, info, approved, PosX, PosY, stars, img_url, added_by)
+VALUES
+(37, 'Johannes Gutenberg University Mainz', 'University', 320, 'Mainz', 'Johann-Joachim-Becher-Weg', '24', 'One of the largest universities in Germany, known for its research in the humanities, social sciences, and natural sciences.', TRUE, 49.9928, 8.2473, 4.5, 'https://example.com/images/jgu_mainz.jpg', 911112),
+(38, 'Mainz Cathedral', 'Historical', 460, 'Mainz', 'Markt', '', 'A thousand-year-old cathedral famous for its Romanesque architecture and historical significance.', TRUE, 49.9987, 8.2727, 4.7, 'https://example.com/images/mainz_cathedral.jpg', 911112),
+(39, 'Gutenberg Museum', 'Museum', 430, 'Mainz', 'Liebfrauenplatz', '5', 'A museum dedicated to the history of books, printing, and the life of Johannes Gutenberg.', TRUE, 49.9985, 8.2705, 4.5, 'https://example.com/images/gutenberg_museum.jpg', 911112),
+(40, 'Rheinuferpromenade', 'Park', 400, 'Mainz', 'Rheinstraße', '', 'A scenic promenade along the Rhine River, popular for walking and cycling.', TRUE, 49.9981, 8.2784, 4.6, 'https://example.com/images/rheinufer_mainz.jpg', 911112),
+(41, 'Mainz State Theatre', 'Theatre', 350, 'Mainz', 'Gutenbergplatz', '7', 'The main performing arts venue in Mainz, offering a diverse program of opera, ballet, and theatre.', TRUE, 49.9994, 8.2710, 4.5, 'https://example.com/images/mainz_state_theatre.jpg', 911112);
+
+
 
 INSERT INTO ATTRACTION_REVIEW(user_id,attraction_id,text,stars) VALUES(911113,9000,"Great place for my trad wife and 50 kids would go again, was able to drink my beer in peace without my wife nagging",5);
 

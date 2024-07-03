@@ -134,6 +134,132 @@ function fillCategories() {
     });
 }
 
+async function showRoute(fromLat, fromLon, toLat, toLon) {  
+    var apiUrl = document.location.origin + `/api/public_transport?fromLat=${fromLat}&fromLon=${fromLon}&toLat=${toLat}&toLon=${toLon}`;
+  
+    fetch(apiUrl)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        const routeDiv = document.getElementById("routeShowcase");
+        routeDiv.innerHTML = '';
+  
+        data.forEach((journey, index) => {
+            const card = document.createElement('div');
+            card.className = 'card bg-dark text-light m-2';
+  
+            const cardHeader = document.createElement('div');
+            cardHeader.className = 'card-header';
+            cardHeader.textContent = `Option ${index + 1}`;
+            cardHeader.onclick = function() {
+                const content = this.nextElementSibling;
+                content.style.display = content.style.display === 'block' ? 'none' : 'block';
+            };
+  
+            const cardBody = document.createElement('div');
+            cardBody.className = 'card-body';
+  
+            journey.legs.forEach(leg => {
+                const depTime = new Date(leg.plannedDeparture).toLocaleString();
+                const arrTime = new Date(leg.plannedArrival).toLocaleString();
+                const info = document.createElement('p');
+                info.innerHTML = `From ${leg.origin.name} to ${leg.destination.name}<br>
+                                  Departure: ${depTime}<br>
+                                  Arrival: ${arrTime}<br>
+                                  Mode: ${leg.line.mode || 'Walking'}${leg.line.name ? ` - ${leg.line.name}` : ''}`;
+                cardBody.appendChild(info);
+            });
+
+            // Die Ankufstzeit des letzten Legs wird als Ankunftszeit der Route genommen
+            const lastLeg = journey.legs[journey.legs.length - 1];
+            const arrivalTime = new Date(lastLeg.plannedArrival).toLocaleString();
+            const arrivalInfo = document.createElement('p');
+            arrivalInfo.innerHTML = `Arrival: ${arrivalTime}`;
+            cardHeader.appendChild(arrivalInfo);
+  
+            card.appendChild(cardHeader);
+            card.appendChild(cardBody);
+            routeDiv.appendChild(card);
+        });
+    })
+    .catch(error => {
+        console.error('There was a problem with the fetch operation:', error);
+    });
+}
+
+// Funktion für die Abfrage von "Startort"
+function getStartLocation(attLat, attLng) {
+    // label "gebe dein Standort ein"
+    const routeDiv = document.getElementById("routeShowcase");
+    routeDiv.innerHTML = '<p>Enter your start location:</p>';
+    
+    // Hbox:
+    hdiv = document.createElement("div");
+    hdiv.className = "hbox";
+
+    inputField = document.createElement("input");
+    inputField.type = "text";
+    inputField.id = "startLocation";
+    inputField.placeholder = "Enter location...";
+    hdiv.appendChild(inputField);
+
+    // Button "Use current location"
+    button = document.createElement("button");
+    button.innerHTML = "Current location";
+    button.className = "btn btn-primary";
+    button.onclick = function() {
+        // Geolocation API
+        navigator.geolocation.getCurrentPosition(function(position) {
+            const fromLat = position.coords.latitude;
+            const fromLon = position.coords.longitude;
+    
+            // API-Abfrage für die Route
+            showRoute(fromLat, fromLon, attLat, attLng);
+        });
+    };
+    hdiv.appendChild(button);
+
+    // Button "Search"
+    button = document.createElement("button");
+    button.innerHTML = "Search";
+    button.className = "btn btn-primary";
+    button.onclick = function() {
+        // Long/Lat durch nomenatim API abfragen
+        const location = inputField.value;
+        const apiUrl = `https://nominatim.openstreetmap.org/search?q=${location}&format=json&limit=1`;
+        fetch(apiUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.length > 0) {
+                const lat = data[0].lat;
+                const lon = data[0].lon;
+                // Koordinaten für Start- und Zielort
+                const fromLat = lat;
+                const fromLon = lon;
+                
+                // API-Abfrage für die Route
+                showRoute(fromLat, fromLon, attLat, attLng);
+            }
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+    };
+
+    routeDiv.appendChild(hdiv);
+
+    routeDiv.appendChild(button);
+}
+
 function loadMarkerInfoToSidebar(attractionData) {
     hideSidebarContent();
     openSidepanel();
@@ -169,7 +295,9 @@ function loadMarkerInfoToSidebar(attractionData) {
     </button>
   </span></p></p>
   
-  <button class="btn btn-primary w-100">Route Planen</button>
+  <button class="btn btn-primary w-100" onclick="getStartLocation(${attractionData.posX}, ${attractionData.posY})">Show Route</button>
+  <div id="routeShowcase">
+  </div>
   <div class="review-section">
     <h6>Leave a Review:</h6>
     <br>
