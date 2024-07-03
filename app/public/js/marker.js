@@ -54,3 +54,9 @@ function placeMarkers(data) {
       marker.openPopup();
       });
   }
+  function showAttractionOnMap(attraction) {
+    var marker = createBlueMarker(attraction);
+    allMarkersLayer.addLayer(marker);
+    // zoom to marker
+    map.flyTo(marker.getLatLng(), 15);
+  }
