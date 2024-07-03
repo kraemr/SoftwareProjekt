@@ -1,5 +1,6 @@
 function OpenFavourites() {
     hideSidebarContent();
+    openSidepanel();
     fetch(document.location.origin + "/api/attractions", {
         method: "GET",
     })
@@ -34,7 +35,7 @@ function OpenFavourites() {
 
                 const deleteButton = document.createElement("button");
                 deleteButton.className = "btn btn-danger";
-                deleteButton.innerHTML = "Delete";
+                deleteButton.innerHTML = "Unfavourite";
                 deleteButton.onclick = function() {
                     fetch(document.location.origin + "/api/favorites", {
                         method: "DELETE",
