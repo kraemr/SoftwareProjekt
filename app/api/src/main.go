@@ -5,30 +5,12 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"src/apis"
 	"src/db_utils"
 	"src/moderator"
 	"src/notifications"
-	"src/public_transport"
-	"src/apis"
 	_ "time"
 )
-
-func testPublicTransport() {
-	// Definiert die Koordinaten für den Startpunkt und den Zielpunkt.
-	fromLat, fromLon := 49.9179102, 8.3430285 // Beispielkoordinaten für irgendwo in Nackenheim
-	toLat, toLon := 49.987809, 8.2272517      // Beispielkoordinaten für Lucy-Hillebrand-Straße, Mainz
-	// Holt die beste Route zwischen den beiden Standorten.
-	journeys, err := public_transport.FetchFullRouteLongLat(fromLat, fromLon, toLat, toLon)
-
-	if err != nil {
-		fmt.Println("Error fetching route:", err)
-		return
-	}
-	// Gibt die gefundene Route aus.
-	for _, journey := range journeys {
-		fmt.Println(journey)
-	}
-}
 
 var categories [7]string
 
@@ -40,8 +22,6 @@ func handleCategories(res http.ResponseWriter, req *http.Request) {
 	output := string(json_bytes)
 	fmt.Fprintf(res, output)
 }
-
-
 
 func startServer(port string) {
 	fmt.Println("Http Server is running on port: " + port)
@@ -77,6 +57,7 @@ func main() {
 	http.HandleFunc("/api/recommendations", apis.HandleRecommendationsREST)
 	http.HandleFunc("/api/reviews", apis.HandleReviewREST)
 	http.HandleFunc("/api/moderators", apis.HandleModeratorsREST)
+	http.HandleFunc("/api/public_transport", apis.HandlePublicTransportREST)
 	// ########### Rest apis ###########
 
 	// start static files server with publicDir as root
@@ -85,7 +66,5 @@ func main() {
 	go notifications.StartNotificationServer("8080", "/notifications")
 
 	//_,_ = recommendations.GetRecommendationForUser(100,"Berlin","Landmark");
-
-	testPublicTransport()
 	startServer("8000") // keeps running i.e blocks execution
 }
