@@ -141,9 +141,7 @@
                                             method: "DELETE",
                                         }).then((response) => response.json())
                                             .then((data) => {
-                                                console.log(attraction.Id)
-                                                console.log(data);
-                                                getAllUnapprovedAttractions();
+                                                card.remove();
                                             });
                                     };
 
@@ -233,8 +231,6 @@
                                             method: "DELETE",
                                         }).then((response) => response.json())
                                             .then((data) => {
-                                                console.log(attraction.Id)
-                                                console.log(data);
                                                 if (data.success == true){
                                                     card.remove();
                                                 }
