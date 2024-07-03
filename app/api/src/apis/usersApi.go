@@ -1,10 +1,11 @@
-package users
+package apis
 
 import (
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
+	"src/users"
 )
 
 // delete user
@@ -14,31 +15,31 @@ func delete(req *http.Request) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	err = DeleteUser(convertedID)
+	err = users.DeleteUser(convertedID)
 	return "{\"success\":true}", err
 }
 
 // update existing user
 func put(req *http.Request) (string, error) {
-	var user User
+	var user users.User
 	decoder := json.NewDecoder(req.Body)
 	err := decoder.Decode(&user)
 	if err != nil {
 		return "", err
 	}
-	err = UpdateUser(user)
+	err = users.UpdateUser(user)
 	return "{\"success\":true}", err
 }
 
 // Add user
 func post(req *http.Request) (string, error) {
-	var user User
+	var user users.User
 	decoder := json.NewDecoder(req.Body)
 	err := decoder.Decode(&user)
 	if err != nil {
 		return "", err
 	}
-	err = CreateUser(user)
+	err = users.CreateUser(user)
 	return "{\"success\":true}", err
 }
 
@@ -52,14 +53,14 @@ func get(req *http.Request) (string, error) {
 
 	var err error
 	var output string
-	var user User
+	var user users.User
 
 	if idIsSet { // by id
 		convertedID, err := strconv.ParseInt(inID, 10, 64)
 		if err != nil {
 			return "{\"info\":\"User does not exist\"}", err
 		}
-		user, err = GetUserByID(convertedID)
+		user, err = users.GetUserByID(convertedID)
 		if err != nil {
 			return "{\"success\":false,\"info\":\"Error getting user by ID\"}", err
 		}
@@ -69,7 +70,7 @@ func get(req *http.Request) (string, error) {
 		}
 		output = string(outputBytes)
 	} else if emailIsSet { // by email
-		user, err = GetUserByEmail(inEmail)
+		user, err = users.GetUserByEmail(inEmail)
 		if err != nil {
 			return "{\"success\":false,\"info\":\"Error marshalling user data\"}", err
 		}

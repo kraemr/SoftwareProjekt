@@ -1,4 +1,4 @@
-package reviews;
+package apis
 
 import(
 	"fmt"
@@ -6,10 +6,11 @@ import(
 	"strconv"
 	"encoding/json"
 	"src/sessions"
+	"src/reviews"
 )
 
 
-func delete(req *http.Request) (string,error){
+func deleteReview(req *http.Request) (string,error){
 	if(!sessions.CheckLoggedIn(req)) {
 		return "{\"success\":false,\"info\":\"Not Logged in\"}",nil
 	}
@@ -18,7 +19,7 @@ func delete(req *http.Request) (string,error){
 	if(err != nil){
 		return "{\"success\":false}",err
 	}
-	err = DeleteReview(convertedID)
+	err = reviews.DeleteReview(convertedID)
 	if(err != nil){
 		return "{\"success\":false}",err
 	}else{
@@ -26,17 +27,17 @@ func delete(req *http.Request) (string,error){
 	}
 }
 
-func put(req *http.Request) (string,error){
+func putReview(req *http.Request) (string,error){
 	if(!sessions.CheckLoggedIn(req)) {
 		return "{\"success\":false,\"info\":\"Not Logged in\"}",nil
 	}
-	var review Review
+	var review reviews.Review
 	decoder := json.NewDecoder(req.Body)
 	err := decoder.Decode(&review)
 	if(err != nil){
 		return "{\"success\":false}",err
 	}
-	err = UpdateReview(review)
+	err = reviews.UpdateReview(review)
 	if(err != nil){
 		return "{\"success\":false}",err
 
@@ -46,18 +47,18 @@ func put(req *http.Request) (string,error){
 
 // add attraction
 // check if logged in
-func post(req *http.Request) (string,error){
+func postReview(req *http.Request) (string,error){
 	if(!sessions.CheckLoggedIn(req)) {
 		return "{\"success\":false,\"info\":\"Not Logged in\"}",nil
 	}
-	var review Review
+	var review reviews.Review
 	decoder := json.NewDecoder(req.Body)
 	err := decoder.Decode(&review)
 	if(err != nil){
 		return "{\"success\":false}",err
 
 	}
-	err = InsertReview(review)
+	err = reviews.InsertReview(review)
 	if(err != nil){
 		return "{\"success\":false}",err
 
@@ -65,34 +66,34 @@ func post(req *http.Request) (string,error){
 	return "{\"success\":true}",nil
 }
 
-func get(req *http.Request) (string,error){
+func getReview(req *http.Request) (string,error){
 	var user_id string = req.URL.Query().Get("user_id")
 	var attraction_id string = req.URL.Query().Get("attraction_id")
 	user_id_set := user_id != ""
 	attraction_id_set := attraction_id != ""
 
-	var reviews []Review
+	var reviews_list []reviews.Review
 	var err error
 	
 
 	if(user_id_set){
 		convertedID := 0
 		convertedID,err = strconv.Atoi(user_id)
-		reviews,err = GetReviewsByUserId(int32(convertedID))
+		reviews_list,err = reviews.GetReviewsByUserId(int32(convertedID))
 		if(err != nil){
 			return "{\"success\":false}",nil
 		}
 	}else if(attraction_id_set){
 		convertedID := 0
 		convertedID,err = strconv.Atoi(attraction_id)
-		reviews,err = GetReviewsByAttractionId(int32( convertedID))
+		reviews_list,err = reviews.GetReviewsByAttractionId(int32( convertedID))
 		if(err != nil){
 			fmt.Println("failed GetReviewsByAttractionId");
 			return "{\"success\":false}",nil
 		}
 	}
 
-	json_bytes , json_err := json.Marshal(reviews)	
+	json_bytes , json_err := json.Marshal(reviews_list)	
 	if(json_err != nil){
 		fmt.Println("error");
 		return  "{\"success\":false}",nil
@@ -106,13 +107,13 @@ func HandleReviewREST(res http.ResponseWriter, req *http.Request){
 	var err error
 	switch{
 		case req.Method == "GET": 
-			output,err = get(req)
+			output,err = getReview(req)
 		case req.Method == "POST":
-			output,err = post(req)
+			output,err = postReview(req)
 		case req.Method == "PUT":
-			output,err = put(req)
+			output,err = putReview(req)
 		case req.Method == "DELETE":
-			output,err = delete(req)
+			output,err = deleteReview(req)
 	}
 	if(err != nil){
 		// handle error here, send 500,403,402,401,400 and so on depending on error

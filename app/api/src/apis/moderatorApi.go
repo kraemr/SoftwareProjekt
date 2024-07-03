@@ -1,38 +1,39 @@
-package moderator
+package apis
 
 import (
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
+	"src/moderator"
 	"src/sessions"
 )
 
 
-// moderators can only delete themselves
-// Site Admin can delete Moderator
-func delete(req *http.Request) (string, error) {
+// moderators can only deleteFavorite themselves
+// Site Admin can deleteFavorite Moderator
+func deleteModerator(req *http.Request) (string, error) {
 	return "{\"success\":false}", nil 
 	id := req.URL.Query().Get("id")
 	convertedID, err := strconv.ParseInt(id, 10, 64)
-	err = DeleteModerator(convertedID)
+	err = moderator.DeleteModerator(convertedID)
 	return "{\"success\":true}", err
 }
 
 
 // moderators can update ONLY himself
 // Site admins can update Everything he wants
-func put(req *http.Request) (string, error) {
+func putModerator(req *http.Request) (string, error) {
 	if(!sessions.CheckLoggedIn(req)){
 		return "{\"success\":false}", nil
 	}
-	var moderator Moderator
+	var mod moderator.Moderator
 	decoder := json.NewDecoder(req.Body)
-	err := decoder.Decode(&moderator)
+	err := decoder.Decode(&mod)
 	if err != nil {
 		return "{\"success\":false}", err
 	}
-	err = UpdateModerator(moderator)
+	err = moderator.UpdateModerator(mod)
 	if err != nil {
 		return "{\"success\":false}", err
 
@@ -43,22 +44,22 @@ func put(req *http.Request) (string, error) {
 
 
 // ONLY Site Admins can add new Moderators
-func post(req *http.Request) (string, error) {
-	var moderator Moderator
+func postModerator(req *http.Request) (string, error) {
+	var mod moderator.Moderator
 	decoder := json.NewDecoder(req.Body)
-	err := decoder.Decode(&moderator)
+	err := decoder.Decode(&mod)
 	if err != nil {
 		return "{\"success\":false}", err
 	}
-	err = InsertModerator(moderator)
+	err = moderator.InsertModerator(mod)
 	if err != nil {
 		return "{\"success\":false}", err
 	}
 	return "{\"success\":true}", nil
 }
 
-// Only Moderators can get Info about Moderators
-func get(req *http.Request) (string, error) {
+// Only Moderators can getModerator Info about Moderators
+func getModerator(req *http.Request) (string, error) {
 	var city string = req.URL.Query().Get("city")
 	var id string = req.URL.Query().Get("id")
 	var email string = req.URL.Query().Get("email")
@@ -66,8 +67,8 @@ func get(req *http.Request) (string, error) {
 	id_is_set := id != ""
 	city_is_set := city != ""
 	email_is_set := email != ""
-	var mods []Moderator
-	var mod Moderator
+	var mods []moderator.Moderator
+	var mod moderator.Moderator
 	var output string
 	var err error
 
@@ -77,25 +78,23 @@ func get(req *http.Request) (string, error) {
 		if(err != nil){
 			return "{\"success\":false}", err
 		}
-		mod,err = GetModeratorById(convertedID)
+		mod,err = moderator.GetModeratorById(convertedID)
 		if(err != nil){
 			return "{\"success\":false}", err
 		}
 		mods = append(mods,mod)
 	} else if city_is_set {
-		mods,err = GetModeratorsCity(city)
+		mods,err = moderator.GetModeratorsCity(city)
 		if(err != nil){
 			return "{\"success\":false}", err
 		}
 	}else if email_is_set {
-		mod,err = GetModeratorByEmail(email)
+		mod,err = moderator.GetModeratorByEmail(email)
 		if(err != nil){
 			return "{\"success\":false}", err
 		}
 		mods = append(mods,mod)
 	}
-
-
 	json_bytes , json_err := json.Marshal(mods)	
 	if(json_err != nil){
 		fmt.Println("error");
@@ -109,13 +108,13 @@ func HandleModeratorsREST(res http.ResponseWriter, req *http.Request) {
 	var err error
 	switch {
 	case req.Method == "GET":
-		output, err = get(req)
+		output, err = getModerator(req)
 	case req.Method == "POST":
-		output, err = post(req)
+		output, err = postModerator(req)
 	case req.Method == "PUT":
-		output, err = put(req)
+		output, err = putModerator(req)
 	case req.Method == "DELETE":
-		output, err = delete(req)
+		output, err = deleteModerator(req)
 	}
 	if err != nil {
 		// handle error here, send 500,403,402,401,400 and so on depending on error

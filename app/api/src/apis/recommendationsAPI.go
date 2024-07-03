@@ -1,4 +1,4 @@
-package recommendations;
+package apis
 
 import (
 	"net/http"
@@ -8,7 +8,7 @@ import (
 	"src/sessions"
 )
 
-func get(req *http.Request) (string,error){
+func getRecommendations(req *http.Request) (string,error){
 	if(!sessions.CheckLoggedIn(req)) {
 		return "{\"success\":false,\"info\":\"Not Logged in\"}",nil
 	}
@@ -37,15 +37,15 @@ func get(req *http.Request) (string,error){
 	}
 }
 
-func delete(req *http.Request) (string,error){
+func deleteRecommendations(req *http.Request) (string,error){
 	return "{\"success\":false,\"info\":\"unsupported Method\"}",nil
 }
 
-func put(req *http.Request) (string,error){
+func putRecommendations(req *http.Request) (string,error){
 	return "{\"success\":false,\"info\":\"unsupported Method\"}",nil
 }
 
-func post(req *http.Request) (string,error){
+func postRecommendations(req *http.Request) (string,error){
 	return "{\"success\":false,\"info\":\"unsupported Method\"}",nil
 }
 
@@ -54,13 +54,13 @@ func HandleRecommendationsREST(res http.ResponseWriter, req *http.Request){
 	var err error
 	switch{
 		case req.Method == "GET": 
-			output,err = get(req)
+			output,err = getRecommendations(req)
 		case req.Method == "POST":
-			output,err = post(req)
+			output,err = postRecommendations(req)
 		case req.Method == "PUT":
-			output,err = put(req)
+			output,err = putRecommendations(req)
 		case req.Method == "DELETE":
-			output,err = delete(req)
+			output,err = deleteRecommendations(req)
 	}
 	if(err != nil){
 		// handle error here, send 500,403,402,401,400 and so on depending on error

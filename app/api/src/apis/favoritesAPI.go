@@ -1,4 +1,4 @@
-package favorites;
+package apis
 
 import(
 	"net/http"
@@ -6,20 +6,21 @@ import(
 	"fmt"
 	"src/sessions"
 	"strconv"
+	"src/favorites"
 )
 
 
-func get(req *http.Request) (string,error){
+func getFavorite(req *http.Request) (string,error){
 	if(!sessions.CheckLoggedIn(req)) {
 		return "{\"success\":false,\"info\":\"Not Logged in\"}",nil
 	}
 
 	id := sessions.GetLoggedInUserId(req)
-	favorites,err := GetAttractionFavoritesByUserId(int32(id));
+	favorite_list,err := favorites.GetAttractionFavoritesByUserId(int32(id));
 	if(err != nil){
 		return "{\"success\":false}",err
 	}
-	json_bytes , json_err := json.Marshal(favorites)	
+	json_bytes , json_err := json.Marshal(favorite_list)	
 	if(json_err != nil){
 		fmt.Println("error");
 		return "{\"success\":false}",json_err
@@ -30,31 +31,31 @@ func get(req *http.Request) (string,error){
 
 
 // NOT SUPPORTED
-func put(req *http.Request) (string,error){
+func putFavorite(req *http.Request) (string,error){
 	_ = req
 	return "{\"success\":false,\"info\":\"unsupported Method\"}",nil
 }
 
 
 // Add a Favorite
-func post(req *http.Request) (string,error){
+func postFavorite(req *http.Request) (string,error){
 	if(!sessions.CheckLoggedIn(req)) {
 		return "{\"success\":false,\"info\":\"Not Logged in\"}",nil
 	}
-	var favorite AttractionFavorite
+	var favorite favorites.AttractionFavorite
 	decoder := json.NewDecoder(req.Body)
 	err := decoder.Decode(&favorite)
 	if(err != nil){
 		return "{\"success\":false}",err
 	}
-	err = AddAttractionFavoriteById(favorite.User_id,favorite.Attraction_id)
+	err = favorites.AddAttractionFavoriteById(favorite.User_id,favorite.Attraction_id)
 	if(err != nil){
 		return "{\"success\":false}",err
 	}
 	return "{\"success\":true}",nil
 }
 
-func delete(req *http.Request) (string,error){
+func deleteFavorite(req *http.Request) (string,error){
 	if(!sessions.CheckLoggedIn(req)) {
 		return "{\"success\":false,\"info\":\"Not Logged in\"}",nil
 	}
@@ -63,7 +64,7 @@ func delete(req *http.Request) (string,error){
 	if(str_err != nil){
 		return "{\"success\":false}",str_err
 	}
-	err := DeleteAttractionFavoriteById(int32(convertedID))
+	err := favorites.DeleteAttractionFavoriteById(int32(convertedID))
 	if(err != nil){
 		return "{\"success\":false}",err
 	}
@@ -76,13 +77,13 @@ func HandleFavoritesREST(res http.ResponseWriter, req *http.Request){
 	var err error
 	switch{
 		case req.Method == "GET": 
-			output,err = get(req)
+			output,err = getFavorite(req)
 		case req.Method == "POST":
-			output,err = post(req)
+			output,err = postFavorite(req)
 		case req.Method == "PUT":
-			output,err = put(req)
+			output,err = putFavorite(req)
 		case req.Method == "DELETE":
-			output,err = delete(req)
+			output,err = deleteFavorite(req)
 	}
 	if(err != nil){
 		// handle error here, send 500,403,402,401,400 and so on depending on error

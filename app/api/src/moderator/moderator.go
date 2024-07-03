@@ -134,7 +134,18 @@ func InsertModerator(moderator Moderator) (error) {
 }
 
 func DeleteModerator(id int64) error {
-	return ErrNoModerator
+	var db *sql.DB = db_utils.DB
+	prepared_stmt,err := db.Prepare(" Delete FROM CITY_MODERATOR WHERE id=?")
+	if(err != nil){
+		fmt.Println("Couldnt Insert Moderator")
+		return err
+	}
+	result,err := prepared_stmt.Exec(id)
+	_ = result
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func DisableUser(email string) error{

@@ -10,8 +10,6 @@ CREATE TABLE CITY_MODERATOR(
     username TEXT
 );
 
-
-
 CREATE TABLE IF NOT EXISTS USER (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     email TEXT,
@@ -166,7 +164,7 @@ INSERT INTO USER_NOTIFICATIONS(user_id,info,date) VALUES(911111,"<p> GOODBYE WOR
 INSERT INTO CITY_NOTIFICATIONS(info,date,city)  VALUES("Kostenlose Döner","2000-01-01","Oppenheim");
 -- Attraction
 
-INSERT INTO USER_FAVORITE(user_id,attraction_id) VALUES(911111,9000); 
+INSERT INTO USER_FAVORITE(user_id,attraction_id) VALUES(911111,27); 
 
 -- add foreign key constraints
 ALTER TABLE ATTRACTION_REVIEW ADD CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES USER(id);

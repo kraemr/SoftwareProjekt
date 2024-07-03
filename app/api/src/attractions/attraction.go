@@ -185,6 +185,18 @@ func GetAttractionsAddedBy(user_id int32) ([]Attraction,error){
 	return getAttractionsFromDb(rows)
 }
 
+
+func GetAttractionsUnapproved() ([]Attraction,error){
+	var db *sql.DB = db_utils.DB
+	var attractions []Attraction
+	rows, err := db.Query("SELECT * FROM ATTRACTION_ENTRY WHERE and approved=FALSE")
+	if err != nil {
+		return attractions, err
+	}
+	defer rows.Close()
+	return getAttractionsFromDb(rows)
+}
+
 func GetAttractionsUnapprovedCity(city string) ([]Attraction,error){
 	var db *sql.DB = db_utils.DB
 	var attractions []Attraction
@@ -244,6 +256,19 @@ func GetAttractionsByTitle(title string) ([]Attraction, error) {
 	var attractions []Attraction
 	title_like_str := "%" + title + "%"
 	rows, err := db.Query("SELECT * from ATTRACTION_ENTRY WHERE title LIKE ? and approved=TRUE LIMIT 1000", title_like_str)
+	if err != nil {
+		return attractions, err
+	}
+	defer rows.Close()
+	return getAttractionsFromDb(rows)
+}
+
+
+func GetAttractionsByCityAndType(city string,category string) ([]Attraction,error){
+	var db *sql.DB = db_utils.DB
+	_ = db
+	var attractions []Attraction
+	rows, err := db.Query("SELECT * from ATTRACTION_ENTRY WHERE type=? and approved=TRUE and city=? LIMIT 1000", city,category)
 	if err != nil {
 		return attractions, err
 	}

@@ -5,16 +5,11 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"src/attractions"
 	"src/db_utils"
-	"src/favorites"
 	"src/moderator"
 	"src/notifications"
 	"src/public_transport"
-	"src/recommendations"
-	"src/reviews"
-	"src/sessions"
-	"src/users"
+	"src/apis"
 	_ "time"
 )
 
@@ -35,39 +30,6 @@ func testPublicTransport() {
 	}
 }
 
-func checkUserLoggedIn(res http.ResponseWriter, req *http.Request) {
-	if sessions.CheckLoggedIn(req) == true {
-		fmt.Fprintf(res, "{\"success\":true}")
-	} else {
-		fmt.Fprintf(res, "{\"success\":false}")
-	}
-}
-
-func loginUser(res http.ResponseWriter, req *http.Request) {
-	decoder := json.NewDecoder(req.Body)
-	var user users.UserLoginInfo
-	err := decoder.Decode(&user)
-	if err != nil {
-		http.Error(res, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	fmt.Println(user)
-
-	correct := sessions.LoginUser(user.Email, user.Password)
-	if correct == true {
-		// get Id
-		id, uerr := users.GetUserIdByEmail(user.Email)
-		if uerr != nil {
-			fmt.Println("loginUser: couldnt get user by id")
-			return
-		}
-		sessions.StartSession(res, req, id)
-		fmt.Fprintf(res, "{\"success\":true}")
-	} else {
-		fmt.Fprintf(res, "{\"success\":false}")
-	}
-}
-
 var categories [7]string
 
 func handleCategories(res http.ResponseWriter, req *http.Request) {
@@ -79,30 +41,7 @@ func handleCategories(res http.ResponseWriter, req *http.Request) {
 	fmt.Fprintf(res, output)
 }
 
-func loginModerator(res http.ResponseWriter, req *http.Request) {
-	decoder := json.NewDecoder(req.Body)
-	var modInfo users.UserLoginInfo
-	err := decoder.Decode(&modInfo)
-	if err != nil {
-		http.Error(res, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	fmt.Println(modInfo)
 
-	correct := sessions.LoginUser(modInfo.Email, modInfo.Password)
-	if correct == true {
-		// get Id
-		mod, uerr := moderator.GetModeratorByEmail(modInfo.Email)
-		if uerr != nil {
-			fmt.Println("loginUser: couldnt get user by id")
-			return
-		}
-		sessions.StartModeratorSession(res, req, mod.Id, mod.Email)
-		fmt.Fprintf(res, "{\"success\":true}")
-	} else {
-		fmt.Fprintf(res, "{\"success\":false}")
-	}
-}
 
 func startServer(port string) {
 	fmt.Println("Http Server is running on port: " + port)
@@ -122,21 +61,21 @@ func main() {
 	publicDir := "/opt/app/public"
 	categories = [...]string{"Monument", "Castle", "Cathedral", "Palace", "Museum", "Mountain", "Park"}
 
-	http.HandleFunc("/api/login", loginUser)
-	http.HandleFunc("/api/logged_in", checkUserLoggedIn)
-	http.HandleFunc("/api/login_moderator", loginModerator)
+	http.HandleFunc("/api/login", apis.LoginUser)
+	http.HandleFunc("/api/logged_in", apis.CheckUserLoggedIn)
+	http.HandleFunc("/api/login_moderator", apis.LoginModerator)
 
 	http.HandleFunc("/api/ban", moderator.BanUser)
 	http.HandleFunc("/api/banned", moderator.GetBannedUsers)
 	http.HandleFunc("/api/categories", handleCategories)
 
 	// ########### Rest apis #############
-	http.HandleFunc("/api/attractions", attractions.HandleAttractionsREST)
-	http.HandleFunc("/api/users", users.HandleUsersREST)
-	http.HandleFunc("/api/favorites", favorites.HandleFavoritesREST)
-	http.HandleFunc("/api/recommendations", recommendations.HandleRecommendationsREST)
-	http.HandleFunc("/api/reviews", reviews.HandleReviewREST)
-	http.HandleFunc("/api/moderators", moderator.HandleModeratorsREST)
+	http.HandleFunc("/api/attractions", apis.HandleAttractionsREST)
+	http.HandleFunc("/api/users", apis.HandleUsersREST)
+	http.HandleFunc("/api/favorites", apis.HandleFavoritesREST)
+	http.HandleFunc("/api/recommendations", apis.HandleRecommendationsREST)
+	http.HandleFunc("/api/reviews", apis.HandleReviewREST)
+	http.HandleFunc("/api/moderators", apis.HandleModeratorsREST)
 	// ########### Rest apis ###########
 
 	// start static files server with publicDir as root
