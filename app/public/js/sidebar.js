@@ -162,8 +162,12 @@ function loadMarkerInfoToSidebar(attractionData) {
   <p class="card-text">${attractionData.info}</p>
   <p class="card-text">${attractionData.city}</p>
   <p class="card-text">${attractionData.type}</p>
-  <p class="card-text">${attractionData.Stars}</p>
-  <p class="card-text">${attractionData.recommended_count}</p>
+  <p class="card-text">${attractionData.Stars} &#11088;
+  <p class="card-text">${attractionData.recommended_count} &#128150;   <span class="favourite-section mt-3" style="position: relative; z-index: 1;">
+    <button class="btn btn-warning" id="favouriteButton">
+      <i class="fas fa-star"></i> Favourite
+    </button>
+  </span></p></p>
   
   <button class="btn btn-primary w-100">Route Planen</button>
   <div class="review-section">
@@ -180,11 +184,6 @@ function loadMarkerInfoToSidebar(attractionData) {
   </div>
     <textarea class="form-control mt-2" placeholder="Write your review here..."></textarea>
     <button class="btn btn-secondary mt-2">Submit Review</button>
-  </div>
-  <div class="favourite-section mt-3" style="position: relative; z-index: 1;">
-    <button class="btn btn-warning" id="favouriteButton">
-      <i class="fas fa-star"></i> Favourite
-    </button>
   </div>
 </div>
 </div>
