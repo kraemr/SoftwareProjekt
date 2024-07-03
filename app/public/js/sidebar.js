@@ -136,6 +136,7 @@ function fillCategories() {
 
 function loadMarkerInfoToSidebar(attractionData) {
     hideSidebarContent();
+    openSidepanel();
     const selectedAttractionsInfo = document.getElementById(
         "selectedAttractionsInformation"
     );
@@ -164,7 +165,7 @@ function loadMarkerInfoToSidebar(attractionData) {
   <p class="card-text">${attractionData.Stars}</p>
   <p class="card-text">${attractionData.recommended_count}</p>
   
-  <a href="#" class="btn btn-primary">Route Planen</a>
+  <button class="btn btn-primary w-100">Route Planen</button>
   <div class="review-section">
     <h6>Leave a Review:</h6>
     <br>
