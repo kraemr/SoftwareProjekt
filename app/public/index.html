@@ -231,7 +231,19 @@
   <button id="toggleButton" class="btn sidepanelOpenBtn" onclick="toggleSidepanel()">
     <i class="bi bi-list"></i>
   </button>
+  <div class="position-fixed top-50 end-0 translate-middle-y">
+    <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-header">
+        <strong class="me-auto">Notification</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body">
+        <!-- Notification content goes here -->
+      </div>
+    </div>
+  </div>
   <div id="map"></div>
+  
 
   <div class="user-container">
     <span class="user-icon" onclick="toggleSettings()">

@@ -49,10 +49,10 @@
                 <a class="nav-link active" id="approve-attractions-tab" onclick="getAllUnapprovedAttractions()"
                     href="#">Approve Attractions</a>
             </li>
-            <!--
+            
             <li class="nav-item">
-                <a class="nav-link" id="delete-attractions-tab" href="#">Delete Attractions</a>
-            </li>
+                <a class="nav-link" id="delete-attractions-tab" href="#" onclick="getAllAttractionsToModerate()">Delete Attractions</a>
+            </li><!--
             <li class="nav-item">
                 <a class="nav-link" id="manage-users-tab" href="#">Manage Users</a>
             </li>-->
@@ -126,7 +126,7 @@
                                     approveButton.className = 'btn btn-success m-1';
                                     approveButton.innerText = 'Approve';
                                     approveButton.onclick = function () {
-                                        fetch(document.location.origin + '/api/attractions?action=approve&id=' + attraction.id, {
+                                        fetch(document.location.origin + '/api/attractions?action=approve&id=' + attraction.Id, {
                                             method: 'PUT',
                                         }).then(() => {
                                             getAllUnapprovedAttractions();
@@ -141,7 +141,7 @@
                                             method: "DELETE",
                                         }).then((response) => response.json())
                                             .then((data) => {
-                                                console.log(attraction.Id);
+                                                console.log(attraction.Id)
                                                 console.log(data);
                                                 getAllUnapprovedAttractions();
                                             });
@@ -168,7 +168,124 @@
 
         <div id="delete-attractions" class="content-tab" style="display: none;">
             <h2>Delete Attractions</h2>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" id="filterAll-input" placeholder="Filter attractions"
+                    oninput="filterAllAttractions()">
+            </div>
+            <div id="allAttractions-list" class="row row-cols-1 row-cols-md-3 g-4">
+                <script>
+                    function filterAllAttractions() {
+                        const filterValue = document.getElementById('filterAll-input').value.toLowerCase();
+                        const attractionCards = document.querySelectorAll('#allAttractions-list .col');
+
+                        attractionCards.forEach(card => {
+                            const cardText = card.querySelector('.card-body').innerText.toLowerCase();
+                            if (cardText.includes(filterValue)) {
+                                card.style.display = '';
+                            } else {
+                                card.style.display = 'none';
+                            }
+                        });
+                    }
+                    function getAllAttractionsToModerate() {
+
+                        fetch(document.location.origin + "/api/attractions", {
+                            method: "GET",
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success == false) {
+                                    const errorMessage = document.createElement('p');
+                                    errorMessage.className = 'alert alert-danger';
+                                    errorMessage.innerHTML = "Everything is approved!";
+                                }
+                                const attractionsList = document.getElementById('allAttractions-list');
+                                attractionsList.innerHTML = ''; // Clear the list before adding new items
+
+                                data.forEach(attraction => {
+                                    const card = document.createElement('div');
+                                    card.className = 'col';
+
+                                    const cardInner = document.createElement('div');
+                                    cardInner.className = 'card h-100';
+
+                                    const cardBody = document.createElement('div');
+                                    cardBody.className = 'card-body';
+
+                                    const cardTitle = document.createElement('h5');
+                                    cardTitle.className = 'card-title';
+                                    cardTitle.innerText = attraction.title;
+
+                                    const cardText = document.createElement('p');
+                                    cardText.className = 'card-text';
+                                    cardText.innerText = attraction.info;
+
+                                    const cardAddress = document.createElement('p');
+                                    cardAddress.className = 'card-text';
+                                    cardAddress.innerText = 'Address: ' + attraction.city;
+                                    cardBody.appendChild(cardAddress);
+
+                                    const deleteButton = document.createElement('button');
+                                    deleteButton.className = 'btn btn-danger m-1';
+                                    deleteButton.innerText = 'Delete';
+                                    deleteButton.onclick = function () {
+                                        fetch(document.location.origin + "/api/attractions?id=" + attraction.Id, {
+                                            method: "DELETE",
+                                        }).then((response) => response.json())
+                                            .then((data) => {
+                                                console.log(attraction.Id)
+                                                console.log(data);
+                                                if (data.success == true){
+                                                    card.remove();
+                                                }
+                                            });
+                                    };
+
+                                    cardBody.appendChild(cardTitle);
+                                    cardBody.appendChild(cardText);
+                                    cardBody.appendChild(deleteButton);
+                                    cardInner.appendChild(cardBody);
+                                    card.appendChild(cardInner);
+                                    attractionsList.appendChild(card);
+                                });
+                            })
+                            .catch(error => {
+                                console.error('Error fetching unapproved attractions:', error);
+                            });
+
+                    }
+
+                </script>
+            </div>
+        </div>
+
+        <div id="delete-attractions" class="content-tab" style="display: none;">
+            <h2>Delete Attractions</h2>
             <!-- Content for deleting attractions -->
+        </div>
+        <div id="manage-users" class="content-tab" style="display: none;">
+            <h2>Manage Users</h2>
+            <!-- Content for managing users -->
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Handle sidebar navigation
+            $('.nav-link').on('click', function () {
+                $('.nav-link').removeClass('active');
+                $(this).addClass('active');
+
+                let target = $(this).attr('id').replace('-tab', '');
+                $('.content-tab').hide();
+                $('#' + target).show();
+            });
+        });
+
+
+
+    </script>
         </div>
         <div id="manage-users" class="content-tab" style="display: none;">
             <h2>Manage Users</h2>
