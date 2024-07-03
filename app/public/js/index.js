@@ -29,38 +29,6 @@ function loadUserSettings() {
 function OpenProfile() {
     window.location.href = "your_Profile.html";
 }
-function OpenFavourites() {
-    hideSidebarContent();
-    var apiUrl = document.location.origin + '/api/favorites';
-    fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-            const sidebarContent = document.getElementById("showFavourites");
-            console.log(data);
-            data.forEach(favorite => {
-                const card = document.createElement("div");
-                card.className = "card mb-2";
-                
-                const cardBody = document.createElement("div");
-                cardBody.className = "card-body";
-                
-                const cardTitle = document.createElement("h5");
-                cardTitle.className = "card-title";
-                cardTitle.innerHTML = favorite.name;
-                
-                const cardText = document.createElement("p");
-                cardText.className = "card-text";
-                cardText.innerHTML = favorite.description;
-                
-                cardBody.appendChild(cardTitle);
-                cardBody.appendChild(cardText);
-                card.appendChild(cardBody);
-                sidebarContent.appendChild(card);
-            });
-        })
-        .catch(error => {
-            console.error('Error fetching favorites:', error);
-        });
-}
+
 
 

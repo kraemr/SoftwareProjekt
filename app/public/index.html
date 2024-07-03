@@ -11,13 +11,14 @@
   <link rel="stylesheet" href="css/index.css" />
   <link rel="stylesheet" href="css/sidebar.css" />
   <link rel="stylesheet" href="css/addAttraction.css" />
+  <script src="js/favourites.js"></script>
   <script src="js/search.js"></script>
   <script src="js/map.js"></script>
   <script src="js/sidebar.js"></script>
   <script src="js/user.js"></script>
   <script src="js/index.js"></script>
   <script src="js/addAttraction.js"></script>
-  <script src="js/startup.js"></script> 
+  <script src="js/startup.js"></script>
   <script src="js/marker.js"></script>
   <script src="leaflet/leaflet.js"></script>
   <link href="leaflet/leaflet.css" rel="stylesheet" />
@@ -35,11 +36,13 @@
     }
 
     .search-container {
-      position: absolute;
+      position: fixed;
       top: 10px;
       left: 10px;
       z-index: 1000;
+      transition: 0.05s;
     }
+
     .user-icon {
       width: 2em;
       height: 2em;
@@ -108,101 +111,101 @@
     .carousel-images {
       height: 20em;
     }
+
     .sidepanel {
-    overflow-x: auto;
-    width: 0;
-    position: fixed;
-    z-index: 1;
-    height: 100%;
-    top: 0;
-    left: 0;
-    background-color: #111;
-    transition: 0.05s;
-    margin-top: 60px;
-  }
+      overflow-x: auto;
+      width: 0;
+      position: fixed;
+      z-index: 1;
+      height: 100%;
+      left: 0;
+      background-color: #111;
+      transition: 0.05s;
+    }
 
-  .sidepanel-search {
-    border: #f1f1f1;
-    border-radius: 4px;
-  }
+    .sidepanel-search {
+      border: #f1f1f1;
+      border-radius: 4px;
+    }
 
-  .sidepanel a {
-    padding: 8px 8px 8px 32px;
-    text-decoration: none;
-    font-size: 25px;
-    color: #818181;
-    display: block;
-    transition: 0.05s;
-  }
+    .sidepanel a {
+      padding: 8px 8px 8px 32px;
+      text-decoration: none;
+      font-size: 25px;
+      color: #818181;
+      display: block;
+      transition: 0.05s;
+    }
 
-  .sidepanel a:hover {
-    color: #f1f1f1;
-  }
-
-  .sidepanelOpenBtn {
-    font-size: 20px;
-    cursor: pointer;
-    background-color: #111;
-    color: white;
-    padding: 10px;
-    border: none;
-    position: fixed;
-    z-index: 2;
-    transition: left 0.05s;
-    margin-top: 25%;
-    left: 2px;
-    text-align: center;
-  }
-
-  .sidepanelOpenBtn:hover {
-    background-color: #111;
-    color: white;
-  }
-
-  .scrolling-wrapper {
-    overflow-x: auto;
-  }
-
-  .btn-categories {
-    background-color: #A64C79;
-    color: white;
-    border: none;
-    width: auto;
-    border-radius: 4px;
-    padding: 0px 4px;
-  }
-
-  .categories {
-    margin: 5px;
-  }
-
-  .btn-categories:hover {
-    background-color: #734079;
-  }
-
-  .btn-categories.selected {
-    background-color: #007bff;
-    color: white;
-  }
-  @media (max-width: 768px) {
-    .sidepanel {
-      bottom: 0px;
-      width: 100%;
-      height: 0px;
-      left: 0px;
-      right: 0px;
+    .sidepanel a:hover {
+      color: #f1f1f1;
     }
 
     .sidepanelOpenBtn {
-      bottom: 2px;
-      margin-top: auto;
-      left: 50%;
+      font-size: 20px;
+      cursor: pointer;
+      background-color: #111;
+      color: white;
+      padding: 10px;
+      border: none;
+      position: fixed;
+      z-index: 2;
+      transition: left 0.05s;
+      margin-top: 25%;
+      left: 2px;
+      text-align: center;
     }
 
-    .carousel-images {
-      height: 7em;
+    .sidepanelOpenBtn:hover {
+      background-color: #111;
+      color: white;
     }
-  }
+
+    .scrolling-wrapper {
+      overflow-x: auto;
+    }
+
+    .btn-categories {
+      background-color: #A64C79;
+      color: white;
+      border: none;
+      width: auto;
+      border-radius: 4px;
+      padding: 0px 4px;
+    }
+
+    .categories {
+      margin: 5px;
+    }
+
+    .btn-categories:hover {
+      background-color: #734079;
+    }
+
+    .btn-categories.selected {
+      background-color: #007bff;
+      color: white;
+    }
+
+    @media (max-width: 768px) {
+      .sidepanel {
+        bottom: 0px;
+        width: 100%;
+        height: 0px;
+        left: 0px;
+        right: 0px;
+      }
+
+      .sidepanelOpenBtn {
+        bottom: 2px;
+        margin-top: auto;
+        left: 50%;
+      }
+
+      .carousel-images {
+        height: 7em;
+      }
+    }
   </style>
 </head>
 
@@ -221,7 +224,7 @@
     </div>
   </div>
   <!--Floating Search-->
-  <div class="search-container m-2">
+  <div id="search-container" class="search-container m-2">
     <input type="text" id="search-input" class="rounded" placeholder="Search..."
       onkeydown="if(event.keyCode==13) searchBox()" />
   </div>
@@ -249,17 +252,17 @@
 
 
 
-  <script>
-    fillCategories();
-    createMap();
-    loadUserSettings();
-  </script>
+    <script>
+      fillCategories();
+      createMap();
+      loadUserSettings();
+    </script>
 
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-    crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"></script>
 </body>
 
 </html>
