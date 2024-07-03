@@ -49,9 +49,10 @@
                 <a class="nav-link active" id="approve-attractions-tab" onclick="getAllUnapprovedAttractions()"
                     href="#">Approve Attractions</a>
             </li>
-            
+
             <li class="nav-item">
-                <a class="nav-link" id="delete-attractions-tab" href="#" onclick="getAllAttractionsToModerate()">Delete Attractions</a>
+                <a class="nav-link" id="delete-attractions-tab" href="#" onclick="getAllAttractionsToModerate()">Delete
+                    Attractions</a>
             </li><!--
             <li class="nav-item">
                 <a class="nav-link" id="manage-users-tab" href="#">Manage Users</a>
@@ -128,9 +129,12 @@
                                     approveButton.onclick = function () {
                                         fetch(document.location.origin + '/api/attractions?action=approve&id=' + attraction.Id, {
                                             method: 'PUT',
-                                        }).then(() => {
-                                            card.remove();
-                                        });
+                                        }).then((response) => response.json())
+                                            .then((data) => {
+                                                if (data.success) {
+                                                    card.remove();
+                                                }
+                                            });
                                     };
 
                                     const deleteButton = document.createElement('button');
@@ -231,7 +235,7 @@
                                             method: "DELETE",
                                         }).then((response) => response.json())
                                             .then((data) => {
-                                                if (data.success == true){
+                                                if (data.success == true) {
                                                     card.remove();
                                                 }
                                             });
@@ -282,11 +286,11 @@
 
 
     </script>
-        </div>
-        <div id="manage-users" class="content-tab" style="display: none;">
-            <h2>Manage Users</h2>
-            <!-- Content for managing users -->
-        </div>
+    </div>
+    <div id="manage-users" class="content-tab" style="display: none;">
+        <h2>Manage Users</h2>
+        <!-- Content for managing users -->
+    </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
