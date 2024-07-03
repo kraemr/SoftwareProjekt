@@ -18,6 +18,7 @@ document.addEventListener("click", function (event) {
 window.addEventListener("resize", function () {
     const sidepanel = document.getElementById("sidepanel-toggle");
     const button = document.getElementById("toggleButton");
+    const searchContainer = document.getElementById("search-container");
     // This code will run whenever the window is resized
     if (window.innerWidth <= 768) {
         // Change the sidebar to the small screen layout
@@ -28,6 +29,7 @@ window.addEventListener("resize", function () {
         sidepanel.style.width = "100%";
         button.style.bottom = "2px";
         button.style.left = "50%";
+        searchContainer.style.left = "2px";
     } else {
         // Change the sidebar to the large screen layout
         sidepanel.style.height = "100%";
@@ -37,6 +39,7 @@ window.addEventListener("resize", function () {
         button.style.bottom = "50%";
         button.style.left = "2px";
         console.log("The window is large");
+        searchContainer.style.left = "2px";
     }
 });
 // Toggle left sidebar
@@ -47,7 +50,7 @@ function toggleSidepanel() {
     if (window.innerWidth <= 768) {
         // Check if the screen size is small
         if (sidepanel.style.height === "40%") {
-            sidepanel.style.height = "0";
+            sidepanel.style.height = "0px";
             button.style.bottom = "2px";
         } else {
             sidepanel.style.height = "40%";
@@ -55,7 +58,7 @@ function toggleSidepanel() {
         }
     } else {
         if (sidepanel.style.width === "25%") {
-            sidepanel.style.width = "0";
+            sidepanel.style.width = "0px";
             button.style.left = "2px";
             searchContainer.style.left = "2px";
         } else {
@@ -65,6 +68,26 @@ function toggleSidepanel() {
         }
     }
 }
+function openSidepanel() {
+    const sidepanel = document.getElementById("sidepanel-toggle");
+    const button = document.getElementById("toggleButton");
+    const searchContainer = document.getElementById("search-container");
+    if (window.innerWidth <= 768) {
+        // Check if the screen size is small
+        if (sidepanel.style.height === "0px") {
+            sidepanel.style.height = "40%";
+            button.style.bottom = "41%";
+        }
+    } else {
+        if (sidepanel.style.width === "0px") {
+            sidepanel.style.width = "25%";
+            button.style.left = "25%";
+            searchContainer.style.left = "25%";
+        }
+        searchContainer.style.left = "25%";
+    }
+}
+
 function getCategories() {
     var apiUrl = document.location.origin + "/api/categories";
     console.log(apiUrl);
