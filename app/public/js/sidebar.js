@@ -326,7 +326,7 @@ function loadMarkerInfoToSidebar(attractionData) {
             .then((data) => {
                 console.log("Update Attraction: " + data.success);
             });
-        fetch(document.location.origin + "/api/favorites?" + attractionData, {
+        fetch(document.location.origin + "/api/favorites?id=" + attractionData, {
             method: "POST",
             body: JSON.stringify(attractionData),
         })
