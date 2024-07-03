@@ -85,7 +85,7 @@
                 <script>
                     function getAllUnapprovedAttractions() {
                         
-                        fetch(document.location.origin + "/api/attractions?unapproved", {
+                        fetch(document.location.origin + "/api/attractions?unapproved=1", {
                             method: "GET",
                         })
                             .then(response => response.json())
