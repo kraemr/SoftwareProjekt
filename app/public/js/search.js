@@ -81,7 +81,6 @@ function loadAttractionsByCity(city) {
     encodeURIComponent(city);
   console.log(apiUrl);
 
-<<<<<<< HEAD
   // Ausführen der API-Abfrage
   fetch(apiUrl)
     .then((response) => response.json())
@@ -95,24 +94,6 @@ function loadAttractionsByCity(city) {
     .catch((error) => {
       console.error("Fehler bei der API-Abfrage:", error);
     });
-=======
-    // Ausführen der API-Abfrage
-    fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            // Löschen aller Marker
-            allMarkersLayer.clearLayers();
-            // Hinzufgen der neuen Marker
-            if (currentCategory) {
-                data = data.filter(attraction => attraction.type === currentCategory);
-            }
-            placeMarkers(data);
-        })
-        .catch(error => {
-            console.error('Fehler bei der API-Abfrage:', error);
-        });
->>>>>>> fbcaadd7b960dc0ac510c604993b2c36c8148ab3
 }
 // Funktion zum Aktualisieren der GeoJSON-Schicht und Anpassen der Karte
 function updateGeoJsonLayer(data) {
