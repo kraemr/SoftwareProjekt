@@ -3,6 +3,7 @@ import (
 	"src/crypto_utils"
 	"database/sql"
 	"src/db_utils"
+	"fmt"
 )
 
 
@@ -49,6 +50,7 @@ func LoginModerator(email string,password string) bool{
 		var db *sql.DB = db_utils.DB
 		row, err := db.Query("SELECT password from CITY_MODERATOR where email=? LIMIT 1", email)
 		if(err != nil){
+			fmt.Println("Email for mod doesnt exist")
 			return false
 		}
 		defer row.Close()

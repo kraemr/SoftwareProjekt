@@ -34,10 +34,6 @@ type hash struct {
     
 }
 
-
-
-
-
 func decodeHash(encodedHash string) (p *params, salt, hash []byte, err error) {
     vals := strings.Split(encodedHash, "$")
     if len(vals) != 6 {
