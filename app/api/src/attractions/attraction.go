@@ -189,7 +189,7 @@ func GetAttractionsAddedBy(user_id int32) ([]Attraction,error){
 func GetAttractionsUnapproved() ([]Attraction,error){
 	var db *sql.DB = db_utils.DB
 	var attractions []Attraction
-	rows, err := db.Query("SELECT * FROM ATTRACTION_ENTRY WHERE and approved=FALSE")
+	rows, err := db.Query("SELECT * FROM ATTRACTION_ENTRY WHERE approved=FALSE")
 	if err != nil {
 		return attractions, err
 	}

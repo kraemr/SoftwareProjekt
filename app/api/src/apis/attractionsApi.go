@@ -207,6 +207,7 @@ func getAttraction(req *http.Request) (string, error) {
 		f2, _ := strconv.ParseFloat(posy, 32)
 		attraction_list, err = attractions.GetAttractionsByPos(float32(f1), float32(f2))
 	} else if(unapprovedIsSet){
+		fmt.Println(unapproved);
 		attraction_list, err = attractions.GetAttractionsUnapproved()
 	} else {
 		attraction_list, err = attractions.GetAttractions()
