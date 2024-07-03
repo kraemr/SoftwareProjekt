@@ -50,7 +50,7 @@ function toggleSidepanel() {
     if (window.innerWidth <= 768) {
         // Check if the screen size is small
         if (sidepanel.style.height === "40%") {
-            sidepanel.style.height = "0px";
+            sidepanel.style.height = "0";
             button.style.bottom = "2px";
         } else {
             sidepanel.style.height = "40%";
@@ -58,7 +58,7 @@ function toggleSidepanel() {
         }
     } else {
         if (sidepanel.style.width === "25%") {
-            sidepanel.style.width = "0px";
+            sidepanel.style.width = "0";
             button.style.left = "2px";
             searchContainer.style.left = "2px";
         } else {
@@ -72,19 +72,18 @@ function openSidepanel() {
     const sidepanel = document.getElementById("sidepanel-toggle");
     const button = document.getElementById("toggleButton");
     const searchContainer = document.getElementById("search-container");
+    // Check if the screen size is small
     if (window.innerWidth <= 768) {
-        // Check if the screen size is small
-        if (sidepanel.style.height === "0px") {
+        if (sidepanel.style.height = "0") {
             sidepanel.style.height = "40%";
             button.style.bottom = "41%";
         }
     } else {
-        if (sidepanel.style.width === "0px") {
+        if (sidepanel.style.width = "0") {
             sidepanel.style.width = "25%";
             button.style.left = "25%";
             searchContainer.style.left = "25%";
         }
-        searchContainer.style.left = "25%";
     }
 }
 
