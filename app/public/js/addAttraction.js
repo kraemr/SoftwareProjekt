@@ -167,12 +167,20 @@ function addAttraction() {
         const fullAddress = city + " " + address + " " + houseNumber;
         const approved = false;
         const stars = 0;
-        const added_by = "user";
+        var added_by;
         const reviews = [];
         var apiUrl = 'https://nominatim.openstreetmap.org/search.php?q=' + encodeURIComponent(fullAddress) + '&format=geojson&limit=1&countrycodes=de'
         console.log(title, city, address, fullAddress, type, info, image)
         console.log(apiUrl)
-        
+        fetch(document.location.origin + "/api/users", {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        })
+            .then(response => response.json())
+            .then(data => {
+                added_by = data.username;
+            });
+        console.log(added_by);
         fetch(apiUrl)
             .then(response => response.json())
             .then(data => {
@@ -181,16 +189,16 @@ function addAttraction() {
                     const posX = coordinates[0]; // Longitude
                     const posY = coordinates[1]; // Latitude
                     console.log(posX, posY);
-    
+
                     // Proceed with the second fetch call only after coordinates are fetched
                     return fetch('/api/attractions', {
                         method: 'POST',
-                        body: JSON.stringify({title, city, address, houseNumber, type, info, image, posX, posY, approved, stars, added_by, reviews }),
+                        body: JSON.stringify({ title, city, address, houseNumber, type, info, image, posX, posY, approved, stars, added_by, reviews }),
                         headers: { 'Content-Type': 'application/json' }
                     }).then((response) => response.json())
-                    .then((data) => {
-                        console.log(data);
-                    });
+                        .then((data) => {
+                            console.log(data);
+                        });
                 } else {
                     throw new Error('No coordinates found for the given address');
                 }
@@ -204,5 +212,5 @@ function addAttraction() {
                 alert("Failed to add attraction: " + error.message);
             });
     });
-    
+
 }
