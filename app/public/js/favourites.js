@@ -7,6 +7,11 @@ function OpenFavourites() {
         .then(data => {
             const sidebarContent = document.getElementById("showFavourites");
             sidebarContent.style.display = "block";
+            sidebarContent.innerHTML = `
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="filter-input" placeholder="Filter favourites" oninput="filterFavourites()">
+                </div>
+            `;
             console.log(data);
             data.forEach(favorite => {
                 const card = document.createElement("div");
@@ -67,4 +72,18 @@ function OpenFavourites() {
         .catch(error => {
             console.error('Error fetching favorites:', error);
         });
+}
+
+function filterFavourites() {
+    const filterValue = document.getElementById('filter-input').value.toLowerCase();
+    const favouriteCards = document.querySelectorAll('#showFavourites .card');
+
+    favouriteCards.forEach(card => {
+        const cardText = card.querySelector('.card-body').innerText.toLowerCase();
+        if (cardText.includes(filterValue)) {
+            card.style.display = '';
+        } else {
+            card.style.display = 'none';
+        }
+    });
 }
