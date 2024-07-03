@@ -17,7 +17,7 @@ func TestDeleteAttractionFavoriteById(t *testing.T) {
 
 	db_utils.DB = db
 
-	id := int32(1)
+	id := int64(1)
 	prep := mock.ExpectPrepare("DELETE FROM USER_FAVORITE WHERE id=\\?")
 	prep.ExpectExec().WithArgs(id).WillReturnResult(sqlmock.NewResult(0, 1))
 
@@ -39,7 +39,7 @@ func TestDeleteAttractionFavoriteByAttractionId(t *testing.T) {
 
 	db_utils.DB = db
 
-	attraction_id := int32(2)
+	attraction_id := int64(2)
 	prep := mock.ExpectPrepare("DELETE FROM USER_FAVORITE WHERE id=\\?")
 	prep.ExpectExec().WithArgs(attraction_id).WillReturnResult(sqlmock.NewResult(0, 1))
 
@@ -62,8 +62,8 @@ func TestAddAttractionFavoriteById(t *testing.T) {
 
 	db_utils.DB = db
 
-	userID := int32(1)
-	attractionID := int32(100)
+	userID := int64(1)
+	attractionID := int64(100)
 	prep := mock.ExpectPrepare("INSERT INTO USER_FAVORITE\\(user_id,attraction_id\\) VALUES\\(\\?,\\?\\)")
 	prep.ExpectExec().WithArgs(userID, attractionID).WillReturnResult(sqlmock.NewResult(1, 1))
 
@@ -85,7 +85,7 @@ func TestGetAttractionFavoritesByUserId(t *testing.T) {
 
 	db_utils.DB = db
 
-	userID := int32(1)
+	userID := int64(1)
 	rows := sqlmock.NewRows([]string{"id", "user_id", "attraction_id", "attraction_id", "title", "type", "recommended_count", "city", "info", "approved", "posX", "posY", "stars"}).
 		AddRow(1, userID, 101, 101, "Attraction One", "Type A", 10, "City X", "Information", true, 12.34, 56.78, 4.5)
 
