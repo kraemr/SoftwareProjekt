@@ -129,7 +129,7 @@
                                         fetch(document.location.origin + '/api/attractions?action=approve&id=' + attraction.Id, {
                                             method: 'PUT',
                                         }).then(() => {
-                                            getAllUnapprovedAttractions();
+                                            card.remove();
                                         });
                                     };
 
