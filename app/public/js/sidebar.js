@@ -174,7 +174,7 @@ async function showRoute(fromLat, fromLon, toLat, toLon) {
                 cardBody.appendChild(info);
             });
 
-            // Die Ankufstzeit des letzten Legs wird als Ankunftszeit der Route genommen
+            // The arrival time of the last leg is taken as the arrival time of the option
             const lastLeg = journey.legs[journey.legs.length - 1];
             const arrivalTime = new Date(lastLeg.plannedArrival).toLocaleString();
             const arrivalInfo = document.createElement('p');
@@ -191,13 +191,10 @@ async function showRoute(fromLat, fromLon, toLat, toLon) {
     });
 }
 
-// Funktion für die Abfrage von "Startort"
 function getStartLocation(attLat, attLng) {
-    // label "gebe dein Standort ein"
     const routeDiv = document.getElementById("routeShowcase");
     routeDiv.innerHTML = '<p>Enter your start location:</p>';
     
-    // Hbox:
     hdiv = document.createElement("div");
     hdiv.className = "hbox";
 
@@ -217,7 +214,7 @@ function getStartLocation(attLat, attLng) {
             const fromLat = position.coords.latitude;
             const fromLon = position.coords.longitude;
     
-            // API-Abfrage für die Route
+            // API request for the route
             showRoute(fromLat, fromLon, attLat, attLng);
         });
     };
@@ -228,7 +225,7 @@ function getStartLocation(attLat, attLng) {
     button.innerHTML = "Search";
     button.className = "btn btn-primary";
     button.onclick = function() {
-        // Long/Lat durch nomenatim API abfragen
+        // Retrieve long/lat through nomenatim API
         const location = inputField.value;
         const apiUrl = `https://nominatim.openstreetmap.org/search?q=${location}&format=json&limit=1`;
         fetch(apiUrl)
@@ -242,11 +239,11 @@ function getStartLocation(attLat, attLng) {
             if (data.length > 0) {
                 const lat = data[0].lat;
                 const lon = data[0].lon;
-                // Koordinaten für Start- und Zielort
+                // Coordinates for start and destination
                 const fromLat = lat;
                 const fromLon = lon;
                 
-                // API-Abfrage für die Route
+                // API request for the route
                 showRoute(fromLat, fromLon, attLat, attLng);
             }
         })
