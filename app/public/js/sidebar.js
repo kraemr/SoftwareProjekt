@@ -91,6 +91,7 @@ function getCategories() {
                     selectedButton = null;
                     // Optionally, you can call a function to handle the unselection case, e.g., showing all markers or clearing the map
                     loadAttractionsByCity(currentCity);
+                    currentCategory = null;
                 } else {
                     // Remove 'selected' class from the previously selected button
                     if (selectedButton) {

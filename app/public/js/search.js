@@ -77,7 +77,9 @@ function loadAttractionsByCity(city) {
             // Löschen aller Marker
             allMarkersLayer.clearLayers();
             // Hinzufgen der neuen Marker
-            data = data.filter(attraction => attraction.type === currentCategory);
+            if (currentCategory) {
+                data = data.filter(attraction => attraction.type === currentCategory);
+            }
             placeMarkers(data);
         })
         .catch(error => {
