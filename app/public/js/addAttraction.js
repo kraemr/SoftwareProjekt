@@ -188,8 +188,8 @@ function addAttraction() {
       .then((data) => {
         if (data.features && data.features.length > 0) {
           const coordinates = data.features[0].geometry.coordinates;
-          const posX = coordinates[0]; // Longitude
-          const posY = coordinates[1]; // Latitude
+          const posX = coordinates[1];
+          const posY = coordinates[0];
           console.log(posX, posY);
 
           fetch_config = {

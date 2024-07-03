@@ -29,7 +29,6 @@ function searchLocation(query, clearSearchInput) {
     "https://nominatim.openstreetmap.org/search.php?q=" +
     encodeURIComponent(query) +
     "&polygon_geojson=1&format=geojson&limit=1&countrycodes=de";
-  console.log(apiUrl);
 
   // Ausführen der API-Abfrage
   fetch(apiUrl)
@@ -54,7 +53,6 @@ function loadAttractionsByCategory(category) {
     document.location.origin +
     "/api/attractions?category=" +
     encodeURIComponent(category);
-  console.log(apiUrl);
 
   // Ausführen der API-Abfrage
   fetch(apiUrl)
@@ -77,14 +75,13 @@ function loadAttractionsByCity(city) {
     document.location.origin +
     "/api/attractions?city=" +
     encodeURIComponent(city);
-  console.log(apiUrl);
 
   // Ausführen der API-Abfrage
   fetch(apiUrl)
     .then((response) => response.json())
     .then((data) => {
+      // Löschen aller Marke
       console.log(data);
-      // Löschen aller Marker
       allMarkersLayer.clearLayers();
       // Hinzufgen der neuen Marker
       if (currentCategory) {

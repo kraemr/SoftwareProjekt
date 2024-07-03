@@ -1,6 +1,6 @@
 function loadUserSettings() {
     isLoggedIn().then(isUserLoggedIn => {
-        console.log(isUserLoggedIn);
+        console.log("logged in: " + isUserLoggedIn);
         if (isUserLoggedIn) {
             document.getElementById('user-settings').innerHTML = `
         <div class="col-12">
