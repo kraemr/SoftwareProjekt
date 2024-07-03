@@ -76,14 +76,13 @@ function getCategories() {
       console.error("Fehler bei der API-Abfrage:", error);
     });
   // Function to fill the sidebar categories from the database
-
-  function fillCategories(data) {
-    const categoriesWrapper = document.getElementById("categories-scroller");
-
-    // Variable to keep track of the currently selected button
-    let selectedButton = null;
-
-    data.forEach((category) => {
+}
+// Function to fill the sidebar categories from the database
+function fillCategories() {
+  let selectedButton = null;
+  const categoriesWrapper = document.getElementById("categories-scroller");
+  getCategories().then((categories) => {
+    categories.forEach((category) => {
       const button = document.createElement("button");
       button.className = "btn-secondary btn-categories m-2";
       button.innerHTML = category;
@@ -97,6 +96,7 @@ function getCategories() {
           selectedButton = null;
           // Optionally, you can call a function to handle the unselection case, e.g., showing all markers or clearing the map
           loadAttractionsByCity(currentCity);
+          currentCategory = null;
         } else {
           // Remove 'selected' class from the previously selected button
           if (selectedButton) {
@@ -106,14 +106,12 @@ function getCategories() {
           button.classList.add("selected");
           // Update the selectedButton variable
           selectedButton = button;
-          loadAttractionsByCategoryAndCity(
-            category,
-            document.getElementById("search-input").value
-          );
+          loadAttractionsByCategory(category);
+          currentCategory = category;
         }
       });
     });
-  }
+  });
 }
 
 function loadMarkerInfoToSidebar(attractionData) {
