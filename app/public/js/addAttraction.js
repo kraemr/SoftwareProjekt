@@ -42,6 +42,15 @@ function addAttraction() {
     addressInput.type = 'text';
     addressInput.classList.add('add-attraction-input');
 
+    const houseNumber = document.createElement('label');
+    houseNumber.innerText = 'House Number';
+    houseNumber.style.display = 'block';
+    houseNumber.style.marginTop = '10px';
+
+    const houseNumberInput = document.createElement('input');
+    houseNumberInput.type = 'text';
+    houseNumberInput.classList.add('add-attraction-input');
+
     const titleLabel = document.createElement('label');
     titleLabel.innerText = 'Title:';
     titleLabel.style.display = 'block';
@@ -61,9 +70,8 @@ function addAttraction() {
     typeSelect.style.padding = '5px';
     typeSelect.style.marginTop = '5px';
 
-    // Fetch categories from API and populate dropdown
-    fetch('/api/categories')
-        .then(response => response.json())
+    // Fetch categories from API and populate dropdown using getCategories function
+    getCategories()
         .then(categories => {
             categories.forEach(category => {
                 const option = document.createElement('option');
@@ -119,12 +127,14 @@ function addAttraction() {
     cancelButton.style.cursor = 'pointer';
 
     // Append form elements to form container
+    formContainer.appendChild(titleLabel);
+    formContainer.appendChild(titleInput);
     formContainer.appendChild(cityLabel);
     formContainer.appendChild(cityInput);
     formContainer.appendChild(addressLabel);
     formContainer.appendChild(addressInput);
-    formContainer.appendChild(titleLabel);
-    formContainer.appendChild(titleInput);
+    formContainer.appendChild(houseNumber);
+    formContainer.appendChild(houseNumberInput);
     formContainer.appendChild(typeLabel);
     formContainer.appendChild(typeSelect);
     formContainer.appendChild(infoLabel);
@@ -149,11 +159,12 @@ function addAttraction() {
         console.log('Add button clicked');
         const city = cityInput.value;
         const address = addressInput.value;
+        const houseNumber = houseNumberInput.value;
         const title = titleInput.value;
         const type = typeSelect.value;
         const info = infoInput.value;
         const image = imageInput.value;
-        const fullAddress = city + " " + address;
+        const fullAddress = city + " " + address + " " + houseNumber;
         var apiUrl = 'https://nominatim.openstreetmap.org/search.php?q=' + encodeURIComponent(fullAddress) + '&format=geojson&limit=1&countrycodes=de'
         console.log(title, city, address, fullAddress, type, info, image)
         console.log(apiUrl)
@@ -170,7 +181,7 @@ function addAttraction() {
                     // Proceed with the second fetch call only after coordinates are fetched
                     return fetch('/api/attractions', {
                         method: 'POST',
-                        body: JSON.stringify({title, city, address, type, info, image, posX, posY }),
+                        body: JSON.stringify({title, city, address, houseNumber, type, info, image, posX, posY }),
                         headers: { 'Content-Type': 'application/json' }
                     });
                 } else {
