@@ -28,12 +28,15 @@ function isLoggedIn(){
     return fetch(document.location.origin + "/api/logged_in", {
         method: "GET",
     })
-    .then(response => response.json())
-    .then(data => {
-        console.log(data);
-        if (data.success == true) {
+    .then((response) => {
+        console.log(response);
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+        if (response.ok == true) {
             return true;
-        } else {
+        } else 
+        {
             return false;
         }
     })
