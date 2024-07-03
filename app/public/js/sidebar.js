@@ -70,6 +70,7 @@ function getCategories() {
 }
 // Function to fill the sidebar categories from the database
 function fillCategories() {
+    let selectedButton = null;
     const categoriesWrapper = document.getElementById("categories-scroller");
     getCategories().then(categories => {
         categories.forEach(category => {
