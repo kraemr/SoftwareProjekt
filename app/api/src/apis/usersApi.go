@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"src/users"
+	"src/sessions"
 )
 
 // delete user
@@ -80,7 +81,16 @@ func get(req *http.Request) (string, error) {
 		}
 		output = string(outputBytes)
 	} else {
-		return "{\"success\":false,\"info\":\"No user id provided\"}", nil
+		id := sessions.GetLoggedInUserId(req)
+		user, err = users.GetUserByID(int64(id))
+		if err != nil {
+			return "{\"success\":false,\"info\":\"Error marshalling user data\"}", err
+		}
+		outputBytes, err := json.Marshal(user)
+		if err != nil {
+			return "{\"success\":false,\"info\":\"Error marshalling user data\"}", err
+		}
+		output = string(outputBytes)
 	}
 	return output, err
 }
