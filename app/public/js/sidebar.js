@@ -101,6 +101,7 @@ function getCategories() {
                     // Update the selectedButton variable
                     selectedButton = button;
                     loadAttractionsByCategory(category);
+                    currentCategory = category;
                 }
             });
         });

@@ -1,4 +1,5 @@
 var currentCity;
+var currentCategory;
 function searchBox() {
     // Read Input Box
     var query = document.getElementById('search-input').value;
@@ -75,7 +76,8 @@ function loadAttractionsByCity(city) {
             console.log(data);
             // Löschen aller Marker
             allMarkersLayer.clearLayers();
-            // Hinzufügen der neuen Marker
+            // Hinzufgen der neuen Marker
+            data = data.filter(attraction => attraction.type === currentCategory);
             placeMarkers(data);
         })
         .catch(error => {
