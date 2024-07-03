@@ -111,7 +111,8 @@ INSERT INTO ATTRACTION_ENTRY (id,title, type, recommended_count, city, street, h
 (4,'Heidelberg Castle', 'Historical', 9500, 'Heidelberg', 'Schlosshof', '1', 'A famous ruin in Germany and landmark of Heidelberg.', TRUE, 49.4106, 8.7153, 4.6, 'https://example.com/heidelberg_castle.jpg',911111),
 (5,'Sanssouci Palace', 'Historical', 8000, 'Potsdam', 'Maulbeerallee', '3', 'The former summer palace of Frederick the Great, King of Prussia, in Potsdam, near Berlin.', TRUE, 52.4044, 13.0388, 4.7, 'https://example.com/sanssouci_palace.jpg',911111),
 (6,'Miniatur Wunderland', 'Museum', 15000, 'Hamburg', 'Kehrwieder', '2', 'A model railway attraction in Hamburg, and the largest of its kind in the world.', TRUE, 53.5436, 9.9886, 4.8, 'https://example.com/miniatur_wunderland.jpg',911111),
-(9000,'Zugspitze', 'Nature', 7000, 'Garmisch-Partenkirchen', '', '', 'The highest peak of the Wetterstein Mountains as well as the highest mountain in Germany.', TRUE, 47.4210, 10.9850, 4.9, 'https://example.com/zugspitze.jpg',911111),
+(9000,'Zugspitze', 'Nature', 7000, 'Garmisch-Partenkirchen', '', '', 'The highest peak of the Wetterstein Mountains as well as the highest mountain in Germany.', TRUE, 47.4210, 10.9850, 4.9, 'https://example.com/zugspitze.jpg',911111);
+
 
 INSERT INTO ATTRACTION_ENTRY (id, title, type, recommended_count, city, street, housenumber, info, approved, PosX, PosY, stars, img_url, added_by)
 VALUES
