@@ -143,7 +143,8 @@ func postAttraction(req *http.Request) (string,error){
 	var attraction attractions.Attraction
 	decoder := json.NewDecoder(req.Body)
 	err := decoder.Decode(&attraction)
-	
+	fmt.Println(attraction)
+
 	if err != nil {
 		return "{\"success\":false}", err
 	}
@@ -151,6 +152,7 @@ func postAttraction(req *http.Request) (string,error){
 	attraction.Stars = 0
 	attraction.Approved = false
 	attraction.Recommended_count = 0
+	attraction.Added_by = 911111
 
 	
 	err = attractions.InsertAttraction(attraction)

@@ -56,6 +56,7 @@ func getAttractionsFromDb(rows *sql.Rows) ([]Attraction, error) {
 			&a.Stars,
 			&a.Img_url,
 			&a.Added_by)
+		fmt.Println(a)
 		attr_list = append(attr_list, a)
 	}
 	if no_data {
@@ -82,7 +83,7 @@ func RemoveAttraction(id int64) error {
 // This function Also Makes sure that the City string is made to be lowercase
 func InsertAttraction(a Attraction) error {
 	var db *sql.DB = db_utils.DB
-	prepared_stmt, err := db.Prepare("INSERT INTO ATTRACTION_ENTRY(title,type,recommended_count,city,street,housenumber,info,PosX,PosY,stars,img_url,added_by) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)")
+	prepared_stmt, err := db.Prepare("INSERT INTO ATTRACTION_ENTRY(title,type,recommended_count,city,street,housenumber,info,PosX,PosY,stars,img_url,added_by,approved) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,FALSE)")
 	if err != nil {
 		fmt.Println("Couldnt Insert Attraction")
 		return err
@@ -90,6 +91,7 @@ func InsertAttraction(a Attraction) error {
 	result, err := prepared_stmt.Exec(a.Title, a.Type, a.Recommended_count, a.City, a.Street, a.Housenumber, a.Info, a.PosX, a.PosY, a.Stars, a.Img_url, a.Added_by)
 	_ = result
 	if err != nil {
+		fmt.Println(err)
 		return err
 	}
 	return nil
