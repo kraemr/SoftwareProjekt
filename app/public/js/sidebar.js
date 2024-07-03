@@ -320,21 +320,22 @@ function loadMarkerInfoToSidebar(attractionData) {
     // Add event listener for the favourite button
     document.getElementById("favouriteButton").addEventListener("click", function () {
         attractionData.recommended_count += 1;
-        fetch(document.location.origin + "/api/attractions", {
+        
+        fetch(document.location.origin + "/api/attractions?id=" + attractionData.Id, {
             method: "PUT",
-            body: JSON.stringify(attractionData),
+            body: JSON.stringify(attractionData.Id),
         })
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
+                console.log("Update Attraction: " + data.success);
             });
-        fetch(document.location.origin + "/api/favorites", {
+        fetch(document.location.origin + "/api/favorites?" + attractionData, {
             method: "POST",
             body: JSON.stringify(attractionData),
         })
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
+                console.log("Add Favorite: " + data.success);
             });
     });
     // Add event listeners for the star rating

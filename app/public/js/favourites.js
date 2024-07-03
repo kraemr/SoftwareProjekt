@@ -1,7 +1,7 @@
 function OpenFavourites() {
     hideSidebarContent();
     openSidepanel();
-    fetch(document.location.origin + "/api/attractions", {
+    fetch(document.location.origin + "/api/favorites", {
         method: "GET",
     })
         .then(response => response.json())

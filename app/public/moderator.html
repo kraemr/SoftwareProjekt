@@ -64,7 +64,8 @@
         <div id="approve-attractions" class="content-tab">
             <h2>Approve Attractions</h2>
             <div class="input-group mb-3">
-                <input type="text" class="form-control" id="filter-input" placeholder="Filter attractions" oninput="filterAttractions()">
+                <input type="text" class="form-control" id="filter-input" placeholder="Filter attractions"
+                    oninput="filterAttractions()">
             </div>
             <div id="attractions-list" class="row row-cols-1 row-cols-md-3 g-4">
                 <script>
@@ -84,13 +85,13 @@
                 </script>
                 <script>
                     function getAllUnapprovedAttractions() {
-                        
+
                         fetch(document.location.origin + "/api/attractions?unapproved=1", {
                             method: "GET",
                         })
                             .then(response => response.json())
                             .then(data => {
-                                if(data.success == false){
+                                if (data.success == false) {
                                     const errorMessage = document.createElement('p');
                                     errorMessage.className = 'alert alert-danger';
                                     errorMessage.innerHTML = "Everything is approved!";
@@ -136,11 +137,14 @@
                                     deleteButton.className = 'btn btn-danger m-1';
                                     deleteButton.innerText = 'Delete';
                                     deleteButton.onclick = function () {
-                                        fetch(document.location.origin + '/api/attractions' + attraction.id, {
-                                            method: 'DELETE',
-                                        }).then(() => {
-                                            getAllUnapprovedAttractions();
-                                        });
+                                        fetch(document.location.origin + "/api/attractions?id=" + attraction.Id, {
+                                            method: "DELETE",
+                                        }).then((response) => response.json())
+                                            .then((data) => {
+                                                console.log(attraction.Id);
+                                                console.log(data);
+                                                getAllUnapprovedAttractions();
+                                            });
                                     };
 
                                     cardBody.appendChild(cardTitle);
@@ -161,7 +165,7 @@
                 </script>
             </div>
         </div>
-        
+
         <div id="delete-attractions" class="content-tab" style="display: none;">
             <h2>Delete Attractions</h2>
             <!-- Content for deleting attractions -->
