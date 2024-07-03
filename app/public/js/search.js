@@ -49,13 +49,11 @@ function searchLocation(query, clearSearchInput) {
     });
 }
 // Place markers by category and city
-function loadAttractionsByCategoryAndCity(category, city) {
+function loadAttractionsByCategory(category) {
   var apiUrl =
     document.location.origin +
     "/api/attractions?category=" +
-    encodeURIComponent(category) +
-    "&city=" +
-    encodeURIComponent(city);
+    encodeURIComponent(category);
   console.log(apiUrl);
 
   // Ausführen der API-Abfrage
