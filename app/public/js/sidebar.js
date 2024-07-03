@@ -126,8 +126,9 @@ function fillCategories() {
                     button.classList.add("selected");
                     // Update the selectedButton variable
                     selectedButton = button;
-                    loadAttractionsByCategory(category);
                     currentCategory = category;
+                    console.log("Category selected: " + category);
+                    loadAttractionsByCategory(category);
                 }
             });
         });

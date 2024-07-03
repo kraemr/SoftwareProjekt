@@ -156,7 +156,7 @@ function addAttraction() {
 
   addButton.addEventListener("click", () => {
     console.log("Add button clicked");
-    const city = cityInput.value;
+    const city = cityInput.value.toLowerCase();
     const address = addressInput.value;
     const houseNumber = houseNumberInput.value;
     const title = titleInput.value;
