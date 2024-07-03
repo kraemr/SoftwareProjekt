@@ -34,12 +34,12 @@ function placeMarkers(data) {
   function setPopUp(data, marker) {
     var popupContent = `
       <div>
-        <strong>City: </strong> ${data.city}<br>
         <strong>Title: </strong> ${data.title}<br>
-        <strong>Type: </strong> ${data.type}<br>
-        <strong>Info: </strong> ${data.info}<br>
-        <strong>Stars: </strong> ${data.Stars}&#11088;<br>
-        <strong>Recommended Count: </strong> ${data.recommended_count}
+        <strong>City: </strong> ${data.city}<br>
+        <strong>Category: </strong> ${data.type}<br>
+        <strong>Description: </strong> ${data.info}<br>
+        <strong>Recommended Count: </strong> ${data.recommended_count}<br>
+        <strong>Stars: </strong> ${data.Stars}&#11088;
         ${data.image ? `<img src="${data.image}" alt="Image" style="width: 100%; height: auto;">` : ""}
       </div>
     `;
