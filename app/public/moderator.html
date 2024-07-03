@@ -66,11 +66,17 @@
             <div id="attractions-list" class="row row-cols-1 row-cols-md-3 g-4">
                 <script>
                     function getAllUnapprovedAttractions() {
-                        fetch(document.location.origin + "/api/attractions?unapproved", {
+                        
+                        fetch(document.location.origin + "/api/attractions?unapproved=1", {
                             method: "GET",
                         })
                             .then(response => response.json())
                             .then(data => {
+                                if(data.success == false){
+                                    const errorMessage = document.createElement('p');
+                                    errorMessage.className = 'alert alert-danger';
+                                    errorMessage.innerHTML = "Everything is approved!";
+                                }
                                 const attractionsList = document.getElementById('attractions-list');
                                 attractionsList.innerHTML = ''; // Clear the list before adding new items
 
@@ -101,8 +107,8 @@
                                     approveButton.className = 'btn btn-success m-1';
                                     approveButton.innerText = 'Approve';
                                     approveButton.onclick = function () {
-                                        fetch(document.location.origin + '/api/attractions/' + attraction.id + '/approve', {
-                                            method: 'POST',
+                                        fetch(document.location.origin + '/api/attractions?action=approve&id=1', {
+                                            method: 'PUT',
                                         }).then(() => {
                                             getAllUnapprovedAttractions();
                                         });
@@ -112,7 +118,7 @@
                                     deleteButton.className = 'btn btn-danger m-1';
                                     deleteButton.innerText = 'Delete';
                                     deleteButton.onclick = function () {
-                                        fetch(document.location.origin + '/api/attractions/' + attraction.id, {
+                                        fetch(document.location.origin + '/api/attractions' + attraction.id, {
                                             method: 'DELETE',
                                         }).then(() => {
                                             getAllUnapprovedAttractions();
