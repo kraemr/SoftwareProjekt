@@ -26,7 +26,7 @@ func LoginModerator(res http.ResponseWriter, req *http.Request) {
 	}
 	fmt.Println(modInfo)
 
-	correct := sessions.LoginUser(modInfo.Email, modInfo.Password)
+	correct := sessions.LoginModerator(modInfo.Email, modInfo.Password)
 	if correct == true {
 		// get Id
 		mod, uerr := moderator.GetModeratorByEmail(modInfo.Email)
@@ -34,7 +34,7 @@ func LoginModerator(res http.ResponseWriter, req *http.Request) {
 			fmt.Println("loginUser: couldnt get user by id")
 			return
 		}
-		sessions.StartModeratorSession(res, req, mod.Id, mod.Email)
+		sessions.StartModeratorSession(res, req, mod.Id, mod.City)
 		fmt.Fprintf(res, "{\"success\":true}")
 	} else {
 		fmt.Fprintf(res, "{\"success\":false}")
