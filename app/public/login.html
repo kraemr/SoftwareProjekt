@@ -73,6 +73,10 @@
                     placeholder="Password"
                   />
                 </div>
+                <div class="form-group form-check mt-2">
+                  <input type="checkbox" class="form-check-input" id="moderatorCheck">
+                  <label class="form-check-label" for="moderatorCheck">Are you a moderator?</label>
+                </div>
                 <button
                   type="submit"
                   class="btn btn-primary btn-block btnLogin mt-2"
@@ -119,13 +123,15 @@
           var data = {
             email: email,
             password: password,
+            isModerator: document.getElementById("moderatorCheck").checked,
           };
 
           // Convert data to JSON string
           var jsonData = JSON.stringify(data);
-
+          
           // Send the JSON data to the login API endpoint
-          fetch(document.location.origin + "/api/login", {
+          var apiEndpoint = document.getElementById("moderatorCheck").checked ? "/api/login_moderator" : "/api/login";
+          fetch(document.location.origin + apiEndpoint, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
