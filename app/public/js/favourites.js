@@ -37,12 +37,13 @@ function OpenFavourites() {
                 deleteButton.className = "btn btn-danger";
                 deleteButton.innerHTML = "Unfavourite";
                 deleteButton.onclick = function() {
-                    fetch(document.location.origin + "/api/favorites", {
+                    fetch(document.location.origin + "/api/favorites?id=" + favorite.Id, {
                         method: "DELETE",
                     })
                     .then(response => response.json())
                     .then(result => {
                         if (result.success) {
+                            console.log('Favorite deleted:', result);
                             card.remove();
                         } else {
                             console.error('Error deleting favorite:', result.info);
