@@ -63,6 +63,7 @@ func main() {
 
 	http.HandleFunc("/api/login", apis.LoginUser)
 	http.HandleFunc("/api/logged_in", apis.CheckUserLoggedIn)
+	http.HandleFunc("/api/logout", apis.LogoutAPI)
 	http.HandleFunc("/api/login_moderator", apis.LoginModerator)
 
 	http.HandleFunc("/api/ban", moderator.BanUser)

@@ -143,9 +143,16 @@ func postAttraction(req *http.Request) (string,error){
 	var attraction attractions.Attraction
 	decoder := json.NewDecoder(req.Body)
 	err := decoder.Decode(&attraction)
+	
 	if err != nil {
 		return "{\"success\":false}", err
 	}
+
+	attraction.Stars = 0
+	attraction.Approved = false
+	attraction.Recommended_count = 0
+
+	
 	err = attractions.InsertAttraction(attraction)
 	if err != nil {
 		return "{\"success\":false}", err

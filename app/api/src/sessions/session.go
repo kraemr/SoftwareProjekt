@@ -68,6 +68,7 @@ func StartModeratorSession(w http.ResponseWriter, r *http.Request,moderator_id i
 func CheckLoggedIn(r *http.Request) bool {
 	session, err := store.Get(r, "sessionid")
 	if(err != nil){
+		fmt.Println("ssession doesnt exist")
 		return false
 	}
 	// test if the type is correct here 
@@ -78,6 +79,7 @@ func CheckLoggedIn(r *http.Request) bool {
 	}
 	
 	if logged_in, ok := session.Values["logged_in"].(bool); ok{
+		fmt.Printf("logged_in was %b\n",logged_in);
 		return logged_in
 	}
 	return false
@@ -131,4 +133,18 @@ func CheckModeratorAccessToCity(r *http.Request	, _city string) bool{
 		return true
 	}
 	return false
+}
+
+
+func Logout(r *http.Request){
+	session, err := store.Get(r, "sessionid")
+	_ = err
+	_ = session
+	session.Values["logged_in"] = false
+	session.Values["moderator"] = false
+	session.Values["id"] = 0
+	session.Values["moderator_city"] = ""
+
+
+	session.Options.MaxAge=-1
 }

@@ -65,3 +65,8 @@ func LoginUser(res http.ResponseWriter, req *http.Request) {
 		fmt.Fprintf(res, "{\"success\":false}")
 	}
 }
+
+func LogoutAPI(res http.ResponseWriter, req *http.Request){
+	sessions.Logout(req)
+	fmt.Fprintf(res,"\"success\":true");
+}
