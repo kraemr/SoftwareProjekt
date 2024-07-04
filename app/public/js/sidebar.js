@@ -323,26 +323,24 @@ function loadMarkerInfoToSidebar(attractionData) {
             method: 'GET',
         }).then((response) => response.json())
             .then((data) => {
-                userID = data.UserId;
+                console.log(data.UserId);
+                console.log(attractionData.Id);
+
+                fetch(document.location.origin + '/api/favorites', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        user_id: data.UserId,
+                        attraction_id: attractionData.Id
+                    }),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                    }).then((response) => response.json())
+                        .then((data) => {
+                            console.log(data);
+                        }
+                    );
         });
-
-       // Favorites API mit POST Methode aufrufen
-
-       fetch(document.location.origin + '/api/favorites', {
-        method: 'POST',
-        body: JSON.stringify({
-            UserId: userID,
-            AttractionId: attractionData.AttractionId
-        }),
-        headers: {
-            'Content-Type': 'application/json'
-        }
-        }).then((response) => response.json())
-            .then((data) => {
-                console.log(data);
-            }
-        );
-
     });
     // Add event listeners for the star rating
     document.querySelectorAll(".star-rating .star").forEach(star => {
