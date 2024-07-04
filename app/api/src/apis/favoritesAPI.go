@@ -10,19 +10,32 @@ import (
 )
 
 func getFavorite(req *http.Request) (string, error) {
+	
+	if(req.URL.Query().Get("action") == "count" && req.URL.Query().Get("attraction_id") != ""){
+		a_id,e := strconv.ParseInt( req.URL.Query().Get("attraction_id"), 10, 64);
+		if(e != nil){
+			return "{\"success\":false,\"info\":\"attraction_id missing\"}", e
+		}
+		count,err := favorites.GetAttractionFavoriteCountByAttractionId(a_id);
+		if(err != nil){
+			return "{\"success\":false,\"info\":\"Couldnt Count Favorites\"}", err
+		}
+		return fmt.Sprintf("{\"favorite_count\":%d}", count) , nil
+	}
+	
 	if !sessions.CheckLoggedIn(req) {
 		return "{\"success\":false,\"info\":\"Not Logged in\"}", nil
 	}
-
+	
 	id := sessions.GetLoggedInUserId(req)
 	favorite_list, err := favorites.GetAttractionFavoritesByUserId(int64(id))
 	if err != nil {
-		return "{\"success\":false}", err
+		return "{\"success\":false,\"info\":\"GetAttractionFavoritesByUserId failed\"}", err
 	}
 	json_bytes, json_err := json.Marshal(favorite_list)
 	if json_err != nil {
 		fmt.Println("error")
-		return "{\"success\":false}", json_err
+		return "{\"success\":false,\"info\":\"json decode failed\"}", json_err
 	}
 	output := string(json_bytes)
 	return output, nil
@@ -43,13 +56,24 @@ func postFavorite(req *http.Request) (string, error) {
 	decoder := json.NewDecoder(req.Body)
 	err := decoder.Decode(&favorite)
 	if err != nil {
-		return "{\"success\":false}", err
+		return "{\"success\":false,\"info\":\"favorite decode fail\"}", err
 	}
+	fmt.Println(favorite)
+	b,e := favorites.CheckFavoriteExists(favorite.Attraction_id, favorite.User_id)
+	if(b == true && e == nil){
+		delete_err := favorites.DeleteAttractionFavoriteByAttractionId(favorite.Attraction_id,favorite.User_id);
+		if(delete_err != nil){
+			return "{\"success\":false,\"info\":\"did not delete favorite\"}",nil;
+		}
+		return "{\"success\":true,\"info\":\"deleted favorite\"}",nil;
+	}
+
 	err = favorites.AddAttractionFavoriteById(favorite.User_id, favorite.Attraction_id)
 	if err != nil {
-		return "{\"success\":false}", err
+		fmt.Println(err)
+		return "{\"success\":false,\"info\":\"AddAttractionFavoriteById failed\"}", err
 	}
-	return "{\"success\":true}", nil
+	return "{\"success\":true,\"info\":\"added favorite\"}", nil
 }
 
 func deleteFavorite(req *http.Request) (string, error) {

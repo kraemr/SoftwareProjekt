@@ -10,8 +10,6 @@ type AttractionFavorite struct {
 	Id            int64 `json:id`
 	User_id       int64 `json:user_id`
 	Attraction_id int64 `json:attraction_id`
-	//	Type string `json:type`
-	//	City string `json:city`
 }
 
 type AttractionFavoriteUnion struct {
@@ -31,17 +29,6 @@ type AttractionFavoriteUnion struct {
 
 // IF this was returned in recommendations then we dont send any
 var ErrNoFavorites = fmt.Errorf("No Favorites Found")
-
-/*
-CREATE TABLE USER_FAVORITE(
-    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    attraction_id INT NOT NULL,
-    type varchar(32) NOT NULL,
-    city varchar(32) NOT NULL
-);
-*/
-
 func DeleteAttractionFavoriteById(id int64) error {
 	var db *sql.DB = db_utils.DB
 	prepared_stmt, err := db.Prepare("DELETE FROM USER_FAVORITE WHERE id=?")
@@ -57,14 +44,15 @@ func DeleteAttractionFavoriteById(id int64) error {
 	return nil
 }
 
-func DeleteAttractionFavoriteByAttractionId(attraction_id int64) error {
+func DeleteAttractionFavoriteByAttractionId(attraction_id int64,user_id int64) error {
 	var db *sql.DB = db_utils.DB
-	prepared_stmt, err := db.Prepare("DELETE FROM USER_FAVORITE WHERE id=?")
+	prepared_stmt, err := db.Prepare("DELETE FROM USER_FAVORITE WHERE user_id=? and attraction_id=?")
 	if err != nil {
 		fmt.Println("Couldnt Remove Attraction Favorite")
 		return err
 	}
-	result, err1 := prepared_stmt.Exec(attraction_id)
+
+	result, err1 := prepared_stmt.Exec(user_id , attraction_id)
 	if err1 != nil {
 		return err1
 	}
@@ -74,6 +62,53 @@ func DeleteAttractionFavoriteByAttractionId(attraction_id int64) error {
 	}
 
 	return nil
+}
+
+
+func CheckFavoriteExists(attraction_id int64,user_id int64) (bool,error){
+	var db *sql.DB = db_utils.DB
+	rows, err := db.Query("SELECT COUNT(*) FROM USER_FAVORITE WHERE attraction_id = ? and user_id = ?", attraction_id,user_id)
+	if err != nil {
+		return false,err
+	}
+	defer rows.Close()
+	var count int64
+	rows.Next()
+	rows.Scan(&count)
+
+	if(count == 0){
+		return false,nil
+	}else{
+		return true,nil
+	}
+}
+
+
+func GetAttractionFavoriteCountByAttractionId(attraction_id int64) (int,error){
+	var db *sql.DB = db_utils.DB
+
+	rows, err := db.Query("SELECT COUNT(*) FROM USER_FAVORITE WHERE attraction_id = ?", attraction_id)	
+	if err != nil {
+		return 0, err
+	}
+	defer rows.Close()
+	
+	nodata_found := true
+	var count int
+	for rows.Next() {
+		rows.Scan(
+			&count,
+		)
+		nodata_found = false
+	}
+
+	if err != nil {
+		return 0, err
+	} else if nodata_found {
+		return 0, ErrNoFavorites
+	} else {
+		return count, nil
+	}
 }
 
 // TODO: Check for IDOR, Check for proper Auth here
