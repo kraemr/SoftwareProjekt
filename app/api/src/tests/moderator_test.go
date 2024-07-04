@@ -9,15 +9,18 @@ import (
 )
 
 func TestGetModeratorById(t *testing.T) {
+	// Mocking the database connection
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("An error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
 
+	// Setting the mocked database connection
 	db_utils.DB = db
 
 	var exampleId int64 = 1
+	// Expecting a query for a moderator by ID and returning a row with the moderator data
 	rows := sqlmock.NewRows([]string{"id", "email", "password", "city", "username"}).
 		AddRow(1, "moderator@example.com", "password123", "SampleCity", "modname")
 
@@ -34,6 +37,7 @@ func TestGetModeratorById(t *testing.T) {
 	}
 
 	var noResultId int64 = 99
+	// Testcase 2: Expecting a query for a moderator by ID and returning no rows (no moderator found)
 	mock.ExpectQuery("Select \\* from CITY_MODERATOR where id = \\?").
 		WithArgs(noResultId).
 		WillReturnRows(sqlmock.NewRows(nil))
@@ -49,15 +53,18 @@ func TestGetModeratorById(t *testing.T) {
 }
 
 func TestGetModeratorByEmail(t *testing.T) {
+	// Mocking the database connection
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("An error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
 
+	// Setting the mocked database connection
 	db_utils.DB = db
 
 	email := "example@example.com"
+	// Expecting a query for a moderator by email and returning a row with the moderator data
 	rows := sqlmock.NewRows([]string{"id", "email", "password", "city", "username"}).
 		AddRow(1, email, "password123", "SampleCity", "modname")
 
@@ -73,7 +80,7 @@ func TestGetModeratorByEmail(t *testing.T) {
 		t.Errorf("Unexpected moderator data returned: %+v", mod)
 	}
 
-	// Test when the moderator does not exist
+	// Subtest: Test when no moderator is found for the email
 	mock.ExpectQuery("Select \\* from CITY_MODERATOR where email = \\?").
 		WithArgs("noemail@example.com").
 		WillReturnRows(sqlmock.NewRows(nil))
@@ -89,14 +96,17 @@ func TestGetModeratorByEmail(t *testing.T) {
 }
 
 func TestGetModeratorsCity(t *testing.T) {
+	// Mocking the database connection
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("An error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
 
+	// Setting the mocked database connection
 	db_utils.DB = db
 
+	// Expecting a query for moderators by city and returning rows with the moderator data
 	city := "SampleCity"
 	rows := sqlmock.NewRows([]string{"id", "email", "password", "city", "username"}).
 		AddRow(1, "moderator@example.com", "password123", city, "modname").
@@ -114,7 +124,7 @@ func TestGetModeratorsCity(t *testing.T) {
 		t.Errorf("Unexpected number of moderators returned: %d", len(moderators))
 	}
 
-	// Test when no moderators are found in the city
+	// Subtest: Test when no moderator is found for the city
 	mock.ExpectQuery("Select \\* from CITY_MODERATOR where city = \\?").
 		WithArgs("UnknownCity").
 		WillReturnRows(sqlmock.NewRows(nil))
@@ -130,14 +140,17 @@ func TestGetModeratorsCity(t *testing.T) {
 }
 
 func TestUpdateModerator(t *testing.T) {
+	// Mocking the database connection
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("An error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
 
+	// Setting the mocked database connection
 	db_utils.DB = db
 
+	// Expecting a prepared statement for updating a moderator and the execution of the prepared statement
 	mod := moderator.Moderator{Id: 1, Email: "moderator@example.com", City: "SampleCity", Username: "modname"}
 	prep := mock.ExpectPrepare("UPDATE CITY_MODERATOR SET id=\\?,email=\\?,city=\\?,username=\\? WHERE id=\\?")
 	prep.ExpectExec().WithArgs(mod.Id, mod.Email, mod.City, mod.Username, mod.Id).WillReturnResult(sqlmock.NewResult(0, 1))
@@ -152,14 +165,17 @@ func TestUpdateModerator(t *testing.T) {
 }
 
 func TestInsertModerator(t *testing.T) {
+	// Mocking the database connection
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("An error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
 
+	// Setting the mocked database connection
 	db_utils.DB = db
 
+	// Expecting a prepared statement for inserting a moderator and the execution of the prepared statement
 	mod := moderator.Moderator{Id: 2, Email: "newmoderator@example.com", City: "NewCity", Username: "newmodname"}
 	prep := mock.ExpectPrepare("INSERT INTO CITY_MODERATOR\\(id,email,city,username\\) VALUES\\(\\?,\\?,\\?,\\?\\)")
 	prep.ExpectExec().WithArgs(mod.Id, mod.Email, mod.City, mod.Username).WillReturnResult(sqlmock.NewResult(1, 1))
@@ -174,14 +190,17 @@ func TestInsertModerator(t *testing.T) {
 }
 
 func TestDisableUser(t *testing.T) {
+	// Mocking the database connection
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("An error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
 
+	// Setting the mocked database connection
 	db_utils.DB = db
 
+	// Expecting update query for disabling a user and the execution of the query
 	email := "user@example.com"
 	mock.ExpectExec("UPDATE USER SET active=false WHERE email = \\?").
 		WithArgs(email).

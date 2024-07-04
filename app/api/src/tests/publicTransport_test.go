@@ -11,6 +11,8 @@ import (
 
 // TestFetchFullRouteLongLat testet die FetchFullRouteLongLat Funktion.
 func TestFetchFullRouteLongLat(t *testing.T) {
+
+	// "Mocking" the server
 	testServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if strings.Contains(r.URL.Path, "locations/nearby") {
 			resp := []public_transport.Location{
@@ -32,6 +34,7 @@ func TestFetchFullRouteLongLat(t *testing.T) {
 	}))
 	defer testServer.Close()
 
+	// trying the function with sample data
 	journeys, err := public_transport.FetchFullRouteLongLat(49.9179102, 8.3430285, 49.987809, 8.2272517)
 	if err != nil {
 		t.Fatalf("FetchFullRouteLongLat failed: %v", err)

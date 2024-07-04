@@ -11,7 +11,7 @@ import (
 
 const baseURL = "https://v6.db.transport.rest"
 
-// Location repräsentiert einen Standort mit seinen Details.
+// Location - Configured just like the API response (JSON)
 type Location struct {
 	Type     string `json:"type"`
 	ID       string `json:"id"`
@@ -22,7 +22,7 @@ type Location struct {
 	} `json:"location"`
 }
 
-// Journey repräsentiert eine Reise mit mehreren Abschnitten (Legs).
+// Journey - API Response for every option
 type Journey struct {
 	Type string `json:"type"`
 	Legs []struct {
@@ -60,7 +60,7 @@ type Journey struct {
 	} `json:"legs"`
 }
 
-// fetchLocationID ruft die Standort-ID für gegebene Koordinaten ab.
+// fetchLocationID checks the nearest location to the given coordinates.
 func fetchLocationID(latitude, longitude float64) (string, error) {
 	var locationID string
 	resp, err := http.Get(fmt.Sprintf("%s/locations/nearby?latitude=%f&longitude=%f&results=1", baseURL, latitude, longitude))
@@ -83,7 +83,7 @@ func fetchLocationID(latitude, longitude float64) (string, error) {
 	return locationID, nil
 }
 
-// fetchJourneys ruft die besten Reisen zwischen zwei Standorten ab.
+// fetchJourneys gets the best journeys from the start location to the destination location.
 func fetchJourneys(fromID, toID string) ([]Journey, error) {
 	var journeys []Journey
 	departureTime := time.Now().Add(24 * time.Hour).Format(time.RFC3339)
@@ -108,33 +108,33 @@ func fetchJourneys(fromID, toID string) ([]Journey, error) {
 }
 
 func FetchFullRouteLongLat(fromLat, fromLon, toLat, toLon float64) ([]Journey, error) {
-	// Holt die Standort-ID für den Zielpunkt.
+	// Gets the location ID for the starting point.
 	fromID, err := fetchLocationID(fromLat, fromLon)
 	if err != nil {
 		err = fmt.Errorf("Error fetching to location ID: %w", err)
 		return nil, err
 	}
 
-	// Holt die Standort-ID für den Zielpunkt.
+	// Gets the location ID for the destination.
 	toID, err := fetchLocationID(toLat, toLon)
 	if err != nil {
 		err = fmt.Errorf("Error fetching to location ID: %w", err)
 		return nil, err
 	}
 
-	// Holt die besten Reisen von der Start-ID zur Ziel-ID.
+	// Gets the best options from the start location to the destination location.
 	journeys, err := fetchJourneys(fromID, toID)
 	if err != nil {
 		err = fmt.Errorf("Error fetching journeys: %w", err)
 		return nil, err
 	}
 
+	// Error-Handling: No journeys found
 	if len(journeys) == 0 {
-		fmt.Println("No journeys found")
 		err = fmt.Errorf("No journeys found")
 		return nil, err
 	}
 
-	// Gefundenen Reisen zurückgeben.
+	// return the options and no error
 	return journeys, nil
 }

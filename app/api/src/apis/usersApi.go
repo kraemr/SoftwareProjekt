@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strconv"
-	"src/users"
 	"src/sessions"
+	"src/users"
+	"strconv"
 )
 
 // delete user
@@ -80,7 +80,7 @@ func get(req *http.Request) (string, error) {
 			return "{\"success\":false,\"info\":\"Error marshalling user data\"}", err
 		}
 		output = string(outputBytes)
-	} else {
+	} else { // By current logged in user (session)
 		id := sessions.GetLoggedInUserId(req)
 		user, err = users.GetUserByID(int64(id))
 		if err != nil {
@@ -95,6 +95,7 @@ func get(req *http.Request) (string, error) {
 	return output, err
 }
 
+// Rest API Handler for users
 func HandleUsersREST(res http.ResponseWriter, req *http.Request) {
 	var output string
 	var err error
