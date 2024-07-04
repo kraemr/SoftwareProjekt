@@ -317,16 +317,32 @@ function loadMarkerInfoToSidebar(attractionData) {
 `;
     // Add event listener for the favourite button
     document.getElementById("favouriteButton").addEventListener("click", function () {
-        fetch(document.location.origin + '/api/favorites?id=' + attractionData.Id, {
-            method: 'POST',
+        var userID = 0;
+        
+        fetch(document.location.origin + '/api/users', {
+            method: 'GET',
         }).then((response) => response.json())
             .then((data) => {
-                if (data.success) {
-                    console.log('Attraction favourited:', data);
-                } else {
-                    console.error('Error favouriting attraction:', data);
-                }
-            });
+                userID = data.UserId;
+        });
+
+       // Favorites API mit POST Methode aufrufen
+
+       fetch(document.location.origin + '/api/favorites', {
+        method: 'POST',
+        body: JSON.stringify({
+            UserId: userID,
+            AttractionId: attractionData.AttractionId
+        }),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+        }).then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+            }
+        );
+
     });
     // Add event listeners for the star rating
     document.querySelectorAll(".star-rating .star").forEach(star => {
