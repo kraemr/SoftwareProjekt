@@ -86,7 +86,6 @@ func CheckFavoriteExists(attraction_id int64,user_id int64) (bool,error){
 
 func GetAttractionFavoriteCountByAttractionId(attraction_id int64) (int,error){
 	var db *sql.DB = db_utils.DB
-
 	rows, err := db.Query("SELECT COUNT(*) FROM USER_FAVORITE WHERE attraction_id = ?", attraction_id)	
 	if err != nil {
 		return 0, err
