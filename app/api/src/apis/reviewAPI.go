@@ -98,9 +98,11 @@ func getReview(req *http.Request) (string,error){
 	}else if(attraction_id_set){
 		convertedID := 0
 		convertedID,err = strconv.Atoi(attraction_id)
+		fmt.Println(convertedID)
 		reviews_list,err = reviews.GetReviewsByAttractionId(int32( convertedID))
 		if(err != nil){
 			fmt.Println("failed GetReviewsByAttractionId");
+			fmt.Println(err)
 			return "{\"success\":false}",nil
 		}
 	}

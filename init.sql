@@ -167,15 +167,24 @@ VALUES
 
 
 
-INSERT INTO ATTRACTION_REVIEW(user_id,attraction_id,text,stars) VALUES(911113,36,"Great place",5);
-INSERT INTO ATTRACTION_REVIEW(user_id,attraction_id,text,stars) VALUES(911113,37,"Loved it here!",5);
-INSERT INTO ATTRACTION_REVIEW(user_id,attraction_id,text,stars) VALUES(911113,38,"Very Nice",5);
-INSERT INTO ATTRACTION_REVIEW(user_id,attraction_id,text,stars) VALUES(911113,39,"Great",5);
-INSERT INTO ATTRACTION_REVIEW(user_id,attraction_id,text,stars) VALUES(911113,36,"Can Recommend",5);
-INSERT INTO ATTRACTION_REVIEW(user_id,attraction_id,text,stars) VALUES(911113,32,"I HATED IT HERE",1);
-INSERT INTO ATTRACTION_REVIEW(user_id,attraction_id,text,stars) VALUES(911113,33,"its OK",3);
-INSERT INTO ATTRACTION_REVIEW(user_id,attraction_id,text,stars) VALUES(911113,33,"its SOOOOO GOOD",5);
-INSERT INTO ATTRACTION_REVIEW(user_id,attraction_id,text,stars) VALUES(911113,31,"Great place",5);
+INSERT INTO ATTRACTION_REVIEW(user_id,attraction_id,text,stars,date) VALUES(911113,36,"Great place",5,"2000-01-01");
+
+INSERT INTO ATTRACTION_REVIEW(user_id,attraction_id,text,stars,date) VALUES(911113,37,"Loved it here!", 5 ,"2000-01-01");
+
+INSERT INTO ATTRACTION_REVIEW(user_id,attraction_id,text,stars,date) VALUES(911113,38,"Very Nice",5,"2000-01-01");
+
+INSERT INTO ATTRACTION_REVIEW(user_id,attraction_id,text,stars,date) VALUES(911113,39,"Great",5,"2000-01-01");
+
+INSERT INTO ATTRACTION_REVIEW(user_id,attraction_id,text,stars,date) VALUES(911113,36,"Can Recommend",5,"2000-01-01");
+
+INSERT INTO ATTRACTION_REVIEW(user_id,attraction_id,text,stars,date) VALUES(911113,32,"I HATED IT HERE",1,"2000-01-01");
+
+INSERT INTO ATTRACTION_REVIEW(user_id,attraction_id,text,stars,date) VALUES(911113,33,"its OK",3,"2000-01-01");
+
+INSERT INTO ATTRACTION_REVIEW(user_id,attraction_id,text,stars,date) VALUES(911113,33,"its SOOOOO GOOD",5,"2000-01-01");
+
+INSERT INTO ATTRACTION_REVIEW(user_id,attraction_id,text,stars,date) VALUES(911113,31,"Great place",5,"2000-01-01");
+
 
 
 
