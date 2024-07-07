@@ -84,7 +84,7 @@ func getReview(req *http.Request) (string,error){
 		if(e != nil){
 			return "{\"success\":false,\"info\":\"no reviews\"}",err
 		}
-		stars_string := strconv.FormatFloat(float64(stars), 'E', -1, 32)
+		stars_string := strconv.FormatFloat(float64(stars), 'f', -1, 32)
 		return "{\"stars\":" +  stars_string + "}",nil ;
 	}
 
