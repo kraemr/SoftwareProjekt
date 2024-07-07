@@ -6,6 +6,7 @@ import (
 	"src/db_utils"
 )
 
+// User & UserLoginInfo structs - representing the user data just like in the database
 type User struct {
 	UserId    int64
 	Email     string `json:email`
@@ -19,6 +20,7 @@ type UserLoginInfo struct {
 	Password string `json:password`
 }
 
+// Create ErrNoUser to return when no user is found
 var ErrNoUser = fmt.Errorf("No User Found")
 
 func GetUsersByCityAndBanned(city string) ([]User, error) {
@@ -33,6 +35,8 @@ func GetUsersByCityAndBanned(city string) ([]User, error) {
 	defer rows.Close()
 
 	var found bool
+
+	// iterate over the rows
 	for rows.Next() {
 		var user User
 		err := rows.Scan(&user.UserId, &user.Email, &user.Password, &user.City, &user.Username, &user.Activated)
@@ -77,7 +81,7 @@ func GetUserByEmail(email string) (User, error) {
 		return User{}, err
 	}
 	defer rows.Close()
-	var id int32
+	var id int64
 	id = 0
 
 	for rows.Next() {

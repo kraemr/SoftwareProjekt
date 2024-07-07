@@ -135,7 +135,9 @@ function fillCategories() {
     });
 }
 
+// Get Route from locationA to locationB
 async function showRoute(fromLat, fromLon, toLat, toLon) {  
+    // Call REST API to get the route
     var apiUrl = document.location.origin + `/api/public_transport?fromLat=${fromLat}&fromLon=${fromLon}&toLat=${toLat}&toLon=${toLon}`;
   
     fetch(apiUrl)
@@ -147,8 +149,11 @@ async function showRoute(fromLat, fromLon, toLat, toLon) {
     })
     .then(data => {
         const routeDiv = document.getElementById("routeShowcase");
+
+        // Clear the route showcase div before adding new content
         routeDiv.innerHTML = '';
-  
+
+        // Add "option" for each journey
         data.forEach((journey, index) => {
             const card = document.createElement('div');
             card.className = 'card bg-dark text-light m-2';
@@ -156,6 +161,8 @@ async function showRoute(fromLat, fromLon, toLat, toLon) {
             const cardHeader = document.createElement('div');
             cardHeader.className = 'card-header';
             cardHeader.textContent = `Option ${index + 1}`;
+
+            // Add event listener to the card header to show/hide the content for better visibility
             cardHeader.onclick = function() {
                 const content = this.nextElementSibling;
                 content.style.display = content.style.display === 'block' ? 'none' : 'block';
@@ -164,6 +171,7 @@ async function showRoute(fromLat, fromLon, toLat, toLon) {
             const cardBody = document.createElement('div');
             cardBody.className = 'card-body';
   
+            // Add information for each leg ("step") of the journey
             journey.legs.forEach(leg => {
                 const depTime = new Date(leg.plannedDeparture).toLocaleString();
                 const arrTime = new Date(leg.plannedArrival).toLocaleString();
@@ -182,6 +190,7 @@ async function showRoute(fromLat, fromLon, toLat, toLon) {
             arrivalInfo.innerHTML = `Arrival: ${arrivalTime}`;
             cardHeader.appendChild(arrivalInfo);
   
+            // Add the card to the route showcase div
             card.appendChild(cardHeader);
             card.appendChild(cardBody);
             routeDiv.appendChild(card);
@@ -192,6 +201,7 @@ async function showRoute(fromLat, fromLon, toLat, toLon) {
     });
 }
 
+// Get the attraction location as parameters on call
 function getStartLocation(attLat, attLng) {
     const routeDiv = document.getElementById("routeShowcase");
     routeDiv.innerHTML = '<p>Enter your start location:</p>';
@@ -221,12 +231,12 @@ function getStartLocation(attLat, attLng) {
     };
     hdiv.appendChild(button);
 
-    // Button "Search"
+    // Add search button
     button = document.createElement("button");
     button.innerHTML = "Search";
     button.className = "btn btn-primary";
     button.onclick = function() {
-        // Retrieve long/lat through nomenatim API
+        // Retrieve long/lat of provided location through nomenatim API
         const location = inputField.value;
         const apiUrl = `https://nominatim.openstreetmap.org/search?q=${location}&format=json&limit=1`;
         fetch(apiUrl)
@@ -253,8 +263,8 @@ function getStartLocation(attLat, attLng) {
         });
     };
 
+    // Add elements to the route showcase div
     routeDiv.appendChild(hdiv);
-
     routeDiv.appendChild(button);
 }
 
@@ -317,8 +327,6 @@ function loadMarkerInfoToSidebar(attractionData) {
 `;
     // Add event listener for the favourite button
     document.getElementById("favouriteButton").addEventListener("click", function () {
-        var userID = 0;
-        
         fetch(document.location.origin + '/api/users', {
             method: 'GET',
         }).then((response) => response.json())

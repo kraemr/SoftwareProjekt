@@ -9,15 +9,174 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 )
 
-func TestCreateUser(t *testing.T) {
+func TestGetUsersByCityAndBanned(t *testing.T) {
+	// Mocking the database connection
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
 
+	// Setting the mocked database connection
 	db_utils.DB = db
 
+	// Prepare the expected user data
+	rows := sqlmock.NewRows([]string{"UserId", "Email", "Password", "City", "Username", "Activated"}).
+		AddRow(1, "user@example.com", "password", "CityX", "username1", "FALSE")
+
+	// Expecting a query to fetch users by city and banned status
+	mock.ExpectQuery("SELECT UserId, Email, Password, City, Username, Activated FROM USER WHERE city=\\? AND activated='FALSE'").
+		WithArgs("CityX").
+		WillReturnRows(rows)
+
+	// Execute the function to fetch users by city and banned status
+	userList, err := users.GetUsersByCityAndBanned("CityX")
+	if err != nil {
+		t.Errorf("Error was not expected while fetching data: %s", err)
+	}
+
+	// Expected user data
+	expected := []users.User{
+		{UserId: 1, Email: "user@example.com", Password: "password", City: "CityX", Username: "username1", Activated: "FALSE"},
+	}
+
+	// Compare the expected user data with the fetched user data
+	if len(userList) != 1 || !reflect.DeepEqual(userList[0], expected[0]) {
+		t.Errorf("Expected %v, got %v", expected, userList)
+	}
+
+	// Ensure all expectations were met
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("There were unfulfilled expectations: %s", err)
+	}
+
+	// Subtest: No user found for the given city and banned status
+	// -
+	// Expecting a query to fetch users by city and banned status but returning no rows
+	mock.ExpectQuery("SELECT UserId, Email, Password, City, Username, Activated FROM USER WHERE city=\\? AND activated='FALSE'").
+		WithArgs("CityY").
+		WillReturnRows(sqlmock.NewRows([]string{"UserId", "Email", "Password", "City", "Username", "Activated"})) // Return no rows
+
+	// Execute the function to fetch users by city and banned status
+	userList, err = users.GetUsersByCityAndBanned("CityY")
+	if err != nil && err.Error() != "No User Found" {
+		t.Errorf("Unexpected error while fetching data: %s", err)
+	}
+
+	// Expected empty user list
+	if len(userList) != 0 {
+		t.Errorf("Expected empty user list, got %v", userList)
+	}
+
+	// Ensure all expectations were met
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("There were unfulfilled expectations: %s", err)
+	}
+
+	// Ensure all expectations were met
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("There were unfulfilled expectations: %s", err)
+	}
+}
+
+func TestGetUserByID(t *testing.T) {
+	// Mocking the database connection
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close()
+
+	// Setting the mocked database connection
+	db_utils.DB = db
+
+	// Testing the user found scenario with the expected user data
+	rows := sqlmock.NewRows([]string{"id", "email", "password", "city", "username"}).
+		AddRow(1, "test@example.com", "password123", "TestCity", "testUser")
+
+	mock.ExpectQuery("SELECT id, email, password, city, username FROM USER WHERE id=\\? LIMIT 1").
+		WithArgs(1).
+		WillReturnRows(rows)
+
+	user, err := users.GetUserByID(1)
+	if err != nil {
+		t.Errorf("error was not expected while fetching user: %s", err)
+	}
+
+	expected := users.User{UserId: 1, Email: "test@example.com", Password: "password123", City: "TestCity", Username: "testUser"}
+	if user != expected {
+		t.Errorf("expected %v, got %v", expected, user)
+	}
+
+	// Subtest: Testing the no user found scenario
+	mock.ExpectQuery("SELECT id, email, password, city, username FROM USER WHERE id=\\? LIMIT 1").
+		WithArgs(999).
+		WillReturnRows(sqlmock.NewRows(nil))
+
+	_, err = users.GetUserByID(999)
+	if err == nil {
+		t.Errorf("expected ErrNoUser error, got %v", err)
+	}
+
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
+
+func TestGetUserCityById(t *testing.T) {
+	// Mocking the database connection
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close()
+
+	// Setting the mocked database connection
+	db_utils.DB = db
+
+	// Testing the user found scenario
+	rows := sqlmock.NewRows([]string{"city"}).
+		AddRow("TestCity")
+
+	mock.ExpectQuery("SELECT city from USER WHERE id=\\? LIMIT 1").
+		WithArgs(1).
+		WillReturnRows(rows)
+
+	city, err := users.GetUserCityById(1)
+	if err != nil {
+		t.Errorf("error was not expected while fetching user city: %s", err)
+	}
+	if city != "TestCity" {
+		t.Errorf("expected city to be 'TestCity', got '%s'", city)
+	}
+
+	// Subtest: Testing the no user found scenario
+	mock.ExpectQuery("SELECT city from USER WHERE id=\\? LIMIT 1").
+		WithArgs(999).
+		WillReturnRows(sqlmock.NewRows(nil))
+
+	city, err = users.GetUserCityById(999)
+	if err == nil || city != "" {
+		t.Errorf("expected error and empty city for non-existing user")
+	}
+
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
+
+func TestCreateUser(t *testing.T) {
+	// Mocking the database connection
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close()
+
+	// Setting the mocked database connection
+	db_utils.DB = db
+
+	// Expecting an insert query to create a new user
 	mock.ExpectExec("INSERT INTO USER \\(email, password, city, username\\)").
 		WithArgs("test@example.com", "password123", "TestCity", "testUser").
 		WillReturnResult(sqlmock.NewResult(1, 1))
@@ -33,14 +192,17 @@ func TestCreateUser(t *testing.T) {
 }
 
 func TestGetUserByEmail(t *testing.T) {
+	// Mocking the database connection
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
 
+	// Setting the mocked database connection
 	db_utils.DB = db
 
+	// Testing the user found scenario with the expected user data
 	rows := sqlmock.NewRows([]string{"id", "email", "password", "city", "username"}).
 		AddRow(1, "test@example.com", "password123", "TestCity", "testUser")
 
@@ -104,12 +266,14 @@ func TestUpdateUser(t *testing.T) {
 }
 
 func TestDeleteUser(t *testing.T) {
+	// Mocking the database connection
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
 
+	// Setting the mocked database connection
 	db_utils.DB = db
 
 	// Expected to delete an existing user
@@ -121,7 +285,7 @@ func TestDeleteUser(t *testing.T) {
 		t.Errorf("error was not expected while deleting user: %s", err)
 	}
 
-	// Expected not to find the user
+	// Subtest: Expected not to find the user (trying to delete a non-existing user)
 	mock.ExpectExec("DELETE FROM USER WHERE id=\\?").
 		WithArgs(999).
 		WillReturnResult(sqlmock.NewResult(0, 0))
@@ -132,124 +296,5 @@ func TestDeleteUser(t *testing.T) {
 
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)
-	}
-}
-
-func TestGetUserByID(t *testing.T) {
-	db, mock, err := sqlmock.New()
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
-	}
-	defer db.Close()
-
-	db_utils.DB = db
-
-	rows := sqlmock.NewRows([]string{"id", "email", "password", "city", "username"}).
-		AddRow(1, "test@example.com", "password123", "TestCity", "testUser")
-
-	mock.ExpectQuery("SELECT id, email, password, city, username FROM USER WHERE id=\\? LIMIT 1").
-		WithArgs(1).
-		WillReturnRows(rows)
-
-	user, err := users.GetUserByID(1)
-	if err != nil {
-		t.Errorf("error was not expected while fetching user: %s", err)
-	}
-
-	expected := users.User{UserId: 1, Email: "test@example.com", Password: "password123", City: "TestCity", Username: "testUser"}
-	if user != expected {
-		t.Errorf("expected %v, got %v", expected, user)
-	}
-
-	// Testing the no user found scenario
-	mock.ExpectQuery("SELECT id, email, password, city, username FROM USER WHERE id=\\? LIMIT 1").
-		WithArgs(999).
-		WillReturnRows(sqlmock.NewRows(nil))
-
-	_, err = users.GetUserByID(999)
-	if err == nil {
-		t.Errorf("expected ErrNoUser error, got %v", err)
-	}
-
-	if err := mock.ExpectationsWereMet(); err != nil {
-		t.Errorf("there were unfulfilled expectations: %s", err)
-	}
-}
-
-func TestGetUserCityById(t *testing.T) {
-	db, mock, err := sqlmock.New()
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
-	}
-	defer db.Close()
-
-	db_utils.DB = db
-
-	rows := sqlmock.NewRows([]string{"city"}).
-		AddRow("TestCity")
-
-	mock.ExpectQuery("SELECT city from USER WHERE id=\\? LIMIT 1").
-		WithArgs(1).
-		WillReturnRows(rows)
-
-	city, err := users.GetUserCityById(1)
-	if err != nil {
-		t.Errorf("error was not expected while fetching user city: %s", err)
-	}
-	if city != "TestCity" {
-		t.Errorf("expected city to be 'TestCity', got '%s'", city)
-	}
-
-	// Testing the no city found scenario
-	mock.ExpectQuery("SELECT city from USER WHERE id=\\? LIMIT 1").
-		WithArgs(999).
-		WillReturnRows(sqlmock.NewRows(nil))
-
-	city, err = users.GetUserCityById(999)
-	if err == nil || city != "" {
-		t.Errorf("expected error and empty city for non-existing user")
-	}
-
-	if err := mock.ExpectationsWereMet(); err != nil {
-		t.Errorf("there were unfulfilled expectations: %s", err)
-	}
-}
-
-func TestGetUsersByCityAndBanned(t *testing.T) {
-	db, mock, err := sqlmock.New()
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
-	}
-	defer db.Close()
-
-	db_utils.DB = db
-
-	// Vorbereiten der Mock-Daten
-	rows := sqlmock.NewRows([]string{"UserId", "Email", "Password", "City", "Username", "Activated"}).
-		AddRow(1, "user@example.com", "password", "CityX", "username1", "FALSE")
-
-	// Erwartete SQL-Abfrage
-	mock.ExpectQuery("SELECT UserId, Email, Password, City, Username, Activated FROM USER WHERE city=\\? AND activated='FALSE'").
-		WithArgs("CityX").
-		WillReturnRows(rows)
-
-	// Testfunktion ausführen
-	userList, err := users.GetUsersByCityAndBanned("CityX")
-	if err != nil {
-		t.Errorf("Error was not expected while fetching data: %s", err)
-	}
-
-	// Erwartete Nutzerdaten
-	expected := []users.User{
-		{UserId: 1, Email: "user@example.com", Password: "password", City: "CityX", Username: "username1", Activated: "FALSE"},
-	}
-
-	if len(userList) != 1 || !reflect.DeepEqual(userList[0], expected[0]) {
-		t.Errorf("Expected %v, got %v", expected, userList)
-	}
-
-	// Überprüfen, ob alle Erwartungen erfüllt wurden
-	if err := mock.ExpectationsWereMet(); err != nil {
-		t.Errorf("There were unfulfilled expectations: %s", err)
 	}
 }

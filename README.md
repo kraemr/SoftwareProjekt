@@ -90,3 +90,9 @@ cd tests/
 
 go test -v 
 ```
+
+alternative: just use this command when composing (Sadly, only found out about it at the end...)
+
+```bash
+docker-compose up --build --watch
+```
