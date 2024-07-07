@@ -56,6 +56,22 @@ func get(req *http.Request) (string, error) {
 	var output string
 	var user users.User
 
+
+	if(req.URL.Query().Get("city") != "" && sessions.CheckModeratorLoggedIn(req)){
+		u,e := users.GetUsersCity( req.URL.Query().Get("city") )
+		if(e != nil){
+			fmt.Println(e)
+			return "{\"info\":\"Error getting users in City\"}", err
+		}
+		json_bytes,json_err := json.Marshal(u)
+		if(json_err != nil){
+
+		}
+		return string(json_bytes),nil
+
+	}
+
+
 	if idIsSet { // by id
 		convertedID, err := strconv.ParseInt(inID, 10, 64)
 		if err != nil {

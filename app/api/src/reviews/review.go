@@ -95,6 +95,33 @@ func GetReviewsByAttractionId(attraction_id int32) ([]Review,error){
 	return reviews,nil
 }
 
+
+func GetStarsForAttraction(attraction_id int32) (float32,error){
+	var db *sql.DB = db_utils.DB
+	rows, err := db.Query("SELECT * FROM ATTRACTION_REVIEW WHERE attraction_id = ? LIMIT 1000",attraction_id)
+	if(err != nil){
+		return 0,err
+	}
+	defer rows.Close()
+	var r Review
+
+	star_sum := float32(0)
+	reviews_count := int32(0)
+	for rows.Next(){
+		rows.Scan(&r.Id,&r.User_id,&r.Attraction_id,&r.Text,&r.Stars,&r.Date)
+		star_sum += r.Stars
+		reviews_count += 1
+	}
+
+	if(reviews_count == 0){
+		return 0,ErrNoReviews
+	}
+
+	return star_sum / float32(reviews_count),nil
+
+
+}
+
 func GetReviewsByUserId(user_id int32) ([]Review,error){
 	var db *sql.DB = db_utils.DB
 	var reviews []Review

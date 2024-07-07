@@ -71,10 +71,22 @@ func getReview(req *http.Request) (string,error){
 	var attraction_id string = req.URL.Query().Get("attraction_id")
 	user_id_set := user_id != ""
 	attraction_id_set := attraction_id != ""
-
 	var reviews_list []reviews.Review
 	var err error
-	
+
+	if(req.URL.Query().Get("action") != "" && attraction_id_set){
+		convertedID := 0
+		convertedID,err = strconv.Atoi(attraction_id)
+		if(err != nil){
+			return "{\"success\":false}",err
+		}
+		stars,e :=  reviews.GetStarsForAttraction(int32(convertedID))
+		if(e != nil){
+			return "{\"success\":false,\"info\":\"no reviews\"}",err
+		}
+		stars_string := strconv.FormatFloat(float64(stars), 'E', -1, 32)
+		return "{\"stars\":" +  stars_string + "}",nil ;
+	}
 
 	if(user_id_set){
 		convertedID := 0
