@@ -167,7 +167,26 @@ VALUES
 
 
 
-INSERT INTO ATTRACTION_REVIEW(user_id,attraction_id,text,stars) VALUES(911113,9000,"Great place for my trad wife and 50 kids would go again, was able to drink my beer in peace without my wife nagging",5);
+INSERT INTO ATTRACTION_REVIEW(user_id,attraction_id,text,stars,date) VALUES(911113,36,"Great place",5,"2000-01-01");
+
+INSERT INTO ATTRACTION_REVIEW(user_id,attraction_id,text,stars,date) VALUES(911113,37,"Loved it here!", 5 ,"2000-01-01");
+
+INSERT INTO ATTRACTION_REVIEW(user_id,attraction_id,text,stars,date) VALUES(911113,38,"Very Nice",5,"2000-01-01");
+
+INSERT INTO ATTRACTION_REVIEW(user_id,attraction_id,text,stars,date) VALUES(911113,39,"Great",5,"2000-01-01");
+
+INSERT INTO ATTRACTION_REVIEW(user_id,attraction_id,text,stars,date) VALUES(911113,36,"Can Recommend",5,"2000-01-01");
+
+INSERT INTO ATTRACTION_REVIEW(user_id,attraction_id,text,stars,date) VALUES(911113,32,"I HATED IT HERE",1,"2000-01-01");
+
+INSERT INTO ATTRACTION_REVIEW(user_id,attraction_id,text,stars,date) VALUES(911113,33,"its OK",3,"2000-01-01");
+
+INSERT INTO ATTRACTION_REVIEW(user_id,attraction_id,text,stars,date) VALUES(911113,33,"its SOOOOO GOOD",5,"2000-01-01");
+
+INSERT INTO ATTRACTION_REVIEW(user_id,attraction_id,text,stars,date) VALUES(911113,31,"Great place",5,"2000-01-01");
+
+
+
 
 INSERT INTO USER_NOTIFICATIONS(user_id,info,date) VALUES(911111,"<p> GOODBYE WORLD </p>","2000-01-01");
 INSERT INTO CITY_NOTIFICATIONS(info,date,city)  VALUES("Kostenlose Döner","2000-01-01","Oppenheim");

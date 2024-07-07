@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"src/sessions"
+	"src/favorites"
 	"src/moderator"
 	"strconv"
 	"src/attractions"
@@ -178,12 +179,13 @@ func getAttraction(req *http.Request) (string, error) {
 	posxIsSet := posx != ""
 	posyIsSet := posy != ""
 	unapprovedIsSet := unapproved != ""
+	
 	var err error
 	var output string
+
 	var attraction_list []attractions.Attraction
 	var attraction attractions.Attraction
 
-	
 	if cityIsSet && categoryIsSet{
 		attraction_list, err = attractions.GetAttractionsByCityAndType(city,category)
 	} else if unapprovedIsSet && cityIsSet && sessions.CheckModeratorAccessToCity(req, city) {
@@ -213,6 +215,11 @@ func getAttraction(req *http.Request) (string, error) {
 		attraction_list, err = attractions.GetAttractionsUnapproved()
 	} else {
 		attraction_list, err = attractions.GetAttractions()
+	}
+
+	// not very pretty but gets the job done, might slow down at about 1000
+	for i:=0;i<len(attraction_list);i+=1 {
+		attraction_list[i].Recommended_count,err = favorites.GetAttractionFavoriteCountByAttractionId( attraction_list[i].Id )
 	}
 
 	if err != nil {

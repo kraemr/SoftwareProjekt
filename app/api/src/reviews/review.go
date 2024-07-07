@@ -71,6 +71,7 @@ func GetReviewsByAttractionId(attraction_id int32) ([]Review,error){
 	var reviews []Review
 	rows, err := db.Query("SELECT * FROM ATTRACTION_REVIEW WHERE attraction_id = ?",attraction_id)
 	if(err != nil){
+		fmt.Println(err)
 		return nil,err
 	}
 	defer rows.Close()
@@ -79,13 +80,13 @@ func GetReviewsByAttractionId(attraction_id int32) ([]Review,error){
 	for rows.Next(){
 		nodata_found = false
 		var r Review
-
 		rows.Scan(&r.Id,&r.User_id,&r.Attraction_id,&r.Text,&r.Stars,&r.Date)
 		fmt.Println("found a rview")
 		fmt.Println(r.Attraction_id)
 		reviews = append(reviews,r)
 	}
-	if(err != nil){	
+	if(err != nil){
+		fmt.Println(err)
 		return nil,err
 	}
 	if(nodata_found){
@@ -93,6 +94,35 @@ func GetReviewsByAttractionId(attraction_id int32) ([]Review,error){
 	}
 
 	return reviews,nil
+}
+
+
+func GetStarsForAttraction(attraction_id int32) (float32,error){
+	var db *sql.DB = db_utils.DB
+	rows, err := db.Query("SELECT * FROM ATTRACTION_REVIEW WHERE attraction_id = ? LIMIT 1000",attraction_id)
+	if(err != nil){
+		fmt.Println(err)
+		return 0,err
+	}
+	defer rows.Close()
+	var r Review
+
+	star_sum := float32(0)
+	reviews_count := int32(0)
+	for rows.Next(){
+		rows.Scan(&r.Id,&r.User_id,&r.Attraction_id,&r.Text,&r.Stars,&r.Date)
+		fmt.Println(r)
+		star_sum += r.Stars
+		reviews_count += 1
+	}
+
+	if(reviews_count == 0){
+		return 0,ErrNoReviews
+	}
+
+	return star_sum / float32(reviews_count),nil
+
+
 }
 
 func GetReviewsByUserId(user_id int32) ([]Review,error){
@@ -108,7 +138,7 @@ func GetReviewsByUserId(user_id int32) ([]Review,error){
 	for rows.Next(){
 		nodata_found = false
 		r := Review{}
-		rows.Scan(&r.Id,&r.User_id,&r.Attraction_id,&r.Text,&r.Stars)
+		rows.Scan(&r.Id,&r.User_id,&r.Attraction_id,&r.Text,&r.Stars,&r.Date)
 		reviews = append(reviews,r)
 	}
 	if(err != nil){	

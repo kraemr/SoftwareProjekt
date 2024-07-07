@@ -8,13 +8,22 @@ import (
 
 // User & UserLoginInfo structs - representing the user data just like in the database
 type User struct {
-	UserId    int64
+	UserId    int64	 `json:userid`
 	Email     string `json:email`
 	Password  string `json:password`
 	City      string `json:city`
 	Username  string `json:username`
 	Activated string `json:activated`
 }
+
+type UserNoPassword struct{
+	UserId    int64	 `json:userid`
+	Email     string `json:email`
+	City      string `json:city`
+	Username  string `json:username`
+	Activated string `json:activated`
+}
+
 type UserLoginInfo struct {
 	Email    string `json:email`
 	Password string `json:password`
@@ -195,4 +204,59 @@ func CreateUser(user User) error {
 		return err
 	}
 	return nil
+}
+
+
+func GetUsers() ([]UserNoPassword,error){
+	var db *sql.DB = db_utils.DB
+	rows, err := db.Query("SELECT id,email,city,username,active from USER")
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var unpw_list []UserNoPassword
+	var unpw UserNoPassword
+
+	no_data := false
+	for rows.Next() {
+		rows.Scan(&unpw.UserId,&unpw.Email,&unpw.City,&unpw.Username,&unpw.Activated)
+		no_data = true
+		unpw_list = append(unpw_list,unpw)
+	}
+
+	if no_data {
+		return nil, ErrNoUser
+	} else {
+		return unpw_list, nil
+	}
+}
+
+
+
+func GetUsersCity(city string) ([]UserNoPassword,error){
+	var db *sql.DB = db_utils.DB
+	rows, err := db.Query("SELECT id,email,city,username,active from USER WHERE city=?", city)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var unpw_list []UserNoPassword
+	var unpw UserNoPassword
+
+	no_data := true
+	for rows.Next() {
+		rows.Scan(&unpw.UserId,&unpw.Email,&unpw.City,&unpw.Username,&unpw.Activated)
+		no_data = false
+		unpw_list = append(unpw_list,unpw)
+	}
+
+	if no_data {
+		return nil, ErrNoUser
+	} else {
+		return unpw_list, nil
+	}
 }
