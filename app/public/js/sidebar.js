@@ -137,7 +137,7 @@ function fillCategories() {
 
 // Get Route from locationA to locationB
 async function showRoute(fromLat, fromLon, toLat, toLon) {
-    // Call REST API to get the route
+  // Call REST API to get the route
   var apiUrl =
     document.location.origin +
     `/api/public_transport?fromLat=${fromLat}&fromLon=${fromLon}&toLat=${toLat}&toLon=${toLon}`;
@@ -150,40 +150,39 @@ async function showRoute(fromLat, fromLon, toLat, toLon) {
       return response.json();
     })
     .then(data => {
-        const routeDiv = document.getElementById("routeShowcase");
+      const routeDiv = document.getElementById("routeShowcase");
 
-        // Clear the route showcase div before adding new content
-        routeDiv.innerHTML = '';
+      // Clear the route showcase div before adding new content
+      routeDiv.innerHTML = '';
 
-        // Add "option" for each journey
-        data.forEach((journey, index) => {
-            const card = document.createElement('div');
-            card.className = 'card bg-dark text-light m-2';
-  
-            const cardHeader = document.createElement('div');
-            cardHeader.className = 'card-header';
-            cardHeader.textContent = `Option ${index + 1}`;
+      // Add "option" for each journey
+      data.forEach((journey, index) => {
+        const card = document.createElement('div');
+        card.className = 'card bg-dark text-light m-2';
 
-            // Add event listener to the card header to show/hide the content for better visibility
-            cardHeader.onclick = function() {
-                const content = this.nextElementSibling;
-                content.style.display = content.style.display === 'block' ? 'none' : 'block';
-            };
-  
-            const cardBody = document.createElement('div');
-            cardBody.className = 'card-body';
-  
-            // Add information for each leg ("step") of the journey
-            journey.legs.forEach(leg => {
-                const depTime = new Date(leg.plannedDeparture).toLocaleString();
-                const arrTime = new Date(leg.plannedArrival).toLocaleString();
-                const info = document.createElement('p');
-                info.innerHTML = `From ${leg.origin.name} to ${leg.destination.name}<br>
+        const cardHeader = document.createElement('div');
+        cardHeader.className = 'card-header';
+        cardHeader.textContent = `Option ${index + 1}`;
+
+        // Add event listener to the card header to show/hide the content for better visibility
+        cardHeader.onclick = function () {
+          const content = this.nextElementSibling;
+          content.style.display = content.style.display === 'block' ? 'none' : 'block';
+        };
+
+        const cardBody = document.createElement('div');
+        cardBody.className = 'card-body';
+
+        // Add information for each leg ("step") of the journey
+        journey.legs.forEach(leg => {
+          const depTime = new Date(leg.plannedDeparture).toLocaleString();
+          const arrTime = new Date(leg.plannedArrival).toLocaleString();
+          const info = document.createElement('p');
+          info.innerHTML = `From ${leg.origin.name} to ${leg.destination.name}<br>
                                   Departure: ${depTime}<br>
                                   Arrival: ${arrTime}<br>
-                                  Mode: ${leg.line.mode || "Walking"}${
-            leg.line.name ? ` - ${leg.line.name}` : ""
-          }`;
+                                  Mode: ${leg.line.mode || "Walking"}${leg.line.name ? ` - ${leg.line.name}` : ""
+            }`;
           cardBody.appendChild(info);
         });
 
@@ -194,7 +193,7 @@ async function showRoute(fromLat, fromLon, toLat, toLon) {
         arrivalInfo.innerHTML = `Arrival: ${arrivalTime}`;
         cardHeader.appendChild(arrivalInfo);
 
-            // Add the card to the route showcase div
+        // Add the card to the route showcase div
         card.appendChild(cardHeader);
         card.appendChild(cardBody);
         routeDiv.appendChild(card);
@@ -267,12 +266,10 @@ function getStartLocation(attLat, attLng) {
       });
   };
 
-    // Add elements to the route showcase div
+  // Add elements to the route showcase div
   routeDiv.appendChild(hdiv);
   routeDiv.appendChild(button);
 }
-
-function sendReview() {}
 
 function loadMarkerInfoToSidebar(attractionData) {
   hideSidebarContent();
@@ -283,43 +280,27 @@ function loadMarkerInfoToSidebar(attractionData) {
   selectedAttractionsInfo.style.display = "block";
   selectedAttractionsInfo.innerHTML = `
 <div class="card text-light bg-transparent m-2">
-<div class="card-body">
-<div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
-<div class="carousel-inner">
-  ${loadCarouselImages(attractionData.Img_url, attractionData.title)}
-</div>
-<button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-  <span class="visually-hidden">Previous</span>
-</button>
-<button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-  <span class="carousel-control-next-icon" aria-hidden="true"></span>
-  <span class="visually-hidden">Next</span>
-</button>
-</div>
+  <div class="card-body">
+    <image src="${attractionData.Img_url}" class="card-img-top" alt="${attractionData.title}">
+  </div>
   <br>
   <h5 class="card-title">${attractionData.title}</h5>
   <p class="card-text">${attractionData.info}</p>
-  <p class="card-text">${attractionData.city}</p>
-  <p class="card-text">${attractionData.type}</p>
+  <p class="card-text"><strong>${attractionData.city}</strong>, ${attractionData.Street} ${attractionData.Housenumber}</p>
+  <p class="card-text"><strong>Category: </strong>${attractionData.type}</p>
   <p class="card-text">${attractionData.Stars} &#11088;
-  <p class="card-text">${
-    attractionData.recommended_count
-  } &#128150;   <span class="favourite-section mt-3" style="position: relative; z-index: 1;">
+  <p class="card-text">${attractionData.recommended_count
+    } &#128150;   <span class="favourite-section mt-3" style="position: relative; z-index: 1;">
     <button class="btn btn-warning" id="favouriteButton">
       <i class="fas fa-star"></i> Favourite
     </button>
-  </span></p></p>
+  </span>
   
-  <button class="btn btn-primary w-100" onclick="getStartLocation(${
-    attractionData.posX
-  }, ${attractionData.posY})">Show Route</button>
-  <div id="routeShowcase">
-  </div>
-  <div class="review-section">
-    <h6>Leave a Review:</h6>
-    <br>
-    <div class="star-rating" id="star-rating-review">
+  <button class="btn btn-primary w-100" onclick="getStartLocation(${attractionData.posX
+    }, ${attractionData.posY})">Show Route</button>
+    <div id="routeShowcase"></div>
+    <div class="review-section">
+      <div class="star-rating" id="star-rating-review">
     ${[1, 2, 3, 4, 5]
       .map(
         (star) => `
@@ -327,19 +308,16 @@ function loadMarkerInfoToSidebar(attractionData) {
     `
       )
       .join("")}
+      </div>
+      <textarea id="reviewAttractionText" class="form-control mt-2" placeholder="Write your review here..."></textarea>
+      <button class="btn btn-secondary mt-2" id="submitReview">Submit Review</button>
     </div>
-
-    <textarea class="form-control mt-2" placeholder="Write your review here..."></textarea>
-    <button class="btn btn-secondary mt-2" onclick="sendReview" >Submit Review</button>
-  
-    </div>
-</div>
+  </div>
 </div>
 
 `;
   // Add event listener for the favourite button
-  document
-    .getElementById("favouriteButton")
+  document.getElementById("favouriteButton")
     .addEventListener("click", function () {
       var userID = 0;
 
@@ -367,10 +345,12 @@ function loadMarkerInfoToSidebar(attractionData) {
             });
         });
     });
+  var rating = 0;
+  var review = "";
   // Add event listeners for the star rating
   document.querySelectorAll(".star-rating .star").forEach((star) => {
     star.addEventListener("click", function () {
-      const rating = this.getAttribute("data-value");
+      rating = this.getAttribute("data-value");
       console.log(`User rated: ${rating} stars`);
       // Update star filling based on rating
       document.querySelectorAll(".star-rating .star").forEach((s) => {
@@ -379,36 +359,48 @@ function loadMarkerInfoToSidebar(attractionData) {
           s.classList.add("filled");
         }
       });
-      attractionData.stars = rating;
-      // Submit the rating
-      fetch(document.location.origin + "/api/attractions", {
-        method: "PUT",
-        body: JSON.stringify(attractionData),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data);
-        });
+      rating = rating;
     });
   });
+  // Get the text review from the textarea
+  const SubmitReviewButton = document.getElementById("submitReview");
+  SubmitReviewButton.addEventListener("click", function () {
+    const reviewText = document.getElementById("reviewAttractionText").value;
+    console.log(reviewText, rating);
+    // if the user has rated the attraction and input text, send the review
+    if (rating && reviewText) {
+      fetch(document.location.origin + "/api/users", {
+        method: "GET",
+      })
+        .then((response) => response.json())
+        .then((userData) => {
+          console.log(userData);
+          const reviewData = {
+            Text: review,
+            Attraction_id: attractionData.Id,
+            Username: userData.Username, // Replace with the actual username
+            User_id: userData.UserId, // Replace with the actual user ID
+            Stars: parseFloat(rating),
+            Date: new Date().toISOString()
+          };
+          fetch(document.location.origin + "/api/reviews", {
+            method: "POST",
+            body: JSON.stringify(reviewData),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              console.log(data);
+            });
+        }
+        );
+    }
+  }
+  );
 }
 
-function loadCarouselImages(url, altText) {
-  const images = [{ src: url, alt: altText }];
-  return images
-    .map(
-      (img, index) => `
-      <div class="carousel-item ${index === 0 ? "active" : ""}">
-          <img src="${
-            img.src
-          }" class="d-block object-fit-cover carousel-images w-100" alt="${
-        img.alt
-      }">
-      </div>
-  `
-    )
-    .join("");
-}
 function hideSidebarContent() {
   const selectedAttractionsInfo = document.getElementById(
     "selectedAttractionsInformation"
