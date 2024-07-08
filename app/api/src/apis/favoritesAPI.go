@@ -10,6 +10,7 @@ import (
 )
 
 func getFavorite(req *http.Request) (string, error) {
+	
 	if(req.URL.Query().Get("action") == "count" && req.URL.Query().Get("attraction_id") != ""){
 		a_id,e := strconv.ParseInt( req.URL.Query().Get("attraction_id"), 10, 64);
 		if(e != nil){
@@ -22,6 +23,7 @@ func getFavorite(req *http.Request) (string, error) {
 		return fmt.Sprintf("{\"favorite_count\":%d}", count) , nil
 	}
 	
+
 	if !sessions.CheckLoggedIn(req) {
 		return "{\"success\":false,\"info\":\"Not Logged in\"}", nil
 	}

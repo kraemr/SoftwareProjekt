@@ -20,11 +20,16 @@ type AttractionFavoriteUnion struct {
 	Type              string  `json:"type"`
 	Recommended_count int     `json:"recommended_count"`
 	City              string  `json:"city"`
+	Street			  string  `json:street`
+	Housenumber		  string	`json:housenumber`
 	Info              string  `json:"info"`
 	Approved          bool    `json:approved`
 	PosX              float32 `json:"posX"`
 	PosY              float32 `json:"posY"`
 	Stars             float32 `json:stars`
+	Img_url			  string   `json:img_url`
+	Added_by			  string   `json:added_by`
+
 }
 
 // IF this was returned in recommendations then we dont send any
@@ -126,13 +131,58 @@ func AddAttractionFavoriteById(user_id int64, attraction_id int64) error {
 	return nil
 }
 
+
+func GetAttractionFavoritesByAttractionId(attraction_id int64) ([]AttractionFavoriteUnion, error) {
+	var db *sql.DB = db_utils.DB
+	var fav_list []AttractionFavoriteUnion
+	rows, err := db.Query("SELECT * FROM USER_FAVORITE as uf JOIN ATTRACTION_ENTRY as at ON uf.attraction_id = at.id WHERE attraction_id=?", attraction_id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	nodata_found := true
+	for rows.Next() {
+		var fav AttractionFavoriteUnion = AttractionFavoriteUnion{}
+		rows.Scan(
+			&fav.Id,
+			&fav.User_id,
+			&fav.Attraction_id,
+			&fav.Attraction_id,
+			&fav.Title,
+			&fav.Type,
+			&fav.Recommended_count,
+			&fav.City,
+			&fav.Street,
+			&fav.Housenumber,
+			&fav.Info,
+			&fav.Approved,
+			&fav.PosX,
+			&fav.PosY,
+			&fav.Stars,
+			&fav.Img_url,
+			&fav.Added_by,
+		)
+		nodata_found = false
+		fav_list = append(fav_list, fav)
+	}
+
+	if err != nil {
+		return nil, err
+	} else if nodata_found {
+		return nil, ErrNoFavorites
+	} else {
+		return fav_list, nil
+	}
+}
+
+
 /*
 JOIN User_favorites and the corresponding Attraction
 */
 // TODO: Check for IDOR, Check for proper Auth here
 func GetAttractionFavoritesByUserId(user_id int64) ([]AttractionFavoriteUnion, error) {
 	var db *sql.DB = db_utils.DB
-	var favorites []AttractionFavoriteUnion
+	var fav_list []AttractionFavoriteUnion
 	rows, err := db.Query("SELECT * FROM USER_FAVORITE as uf JOIN ATTRACTION_ENTRY as at ON uf.attraction_id = at.id WHERE user_id=?", user_id)
 	if err != nil {
 		return nil, err
@@ -150,14 +200,18 @@ func GetAttractionFavoritesByUserId(user_id int64) ([]AttractionFavoriteUnion, e
 			&fav.Type,
 			&fav.Recommended_count,
 			&fav.City,
+			&fav.Street,
+			&fav.Housenumber,
 			&fav.Info,
 			&fav.Approved,
 			&fav.PosX,
 			&fav.PosY,
 			&fav.Stars,
+			&fav.Img_url,
+			&fav.Added_by,
 		)
 		nodata_found = false
-		favorites = append(favorites, fav)
+		fav_list = append(fav_list, fav)
 	}
 
 	if err != nil {
@@ -165,6 +219,6 @@ func GetAttractionFavoritesByUserId(user_id int64) ([]AttractionFavoriteUnion, e
 	} else if nodata_found {
 		return nil, ErrNoFavorites
 	} else {
-		return favorites, nil
+		return fav_list, nil
 	}
 }
