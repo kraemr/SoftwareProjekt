@@ -216,10 +216,40 @@ function loadMarkerInfoToSidebar(attractionData) {
                 .join("")}
                 </div>
                 <p class="card-text">${review.Text}</p>
-                <p class="card-text">By ${username} on ${review.Date}</p>
-              </div>
+                <p class="card-text">By ${username} on ${review.Date}
             `;
             if (review.User_id === userData.UserId) {
+              const buttonContainer = document.createElement("div");
+              const editButton = document.createElement("button");
+              editButton.classList.add("btn", "btn-primary", "edit-review");
+              editButton.innerHTML = "Edit";
+              editButton.addEventListener("click", function () {
+                // Call the edit review API endpoint here
+                console.log("Edit review:", review.Id);
+                const updatedReviewText = prompt("Enter the updated review text:");
+                if (updatedReviewText) {
+                  fetch(document.location.origin + "/api/reviews?id=" + review.Id, {
+                    method: "PUT",
+                    body: JSON.stringify({
+                      text: updatedReviewText,
+                    }),
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                  })
+                    .then((response) => response.json())
+                    .then((data) => {
+                      console.log(data);
+                      // Update the review card with the updated text
+                      if (data.success) {
+                        reviewCard.querySelector(".card-text").textContent = updatedReviewText;
+                      }
+                    })
+                    .catch((error) => {
+                      console.error("Error editing review:", error);
+                    });
+                }
+              });
               const deleteButton = document.createElement("button");
               deleteButton.classList.add("btn", "btn-danger", "delete-review");
               deleteButton.innerHTML = "Delete";
@@ -241,7 +271,9 @@ function loadMarkerInfoToSidebar(attractionData) {
                     console.error("Error deleting review:", error);
                   });
               });
-              reviewCard.appendChild(deleteButton);
+              buttonContainer.appendChild(editButton);
+              buttonContainer.appendChild(deleteButton);
+              reviewCard.appendChild(buttonContainer);
             }
             reviewsContainer.appendChild(reviewCard);
           });
@@ -250,7 +282,8 @@ function loadMarkerInfoToSidebar(attractionData) {
     .catch((error) => {
       console.error("Error fetching reviews:", error);
     });
-  `
+  `</p>
+                </div>
   </div>
 </div>
 

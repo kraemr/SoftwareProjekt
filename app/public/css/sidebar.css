@@ -44,7 +44,7 @@
 }
 
 .userReviews .card {
-    width: 100%;
+    width: 95%;
     max-width: 600px;
 }
 
@@ -72,4 +72,14 @@
 
 .userReviews .card-text.text-muted {
     font-size: 0.9rem;
+}
+
+.userReviews .button-container {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 15px;
+}
+
+.userReviews .btn {
+    width: 45%;
 }
