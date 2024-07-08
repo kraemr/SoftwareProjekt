@@ -135,141 +135,7 @@ function fillCategories() {
   });
 }
 
-// Get Route from locationA to locationB
-async function showRoute(fromLat, fromLon, toLat, toLon) {
-  // Call REST API to get the route
-  var apiUrl =
-    document.location.origin +
-    `/api/public_transport?fromLat=${fromLat}&fromLon=${fromLon}&toLat=${toLat}&toLon=${toLon}`;
 
-  fetch(apiUrl)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.json();
-    })
-    .then(data => {
-      const routeDiv = document.getElementById("routeShowcase");
-
-      // Clear the route showcase div before adding new content
-      routeDiv.innerHTML = '';
-
-      // Add "option" for each journey
-      data.forEach((journey, index) => {
-        const card = document.createElement('div');
-        card.className = 'card bg-dark text-light m-2';
-
-        const cardHeader = document.createElement('div');
-        cardHeader.className = 'card-header';
-        cardHeader.textContent = `Option ${index + 1}`;
-
-        // Add event listener to the card header to show/hide the content for better visibility
-        cardHeader.onclick = function () {
-          const content = this.nextElementSibling;
-          content.style.display = content.style.display === 'block' ? 'none' : 'block';
-        };
-
-        const cardBody = document.createElement('div');
-        cardBody.className = 'card-body';
-
-        // Add information for each leg ("step") of the journey
-        journey.legs.forEach(leg => {
-          const depTime = new Date(leg.plannedDeparture).toLocaleString();
-          const arrTime = new Date(leg.plannedArrival).toLocaleString();
-          const info = document.createElement('p');
-          info.innerHTML = `From ${leg.origin.name} to ${leg.destination.name}<br>
-                                  Departure: ${depTime}<br>
-                                  Arrival: ${arrTime}<br>
-                                  Mode: ${leg.line.mode || "Walking"}${leg.line.name ? ` - ${leg.line.name}` : ""
-            }`;
-          cardBody.appendChild(info);
-        });
-
-        // The arrival time of the last leg is taken as the arrival time of the option
-        const lastLeg = journey.legs[journey.legs.length - 1];
-        const arrivalTime = new Date(lastLeg.plannedArrival).toLocaleString();
-        const arrivalInfo = document.createElement("p");
-        arrivalInfo.innerHTML = `Arrival: ${arrivalTime}`;
-        cardHeader.appendChild(arrivalInfo);
-
-        // Add the card to the route showcase div
-        card.appendChild(cardHeader);
-        card.appendChild(cardBody);
-        routeDiv.appendChild(card);
-      });
-    })
-    .catch((error) => {
-      console.error("There was a problem with the fetch operation:", error);
-    });
-}
-
-// Get the attraction location as parameters on call
-function getStartLocation(attLat, attLng) {
-  const routeDiv = document.getElementById("routeShowcase");
-  routeDiv.innerHTML = "<p>Enter your start location:</p>";
-
-  hdiv = document.createElement("div");
-  hdiv.className = "hbox";
-
-  inputField = document.createElement("input");
-  inputField.type = "text";
-  inputField.id = "startLocation";
-  inputField.placeholder = "Enter location...";
-  hdiv.appendChild(inputField);
-
-  // Button "Use current location"
-  button = document.createElement("button");
-  button.innerHTML = "Current location";
-  button.className = "btn btn-primary";
-  button.onclick = function () {
-    // Geolocation API
-    navigator.geolocation.getCurrentPosition(function (position) {
-      const fromLat = position.coords.latitude;
-      const fromLon = position.coords.longitude;
-
-      // API request for the route
-      showRoute(fromLat, fromLon, attLat, attLng);
-    });
-  };
-  hdiv.appendChild(button);
-
-  // Add search button
-  button = document.createElement("button");
-  button.innerHTML = "Search";
-  button.className = "btn btn-primary";
-  button.onclick = function () {
-    // Retrieve long/lat of provided location through nomenatim API
-    const location = inputField.value;
-    const apiUrl = `https://nominatim.openstreetmap.org/search?q=${location}&format=json&limit=1`;
-    fetch(apiUrl)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (data.length > 0) {
-          const lat = data[0].lat;
-          const lon = data[0].lon;
-          // Coordinates for start and destination
-          const fromLat = lat;
-          const fromLon = lon;
-
-          // API request for the route
-          showRoute(fromLat, fromLon, attLat, attLng);
-        }
-      })
-      .catch((error) => {
-        console.error("There was a problem with the fetch operation:", error);
-      });
-  };
-
-  // Add elements to the route showcase div
-  routeDiv.appendChild(hdiv);
-  routeDiv.appendChild(button);
-}
 
 function loadMarkerInfoToSidebar(attractionData) {
   hideSidebarContent();
@@ -286,19 +152,18 @@ function loadMarkerInfoToSidebar(attractionData) {
   <br>
   <h5 class="card-title">${attractionData.title}</h5>
   <p class="card-text">${attractionData.info}</p>
-  <p class="card-text"><strong>${attractionData.city}</strong>, ${attractionData.Street} ${attractionData.Housenumber}</p>
+  <p class="card-text"><strong>${attractionData.city}</strong>, ${attractionData.Street} ${attractionData.Housenumber}  
+    <button class="btn btn-primary" id="showRouteBtn" onclick="getStartLocation(${attractionData.posX}, ${attractionData.posY})">Show Route</button>
+    <div id="routeShowcase"></div>
+  </p>
   <p class="card-text"><strong>Category: </strong>${attractionData.type}</p>
   <p class="card-text">${attractionData.Stars} &#11088;
-  <p class="card-text">${attractionData.recommended_count
-    } &#128150;   <span class="favourite-section mt-3" style="position: relative; z-index: 1;">
+  <p class="card-text">${attractionData.recommended_count} &#128150;</p>
+  <span class="favourite-section mt-3" style="position: relative; z-index: 1;">
     <button class="btn btn-warning" id="favouriteButton">
       <i class="fas fa-star"></i> Favourite
     </button>
   </span>
-  
-  <button class="btn btn-primary w-100" onclick="getStartLocation(${attractionData.posX
-    }, ${attractionData.posY})">Show Route</button>
-    <div id="routeShowcase"></div>
     <div class="review-section">
       <div class="star-rating" id="star-rating-review">
     ${[1, 2, 3, 4, 5]
@@ -316,6 +181,18 @@ function loadMarkerInfoToSidebar(attractionData) {
 </div>
 
 `;
+  // Change the Show Route button to Cancel Button unless its already the cancel button
+  const routeButton = document.getElementById("showRouteBtn");
+  routeButton.addEventListener("click", function () {
+    if (routeButton.innerHTML === "Show Route") {
+      routeButton.innerHTML = "Cancel";
+    } else {
+      routeButton.innerHTML = "Show Route";
+      // Clear the route showcase div
+      const routeDiv = document.getElementById("routeShowcase");
+      routeDiv.innerHTML = '';
+    }
+  });
   // Add event listener for the favourite button
   document.getElementById("favouriteButton")
     .addEventListener("click", function () {
@@ -400,7 +277,144 @@ function loadMarkerInfoToSidebar(attractionData) {
   }
   );
 }
+// Get Route from locationA to locationB
+async function showRoute(fromLat, fromLon, toLat, toLon) {
+  // Call REST API to get the route
 
+  // Create a new route planning div
+  const routePlanningDiv = document.createElement("div");
+  routePlanningDiv.id = "routePlanningDiv";
+  routePlanningDiv.innerHTML = "Route Planning Div";
+  document.body.appendChild(routePlanningDiv);
+  var apiUrl =
+    document.location.origin +
+    `/api/public_transport?fromLat=${fromLat}&fromLon=${fromLon}&toLat=${toLat}&toLon=${toLon}`;
+
+  fetch(apiUrl)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    })
+    .then(data => {
+      const routeDiv = document.getElementById("routeShowcase");
+      // Clear the route showcase div before adding new content
+      routeDiv.innerHTML = '';
+
+      // Add "option" for each journey
+      data.forEach((journey, index) => {
+        const card = document.createElement('div');
+        card.className = 'card bg-dark text-light m-2';
+
+        const cardHeader = document.createElement('div');
+        cardHeader.className = 'card-header';
+        cardHeader.textContent = `Option ${index + 1}`;
+
+        // Add event listener to the card header to show/hide the content for better visibility
+        cardHeader.onclick = function () {
+          const content = this.nextElementSibling;
+          content.style.display = content.style.display === 'block' ? 'none' : 'block';
+        };
+
+        const cardBody = document.createElement('div');
+        cardBody.className = 'card-body';
+
+        // Add information for each leg ("step") of the journey
+        journey.legs.forEach(leg => {
+          const depTime = new Date(leg.plannedDeparture).toLocaleString();
+          const arrTime = new Date(leg.plannedArrival).toLocaleString();
+          const info = document.createElement('p');
+          info.innerHTML = `From ${leg.origin.name} to ${leg.destination.name}<br>
+                                  Departure: ${depTime}<br>
+                                  Arrival: ${arrTime}<br>
+                                  Mode: ${leg.line.mode || "Walking"}${leg.line.name ? ` - ${leg.line.name}` : ""
+            }`;
+          cardBody.appendChild(info);
+        });
+
+        // The arrival time of the last leg is taken as the arrival time of the option
+        const lastLeg = journey.legs[journey.legs.length - 1];
+        const arrivalTime = new Date(lastLeg.plannedArrival).toLocaleString();
+        const arrivalInfo = document.createElement("p");
+        arrivalInfo.innerHTML = `Arrival: ${arrivalTime}`;
+        cardHeader.appendChild(arrivalInfo);
+
+        // Add the card to the route showcase div
+        card.appendChild(cardHeader);
+        card.appendChild(cardBody);
+        routeDiv.appendChild(card);
+      });
+    })
+    .catch((error) => {
+      console.error("There was a problem with the fetch operation:", error);
+    });
+}
+
+// Get the attraction location as parameters on call
+function getStartLocation(attLat, attLng) {
+  const routeDiv = document.getElementById("routeShowcase");
+  hdiv = document.createElement("div");
+  hdiv.className = "hbox";
+
+  inputField = document.createElement("input");
+  inputField.type = "text";
+  inputField.id = "startLocation";
+  inputField.placeholder = "Enter Start location...";
+  hdiv.appendChild(inputField);
+
+  // Button "Use current location"
+  button = document.createElement("button");
+  button.innerHTML = "Current location";
+  button.className = "btn btn-primary m-1";
+  button.onclick = function () {
+    // Geolocation API
+    navigator.geolocation.getCurrentPosition(function (position) {
+      const fromLat = position.coords.latitude;
+      const fromLon = position.coords.longitude;
+
+      // API request for the route
+      showRoute(fromLat, fromLon, attLat, attLng);
+    });
+  };
+  hdiv.appendChild(button);
+
+  // Add search button
+  button = document.createElement("button");
+  button.innerHTML = "Search";
+  button.className = "btn btn-primary m-1";
+  button.onclick = function () {
+    // Retrieve long/lat of provided location through nomenatim API
+    const location = inputField.value;
+    const apiUrl = `https://nominatim.openstreetmap.org/search?q=${location}&format=json&limit=1`;
+    fetch(apiUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data.length > 0) {
+          const lat = data[0].lat;
+          const lon = data[0].lon;
+          // Coordinates for start and destination
+          const fromLat = lat;
+          const fromLon = lon;
+
+          // API request for the route
+          showRoute(fromLat, fromLon, attLat, attLng);
+        }
+      })
+      .catch((error) => {
+        console.error("There was a problem with the fetch operation:", error);
+      });
+  };
+
+  // Add elements to the route showcase div
+  routeDiv.appendChild(hdiv);
+  routeDiv.appendChild(button);
+}
 function hideSidebarContent() {
   const selectedAttractionsInfo = document.getElementById(
     "selectedAttractionsInformation"
