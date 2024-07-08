@@ -11,3 +11,26 @@
 .star.filled {
     color: gold;
 }
+#favouriteButton {
+    margin-left: 5px;
+}
+.btn-link {
+  text-decoration: none;
+  color: white;
+  padding: 0px 5px;
+}
+
+.active-tab {
+  font-weight: bold;
+  color: #007bff;
+  border-bottom: 4px solid blue;
+}
+
+.btn-link:hover {
+  text-decoration: none;
+}
+
+.d-flex {
+  display: flex;
+  justify-content: center;
+}
