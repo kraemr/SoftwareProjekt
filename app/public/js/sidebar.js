@@ -143,9 +143,10 @@ function loadMarkerInfoToSidebar(attractionData) {
   );
   selectedAttractionsInfo.style.display = "block";
   selectedAttractionsInfo.innerHTML = `
+<link rel="stylesheet" href="./css/sidebar.css">
 <div class="d-flex justify-content-center mb-2">
-  <button class="btn btn-link active-tab" id="overviewLink">Übersicht</button>
-  <button class="btn btn-link" id="reviewsLink">Rezensionen</button>
+  <button class="btn btn-link active-tab" id="overviewLink">Overview</button>
+  <button class="btn btn-link" id="reviewsLink">Reviews</button>
 </div>
 <div class="content-section">
   <div class="card text-light bg-transparent m-2" id="overviewSection">
@@ -181,31 +182,78 @@ function loadMarkerInfoToSidebar(attractionData) {
     </div>
     <textarea id="reviewAttractionText" class="form-control mt-2" placeholder="Write your review here..."></textarea>
     <button class="btn btn-secondary mt-2" id="submitReview">Submit Review</button>
+    <div class="reviews-container mt-3">
+      <h5 class="text-white m-2">Reviews</h5>
+      <div class="userReviews">`
+  fetch(document.location.origin + "/api/users", {
+    method: "GET",
+  })
+    .then((response) => response.json())
+    .then((userData) => {
+      fetch(document.location.origin + "/api/reviews?attraction_id=" + attractionData.Id, {
+        method: "GET",
+      })
+        .then((response) => response.json())
+        .then((reviews) => {
+          const reviewsContainer = document.querySelector(".userReviews");
+          reviews.forEach((review) => {
+            const reviewCard = document.createElement("div");
+            reviewCard.classList.add("card", "text-light", "bg-transparent", "m-2");
+            var username = review.Username;
+            if (review.Username === "") {
+              username = "Anonymous";
+            }
+            console.log(review);
+            reviewCard.innerHTML = `
+              <div class="card-body">
+                <div class="star-rating">
+                  ${[1, 2, 3, 4, 5]
+                .map(
+                  (star) => `
+                        <span class="star ${star <= review.Stars ? 'filled' : ''}">&#9733;</span>
+                      `
+                )
+                .join("")}
+                </div>
+                <p class="card-text">${review.Text}</p>
+                <p class="card-text">By ${username} on ${review.Date}</p>
+              </div>
+            `;
+            if (review.User_id === userData.UserId) {
+              const deleteButton = document.createElement("button");
+              deleteButton.classList.add("btn", "btn-danger", "delete-review");
+              deleteButton.innerHTML = "Delete";
+              deleteButton.addEventListener("click", function () {
+                // Call the delete review API endpoint here
+                console.log("Delete review:", review.Id)
+                fetch(document.location.origin + "/api/reviews?id=" + review.Id, {
+                  method: "DELETE",
+                })
+                  .then((response) => response.json())
+                  .then((data) => {
+                    console.log(data);
+                    // Remove the review card from the DOM
+                    if (data.success) {
+                      reviewCard.remove();
+                    }
+                  })
+                  .catch((error) => {
+                    console.error("Error deleting review:", error);
+                  });
+              });
+              reviewCard.appendChild(deleteButton);
+            }
+            reviewsContainer.appendChild(reviewCard);
+          });
+        })
+    })
+    .catch((error) => {
+      console.error("Error fetching reviews:", error);
+    });
+  `
   </div>
 </div>
 
-<style>
-.btn-link {
-  text-decoration: none;
-  color: white;
-  padding: 0px 5px;
-}
-
-.active-tab {
-  font-weight: bold;
-  color: #007bff;
-  border-bottom: 4px solid blue;
-}
-
-.btn-link:hover {
-  text-decoration: none;
-}
-
-.d-flex {
-  display: flex;
-  justify-content: center;
-}
-</style>
 `;
   // Overview and Reviews tabs
   document.getElementById('overviewLink').addEventListener('click', function () {
@@ -254,7 +302,7 @@ function loadMarkerInfoToSidebar(attractionData) {
     .catch(error => {
       console.error('Error:', error);
     });
-  
+
 
   // Add event listener for the favourite button
   document.getElementById("favouriteButton")
@@ -321,15 +369,15 @@ function loadMarkerInfoToSidebar(attractionData) {
     const reviewText = document.getElementById("reviewAttractionText").value;
     console.log(reviewText, rating);
     // if the user has rated the attraction and input text, send the review
-    if (rating && reviewText) {
+    if (rating > 0) {
       fetch(document.location.origin + "/api/users", {
         method: "GET",
       })
         .then((response) => response.json())
         .then((userData) => {
-          console.log(userData);
+          console.log(userData.Username);
           const reviewData = {
-            Text: review,
+            Text: reviewText,
             Attraction_id: attractionData.Id,
             Username: userData.Username,
             User_id: userData.UserId,
@@ -345,7 +393,15 @@ function loadMarkerInfoToSidebar(attractionData) {
           })
             .then((response) => response.json())
             .then((data) => {
-              console.log(data);
+              if(data.success) {
+                console.log('Review added:', data);
+                // Clear the review textarea
+                document.getElementById("reviewAttractionText").value = "";
+                // Update the reviews section
+                loadMarkerInfoToSidebar(attractionData);
+                // Open the reviews tab
+                document.getElementById('reviewsLink').click();
+              }
             });
         }
         );

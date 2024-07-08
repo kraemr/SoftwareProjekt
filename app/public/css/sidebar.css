@@ -11,3 +11,65 @@
 .star.filled {
     color: gold;
 }
+
+#favouriteButton {
+    margin-left: 5px;
+}
+
+.btn-link {
+    text-decoration: none;
+    color: white;
+    padding: 0px 5px;
+}
+
+.active-tab {
+    font-weight: bold;
+    color: #007bff;
+    border-bottom: 4px solid blue;
+}
+
+.btn-link:hover {
+    text-decoration: none;
+}
+
+.d-flex {
+    display: flex;
+    justify-content: center;
+}
+
+.userReviews {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.userReviews .card {
+    width: 100%;
+    max-width: 600px;
+}
+
+.userReviews .star-rating {
+    display: flex;
+}
+
+.userReviews .star {
+    font-size: 1.5rem;
+    color: #ddd;
+}
+
+.userReviews .star.filled {
+    color: #ffc107;
+}
+
+.userReviews .card-body {
+    background: rgba(0, 0, 0, 0.75);
+    border-radius: 10px;
+}
+
+.userReviews .card-text {
+    margin-bottom: 0.5rem;
+}
+
+.userReviews .card-text.text-muted {
+    font-size: 0.9rem;
+}

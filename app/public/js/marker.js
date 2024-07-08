@@ -55,6 +55,8 @@ function placeMarkers(data) {
       });
   }
   function showAttractionOnMap(attraction) {
+    // remove all markers from the map
+    allMarkersLayer.clearLayers();
     var marker = createBlueMarker(attraction);
     allMarkersLayer.addLayer(marker);
     // zoom to marker
