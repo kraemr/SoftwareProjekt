@@ -221,37 +221,42 @@ function loadMarkerInfoToSidebar(attractionData) {
             if (review.User_id === userData.UserId) {
               const buttonContainer = document.createElement("div");
               const editButton = document.createElement("button");
-              editButton.classList.add("btn", "btn-primary", "edit-review");
+              editButton.classList.add("btn", "btn-primary", "edit-review", "w-50");
               editButton.innerHTML = "Edit";
               editButton.addEventListener("click", function () {
                 // Call the edit review API endpoint here
                 console.log("Edit review:", review.Id);
                 const updatedReviewText = prompt("Enter the updated review text:");
-                if (updatedReviewText) {
-                  fetch(document.location.origin + "/api/reviews?id=" + review.Id, {
-                    method: "PUT",
-                    body: JSON.stringify({
-                      text: updatedReviewText,
-                    }),
-                    headers: {
-                      "Content-Type": "application/json",
-                    },
+                console.log(updatedReviewText);
+                const reviewData = {
+                  Text: updatedReviewText,
+                  review_id: review.Id,
+                  Username: userData.Username,
+                  User_id: userData.UserId,
+                  Stars: parseFloat(rating),
+                  Date: new Date().toISOString()
+                };
+                fetch(document.location.origin + "/api/reviews", {
+                  method: "PUT",
+                  body: JSON.stringify(reviewData),
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                })
+                  .then((response) => response.json())
+                  .then((data) => {
+                    console.log(data);
+                    // Update the review card with the updated text
+                    if (data.success) {
+                      reviewCard.querySelector(".card-text").textContent = updatedReviewText;
+                    }
                   })
-                    .then((response) => response.json())
-                    .then((data) => {
-                      console.log(data);
-                      // Update the review card with the updated text
-                      if (data.success) {
-                        reviewCard.querySelector(".card-text").textContent = updatedReviewText;
-                      }
-                    })
-                    .catch((error) => {
-                      console.error("Error editing review:", error);
-                    });
-                }
+                  .catch((error) => {
+                    console.error("Error editing review:", error);
+                  });
               });
               const deleteButton = document.createElement("button");
-              deleteButton.classList.add("btn", "btn-danger", "delete-review");
+              deleteButton.classList.add("btn", "btn-danger", "delete-review", "w-50");
               deleteButton.innerHTML = "Delete";
               deleteButton.addEventListener("click", function () {
                 // Call the delete review API endpoint here
@@ -426,7 +431,7 @@ function loadMarkerInfoToSidebar(attractionData) {
           })
             .then((response) => response.json())
             .then((data) => {
-              if(data.success) {
+              if (data.success) {
                 console.log('Review added:', data);
                 // Clear the review textarea
                 document.getElementById("reviewAttractionText").value = "";
