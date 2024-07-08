@@ -2,12 +2,18 @@ function placeMarkers(data) {
   for (var elem of data) {
     fetch(`/api/reviews?action=stars&attraction_id=${elem.Id}`)
       .then((response) => response.json())
+      // If the array is less than 1 long, soft fail
+      .catch((error) => {
+        console.error("Error:", error);
+        return [];
+      })
       .then((data) => {
         elem.Stars = data.stars;
       });
+      let marker = createBlueMarker(elem);
+      allMarkersLayer.addLayer(marker);
   }
-  let marker = createBlueMarker(elem);
-  allMarkersLayer.addLayer(marker);
+
 }
 //Blue Marker
 function createBlueMarker(attraction) {
