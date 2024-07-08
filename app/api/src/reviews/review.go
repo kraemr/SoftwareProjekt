@@ -69,7 +69,7 @@ func UpdateReview(review Review) error{
 func GetReviewsByAttractionId(attraction_id int32) ([]Review,error){
 	var db *sql.DB = db_utils.DB
 	var reviews []Review
-	rows, err := db.Query("SELECT * FROM ATTRACTION_REVIEW WHERE attraction_id = ?",attraction_id)
+	rows, err := db.Query("SELECT ar.id,ar.user_id,ar.attraction_id,ar.text,ar.stars,ar.date,username FROM ATTRACTION_REVIEW as ar LEFT JOIN USER ON user_id = USER.id WHERE attraction_id = ?",attraction_id)
 	if(err != nil){
 		fmt.Println(err)
 		return nil,err
@@ -80,7 +80,7 @@ func GetReviewsByAttractionId(attraction_id int32) ([]Review,error){
 	for rows.Next(){
 		nodata_found = false
 		var r Review
-		rows.Scan(&r.Id,&r.User_id,&r.Attraction_id,&r.Text,&r.Stars,&r.Date)
+		rows.Scan(&r.Id,&r.User_id,&r.Attraction_id,&r.Text,&r.Stars,&r.Date,&r.Username)
 		fmt.Println("found a rview")
 		fmt.Println(r.Attraction_id)
 		reviews = append(reviews,r)
@@ -128,7 +128,7 @@ func GetStarsForAttraction(attraction_id int32) (float32,error){
 func GetReviewsByUserId(user_id int32) ([]Review,error){
 	var db *sql.DB = db_utils.DB
 	var reviews []Review
-	rows, err := db.Query("SELECT * FROM ATTRACTION_REVIEW WHERE user_id = ?",user_id)
+	rows, err := db.Query("SELECT ar.id,ar.user_id,ar.attraction_id,ar.text,ar.stars,ar.date,username FROM ATTRACTION_REVIEW as ar LEFT JOIN USER ON user_id = USER.id WHERE user_id = ?",user_id)
 	if(err != nil){
 		return nil,err
 	}
@@ -138,7 +138,7 @@ func GetReviewsByUserId(user_id int32) ([]Review,error){
 	for rows.Next(){
 		nodata_found = false
 		r := Review{}
-		rows.Scan(&r.Id,&r.User_id,&r.Attraction_id,&r.Text,&r.Stars,&r.Date)
+		rows.Scan(&r.Id,&r.User_id,&r.Attraction_id,&r.Text,&r.Stars,&r.Date,&r.Username)
 		reviews = append(reviews,r)
 	}
 	if(err != nil){	
