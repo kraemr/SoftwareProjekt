@@ -58,7 +58,15 @@ function OpenFavourites() {
                 showOnMapButton.className = "btn btn-primary";
                 showOnMapButton.innerHTML = "Show on Map";
                 showOnMapButton.onclick = function() {
-                    showAttractionOnMap(favorite);
+                    // use the attraction ID from the favorite to fetch the attraction data
+                    fetch(document.location.origin + "/api/attractions?id=" + favorite.Attraction_id, {
+                        method: "GET",
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Attraction data:', data);
+                        showAttractionOnMap(data[0]);
+                    })
                 };
 
                 cardBody.appendChild(cardTitle);
