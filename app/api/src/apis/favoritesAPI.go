@@ -10,7 +10,6 @@ import (
 )
 
 func getFavorite(req *http.Request) (string, error) {
-	
 	if(req.URL.Query().Get("action") == "count" && req.URL.Query().Get("attraction_id") != ""){
 		a_id,e := strconv.ParseInt( req.URL.Query().Get("attraction_id"), 10, 64);
 		if(e != nil){
