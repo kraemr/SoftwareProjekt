@@ -11,62 +11,65 @@
 .star.filled {
     color: gold;
 }
+
 #favouriteButton {
     margin-left: 5px;
 }
+
 .btn-link {
-  text-decoration: none;
-  color: white;
-  padding: 0px 5px;
+    text-decoration: none;
+    color: white;
+    padding: 0px 5px;
 }
 
 .active-tab {
-  font-weight: bold;
-  color: #007bff;
-  border-bottom: 4px solid blue;
+    font-weight: bold;
+    color: #007bff;
+    border-bottom: 4px solid blue;
 }
 
 .btn-link:hover {
-  text-decoration: none;
+    text-decoration: none;
 }
 
 .d-flex {
-  display: flex;
-  justify-content: center;
+    display: flex;
+    justify-content: center;
 }
+
 .userReviews {
     display: flex;
     flex-direction: column;
     align-items: center;
-  }
+}
 
-  .card {
+.card {
     width: 100%;
     max-width: 600px;
-  }
+}
 
-  .star-rating {
+.star-rating {
     display: flex;
-  }
+}
 
-  .star {
+.star {
     font-size: 1.5rem;
     color: #ddd;
-  }
+}
 
-  .star.filled {
+.star.filled {
     color: #ffc107;
-  }
+}
 
-  .card-body {
+.card-body {
     background: rgba(0, 0, 0, 0.75);
     border-radius: 10px;
-  }
+}
 
-  .card-text {
+.card-text {
     margin-bottom: 0.5rem;
-  }
+}
 
-  .card-text.text-muted {
+.card-text.text-muted {
     font-size: 0.9rem;
-  }
+}

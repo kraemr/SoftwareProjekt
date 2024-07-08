@@ -145,8 +145,8 @@ function loadMarkerInfoToSidebar(attractionData) {
   selectedAttractionsInfo.innerHTML = `
 <link rel="stylesheet" href="./css/sidebar.css">
 <div class="d-flex justify-content-center mb-2">
-  <button class="btn btn-link active-tab" id="overviewLink">Übersicht</button>
-  <button class="btn btn-link" id="reviewsLink">Rezensionen</button>
+  <button class="btn btn-link active-tab" id="overviewLink">Overview</button>
+  <button class="btn btn-link" id="reviewsLink">Reviews</button>
 </div>
 <div class="content-section">
   <div class="card text-light bg-transparent m-2" id="overviewSection">
@@ -393,7 +393,15 @@ function loadMarkerInfoToSidebar(attractionData) {
           })
             .then((response) => response.json())
             .then((data) => {
-              console.log(data);
+              if(data.success) {
+                console.log('Review added:', data);
+                // Clear the review textarea
+                document.getElementById("reviewAttractionText").value = "";
+                // Update the reviews section
+                loadMarkerInfoToSidebar(attractionData);
+                // Open the reviews tab
+                document.getElementById('reviewsLink').click();
+              }
             });
         }
         );
