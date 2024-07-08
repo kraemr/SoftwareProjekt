@@ -135,8 +135,6 @@ function fillCategories() {
   });
 }
 
-
-
 function loadMarkerInfoToSidebar(attractionData) {
   hideSidebarContent();
   openSidepanel();
@@ -209,7 +207,7 @@ function loadMarkerInfoToSidebar(attractionData) {
 }
 </style>
 `;
-
+  // Overview and Reviews tabs
   document.getElementById('overviewLink').addEventListener('click', function () {
     document.getElementById('overviewSection').style.display = 'block';
     document.getElementById('reviewsSection').style.display = 'none';
@@ -226,6 +224,7 @@ function loadMarkerInfoToSidebar(attractionData) {
 
   // Adding the active-tab class for the initial load
   document.getElementById('overviewLink').classList.add('active-tab');
+
   // Change the Show Route button to Cancel Button unless its already the cancel button
   const routeButton = document.getElementById("showRouteBtn");
   routeButton.addEventListener("click", function () {
@@ -238,10 +237,28 @@ function loadMarkerInfoToSidebar(attractionData) {
       routeDiv.innerHTML = '';
     }
   });
+  // Check if the current user has already favourited the attraction
+  fetch(document.location.origin + "/api/favorites?action=count&attraction_id=" + attractionData.Id, {
+    method: "GET",
+  })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+      const favouriteButton = document.getElementById("favouriteButton");
+      if (data.favorite_count > 0) {
+        favouriteButton.innerHTML = "Unfavourite";
+        favouriteButton.classList.remove("btn-warning");
+        favouriteButton.classList.add("btn-danger");
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  
+
   // Add event listener for the favourite button
   document.getElementById("favouriteButton")
     .addEventListener("click", function () {
-      var userID = 0;
 
       fetch(document.location.origin + "/api/users", {
         method: "GET",
@@ -263,7 +280,21 @@ function loadMarkerInfoToSidebar(attractionData) {
           })
             .then((response) => response.json())
             .then((data) => {
-              console.log(data);
+              console.log(data.info);
+              if (data.info === "deleted favorite") {
+                favouriteButton.innerHTML = "Favourite";
+                favouriteButton.classList.add("btn-warning");
+                favouriteButton.classList.remove("btn-danger");
+                attractionData.recommended_count--;
+                loadMarkerInfoToSidebar(attractionData);
+              }
+              if (data.info === "added favorite") {
+                favouriteButton.innerHTML = "Unfavourite";
+                favouriteButton.classList.remove("btn-warning");
+                favouriteButton.classList.add("btn-danger");
+                attractionData.recommended_count++;
+                loadMarkerInfoToSidebar(attractionData);
+              }
             });
         });
     });
