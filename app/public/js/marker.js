@@ -56,7 +56,6 @@ function placeMarkers(data) {
   }
   function showAttractionOnMap(attraction) {
     // remove all markers from the map
-    map.fitBounds(allMarkersLayer.getBounds());
     allMarkersLayer.clearLayers();
     var marker = createBlueMarker(attraction);
     allMarkersLayer.addLayer(marker);

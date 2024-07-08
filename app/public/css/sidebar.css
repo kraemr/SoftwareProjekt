@@ -34,3 +34,39 @@
   display: flex;
   justify-content: center;
 }
+.userReviews {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 600px;
+  }
+
+  .star-rating {
+    display: flex;
+  }
+
+  .star {
+    font-size: 1.5rem;
+    color: #ddd;
+  }
+
+  .star.filled {
+    color: #ffc107;
+  }
+
+  .card-body {
+    background: rgba(0, 0, 0, 0.75);
+    border-radius: 10px;
+  }
+
+  .card-text {
+    margin-bottom: 0.5rem;
+  }
+
+  .card-text.text-muted {
+    font-size: 0.9rem;
+  }
