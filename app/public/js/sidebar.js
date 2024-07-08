@@ -145,42 +145,87 @@ function loadMarkerInfoToSidebar(attractionData) {
   );
   selectedAttractionsInfo.style.display = "block";
   selectedAttractionsInfo.innerHTML = `
-<div class="card text-light bg-transparent m-2">
-  <div class="card-body">
-    <image src="${attractionData.Img_url}" class="card-img-top" alt="${attractionData.title}">
+<div class="d-flex justify-content-center mb-2">
+  <button class="btn btn-link active-tab" id="overviewLink">Übersicht</button>
+  <button class="btn btn-link" id="reviewsLink">Rezensionen</button>
+</div>
+<div class="content-section">
+  <div class="card text-light bg-transparent m-2" id="overviewSection">
+    <div class="card-body">
+      <img src="${attractionData.Img_url}" class="card-img-top" alt="${attractionData.title}">
+    </div>
+    <br>
+    <h5 class="card-title">${attractionData.title}</h5>
+    <p class="card-text">${attractionData.info}</p>
+    <p class="card-text"><strong>${attractionData.city}</strong>, ${attractionData.Street} ${attractionData.Housenumber}
+      <button class="btn btn-primary" id="showRouteBtn" onclick="getStartLocation(${attractionData.posX}, ${attractionData.posY})">Show Route</button>
+      <div id="routeShowcase"></div>
+    </p>
+    <p class="card-text"><strong>Category: </strong>${attractionData.type}</p>
+    <p class="card-text">${attractionData.Stars} &#11088;
+    <p class="card-text">${attractionData.recommended_count} &#128150;
+      <span class="favourite-section mt-3" style="position: relative; z-index: 1;">
+        <button class="btn btn-warning" id="favouriteButton">
+        <i class="fas fa-star"></i> Favourite
+        </button>
+      </span>
+    </p>
   </div>
-  <br>
-  <h5 class="card-title">${attractionData.title}</h5>
-  <p class="card-text">${attractionData.info}</p>
-  <p class="card-text"><strong>${attractionData.city}</strong>, ${attractionData.Street} ${attractionData.Housenumber}  
-    <button class="btn btn-primary" id="showRouteBtn" onclick="getStartLocation(${attractionData.posX}, ${attractionData.posY})">Show Route</button>
-    <div id="routeShowcase"></div>
-  </p>
-  <p class="card-text"><strong>Category: </strong>${attractionData.type}</p>
-  <p class="card-text">${attractionData.Stars} &#11088;
-  <p class="card-text">${attractionData.recommended_count} &#128150;</p>
-  <span class="favourite-section mt-3" style="position: relative; z-index: 1;">
-    <button class="btn btn-warning" id="favouriteButton">
-      <i class="fas fa-star"></i> Favourite
-    </button>
-  </span>
-    <div class="review-section">
-      <div class="star-rating" id="star-rating-review">
-    ${[1, 2, 3, 4, 5]
+  <div class="review-section" id="reviewsSection" style="display: none;">
+    <div class="star-rating" id="star-rating-review">
+      ${[1, 2, 3, 4, 5]
       .map(
         (star) => `
-      <span class="star" data-value="${star}">&#9733;</span>
-    `
+        <span class="star" data-value="${star}">&#9733;</span>
+      `
       )
       .join("")}
-      </div>
-      <textarea id="reviewAttractionText" class="form-control mt-2" placeholder="Write your review here..."></textarea>
-      <button class="btn btn-secondary mt-2" id="submitReview">Submit Review</button>
     </div>
+    <textarea id="reviewAttractionText" class="form-control mt-2" placeholder="Write your review here..."></textarea>
+    <button class="btn btn-secondary mt-2" id="submitReview">Submit Review</button>
   </div>
 </div>
 
+<style>
+.btn-link {
+  text-decoration: none;
+  color: white;
+  padding: 0px 5px;
+}
+
+.active-tab {
+  font-weight: bold;
+  color: #007bff;
+  border-bottom: 4px solid blue;
+}
+
+.btn-link:hover {
+  text-decoration: none;
+}
+
+.d-flex {
+  display: flex;
+  justify-content: center;
+}
+</style>
 `;
+
+  document.getElementById('overviewLink').addEventListener('click', function () {
+    document.getElementById('overviewSection').style.display = 'block';
+    document.getElementById('reviewsSection').style.display = 'none';
+    document.getElementById('overviewLink').classList.add('active-tab');
+    document.getElementById('reviewsLink').classList.remove('active-tab');
+  });
+
+  document.getElementById('reviewsLink').addEventListener('click', function () {
+    document.getElementById('overviewSection').style.display = 'none';
+    document.getElementById('reviewsSection').style.display = 'block';
+    document.getElementById('reviewsLink').classList.add('active-tab');
+    document.getElementById('overviewLink').classList.remove('active-tab');
+  });
+
+  // Adding the active-tab class for the initial load
+  document.getElementById('overviewLink').classList.add('active-tab');
   // Change the Show Route button to Cancel Button unless its already the cancel button
   const routeButton = document.getElementById("showRouteBtn");
   routeButton.addEventListener("click", function () {
@@ -255,8 +300,8 @@ function loadMarkerInfoToSidebar(attractionData) {
           const reviewData = {
             Text: review,
             Attraction_id: attractionData.Id,
-            Username: userData.Username, // Replace with the actual username
-            User_id: userData.UserId, // Replace with the actual user ID
+            Username: userData.Username,
+            User_id: userData.UserId,
             Stars: parseFloat(rating),
             Date: new Date().toISOString()
           };
