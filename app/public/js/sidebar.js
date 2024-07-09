@@ -447,10 +447,9 @@ function loadMarkerInfoToSidebar(attractionData) {
   }
   );
 }
+
 // Get Route from locationA to locationB
 async function showRoute(fromLat, fromLon, toLat, toLon) {
-  // Call REST API to get the route
-
   // Create a new route planning div
   const routePlanningDiv = document.createElement("div");
   routePlanningDiv.id = "routePlanningDiv";
@@ -460,6 +459,7 @@ async function showRoute(fromLat, fromLon, toLat, toLon) {
     document.location.origin +
     `/api/public_transport?fromLat=${fromLat}&fromLon=${fromLon}&toLat=${toLat}&toLon=${toLon}`;
 
+  // Call REST API to get the route
   fetch(apiUrl)
     .then((response) => {
       if (!response.ok) {
@@ -501,6 +501,20 @@ async function showRoute(fromLat, fromLon, toLat, toLon) {
                                   Mode: ${leg.line.mode || "Walking"}${leg.line.name ? ` - ${leg.line.name}` : ""
             }`;
           cardBody.appendChild(info);
+
+          // Add "Show on Map" button for each leg
+          const showOnMapBtn = document.createElement('button');
+          showOnMapBtn.className = 'btn btn-secondary m-2';
+          showOnMapBtn.innerHTML = 'Zoom on Map';
+          showOnMapBtn.onclick = function () {
+            publicTransportMarker(leg);
+          };
+
+          cardBody.appendChild(showOnMapBtn);
+
+          // Add horizontal line after each leg
+          const hr = document.createElement('hr');
+          cardBody.appendChild(hr);
         });
 
         // The arrival time of the last leg is taken as the arrival time of the option
@@ -580,11 +594,11 @@ function getStartLocation(attLat, attLng) {
         console.error("There was a problem with the fetch operation:", error);
       });
   };
-
   // Add elements to the route showcase div
   routeDiv.appendChild(hdiv);
   routeDiv.appendChild(button);
 }
+
 function hideSidebarContent() {
   const selectedAttractionsInfo = document.getElementById(
     "selectedAttractionsInformation"

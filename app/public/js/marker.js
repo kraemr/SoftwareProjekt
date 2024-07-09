@@ -13,8 +13,43 @@ function placeMarkers(data) {
       let marker = createBlueMarker(elem);
       allMarkersLayer.addLayer(marker);
   }
-
 }
+
+// Stop marker
+function publicTransportMarker(leg) {
+  // Remove all route markers from the map
+  const markers = allMarkersLayer.getLayers();
+  markers.forEach((marker) => {
+    if (marker.options.isRouteMarker) {
+      allMarkersLayer.removeLayer(marker);
+    }
+  });
+
+  // Create a new marker
+  var latlng = L.latLng(leg.destination.location.latitude, leg.destination.location.longitude);
+  let marker = L.marker(latlng, { isRouteMarker: true });
+
+  // Custom icon for the marker
+  var customIcon = L.icon({
+    iconUrl: "leaflet/images/marker-icon-2x-red.png", // Update this path to your actual icon path
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [0, -16],
+  });
+  marker.setIcon(customIcon);
+
+  // Convert planned arrival time to a more readable format
+  let plannedArrivalTime = new Date(leg.plannedArrival);
+
+  // Add popup with destination name and planned arrival time to the marker
+  marker.bindPopup(`${leg.destination.name}<br>
+    <strong>Planned arrival Time:</strong> ${plannedArrivalTime.toLocaleTimeString()}`);
+  allMarkersLayer.addLayer(marker);
+
+  // Zoom to the marker
+  map.flyTo(marker.getLatLng(), 17);
+}
+
 //Blue Marker
 function createBlueMarker(attraction) {
   var latlng = L.latLng(attraction.posX, attraction.posY);
