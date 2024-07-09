@@ -4,14 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strconv"
 	"src/moderator"
 	"src/sessions"
+	"strconv"
 )
 
-
-// moderators can only deleteFavorite themselves
+// moderators can only delete themselves
 // Site Admin can deleteFavorite Moderator
+// No proper checks implemented for now ... SO just return success:false
 func deleteModerator(req *http.Request) (string, error) {
 	return "{\"success\":false}", nil 
 	id := req.URL.Query().Get("id")

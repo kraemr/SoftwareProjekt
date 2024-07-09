@@ -1,9 +1,9 @@
-package moderator;
+package moderator
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
-	"encoding/json"
 	"src/sessions"
 	"src/users"
 );
@@ -13,7 +13,10 @@ type BanInfo struct{
 	Reason string  // TODO Save as USER_NOTIFICATION
 }
 
-//TODO TEST
+/*
+Ban a user by his email and with a given Reason
+This sets the users active boolean to false
+*/
 func BanUser(res http.ResponseWriter, req *http.Request){
 	if(req.Method == "PUT"){
 		var ban BanInfo
@@ -33,6 +36,11 @@ func BanUser(res http.ResponseWriter, req *http.Request){
 	}
 }
 
+
+/*
+Returns List of BannedUsers for given City 
+If the current session is a Moderator session and the moderator has access to the city
+*/
 func GetBannedUsers(res http.ResponseWriter, req *http.Request){
 	var city string = req.URL.Query().Get("city")
 	

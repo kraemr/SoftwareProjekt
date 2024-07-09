@@ -1,17 +1,23 @@
 package apis
 
+// Attraction REST Api
 import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"src/sessions"
+	"src/attractions"
 	"src/favorites"
 	"src/moderator"
+	"src/sessions"
 	"strconv"
-	"src/attractions"
 )
 
-// deleteAttraction attraction
+/*
+deleteAttraction gets called if a DELETE http-Request is received on /api/attractions
+deleteAttraction expects an id inform of a query parameter (http://localhost/api/attractions?id=19191919)
+This id identifies the attraction to be deleted
+Attractions can only be deleted by a moderator for the corresponding city or by the user who created them
+*/
 func deleteAttraction(req *http.Request) (string,error){
 	id := req.URL.Query().Get("id")
 	convertedID,err := strconv.ParseInt(id, 10, 64)
@@ -50,9 +56,6 @@ func deleteAttraction(req *http.Request) (string,error){
 }
 
 
-
-
-// is not really how you would normally do a PUT api
 func putModeratingAction(req *http.Request) error{
 	var action string = req.URL.Query().Get("action")
 	var id string = req.URL.Query().Get("id")
@@ -67,10 +70,12 @@ func putModeratingAction(req *http.Request) error{
 	return nil
 
 }
-
-
-
-// update existing attraction, check if logged in and added_by id is the users
+/*
+This function is called when /api/attractions receives a PUT request
+Since this is a REST API the PUT Endpoint is used for updating already existing attractions
+This function expects a JSON object in the request body with ALL necessary attributes including Id.
+calling it with ?action=approve or disapprove allows moderators to make it visible or invisible to normal users.
+*/
 func putAttraction(req *http.Request) (string,error){
 	if(req.URL.Query().Get("action") != ""){
 		e := putModeratingAction(req);
@@ -80,7 +85,6 @@ func putAttraction(req *http.Request) (string,error){
 			return "{\"success\":true}",nil
 		}
 	}
-	
 	
 	var attraction attractions.Attraction
 	decoder := json.NewDecoder(req.Body)
@@ -95,16 +99,13 @@ func putAttraction(req *http.Request) (string,error){
 		if(err != nil){
 			return "{\"success\":false,\"info\":\"Not Logged in\"}",err 
 		}
-		
 		a,err1 := attractions.GetAttraction(attraction.Id)
 		if(err1 != nil){
 			return "{\"success\":false}",err 
 		}
-
 		if(mod.City != a.City){
 			return "{\"success\":false}",nil 
 		}
-
 		err = attractions.UpdateAttraction(attraction)
 		if(err != nil){
 			return "{\"success\":false}",err
@@ -114,8 +115,10 @@ func putAttraction(req *http.Request) (string,error){
 	if(!sessions.CheckLoggedIn(req)) {
 		return "{\"success\":false,\"info\":\"Not Logged in\"}",nil
 	}
+	
 	userid := sessions.GetLoggedInUserId(req)
 	a1,err1 := attractions.GetAttraction(attraction.Id)
+	
 	if(err1 != nil){
 		return "{\"success\":false}",err1
 	}
@@ -135,8 +138,12 @@ func putAttraction(req *http.Request) (string,error){
 
 }
 
-// add attraction
-// check if logged in, attraction will not be approved, moderator must look at it first
+/*
+postAttraction is called when /api/attractions receives a POST request
+This creates a new Attraction
+This function expects a logged in user sending a JSON Object with all attributes of Attraction struct,
+except Stars,Approved,Id,Recommended_count and Added_by as these should not be set by the user
+*/
 func postAttraction(req *http.Request) (string,error){
 	if(!sessions.CheckLoggedIn(req)) {
 		return "{\"success\":false,\"info\":\"Not Logged in\"}",nil
@@ -144,18 +151,13 @@ func postAttraction(req *http.Request) (string,error){
 	var attraction attractions.Attraction
 	decoder := json.NewDecoder(req.Body)
 	err := decoder.Decode(&attraction)
-	fmt.Println(attraction)
-
 	if err != nil {
 		return "{\"success\":false}", err
 	}
-
 	attraction.Stars = 0
 	attraction.Approved = false
 	attraction.Recommended_count = 0
-	attraction.Added_by = 911111
-
-	
+	attraction.Added_by = sessions.GetLoggedInUserId(req)
 	err = attractions.InsertAttraction(attraction)
 	if err != nil {
 		return "{\"success\":false}", err
@@ -163,6 +165,14 @@ func postAttraction(req *http.Request) (string,error){
 	return "{\"success\":true}", nil
 }
 
+
+/*
+getAttraction is called when requesting Attraction data
+This function is called when /api/attractions receives a GET Request
+getAttraction allows to filter by a bunch of attributes like city,title,id,category,approval and so on
+unapproved attractions should only be returned when a moderator sends a request
+When the Attractions are retrieved from the Database the FavoriteCount is inserted into the attraction struct
+*/
 func getAttraction(req *http.Request) (string, error) {
 	var city string = req.URL.Query().Get("city")
 	var title string = req.URL.Query().Get("title")
@@ -234,6 +244,13 @@ func getAttraction(req *http.Request) (string, error) {
 	}
 }
 
+
+
+/*
+This is the Callback function for /api/attractions
+Depending on Request Method different functions are called
+Every function returns JSON-String and an error value that is nil on success
+*/
 func HandleAttractionsREST(res http.ResponseWriter, req *http.Request) {
 	var output string
 	var err error

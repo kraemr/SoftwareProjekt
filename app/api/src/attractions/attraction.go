@@ -35,6 +35,11 @@ type Filter struct{
 var ErrNoAttraction = fmt.Errorf("No Attractions Found")
 var ErrNotModerator = fmt.Errorf("Not a Moderator")
 
+/*
+Receives Database rows
+Iterates over them and returns a list of Attractions
+Also returns an error if no Attractions were found
+*/
 func getAttractionsFromDb(rows *sql.Rows) ([]Attraction, error) {
 	var attr_list []Attraction
 	no_data := true
@@ -65,6 +70,9 @@ func getAttractionsFromDb(rows *sql.Rows) ([]Attraction, error) {
 	return attr_list, nil
 }
 
+/*
+This removes an Attraction by its id from the Database
+*/
 func RemoveAttraction(id int64) error {
 	var db *sql.DB = db_utils.DB
 	prepared_stmt, err := db.Prepare("DELETE FROM ATTRACTION_ENTRY WHERE id = ?")
@@ -80,7 +88,12 @@ func RemoveAttraction(id int64) error {
 	return nil
 }
 
-// This function Also Makes sure that the City string is made to be lowercase
+/*
+This function expects that the Attraction struct has every value except Id already
+filled with values.
+If that is the case a new Attraction is inserted into the Database with the given data.
+Newly added Attractions will be unapproved
+*/
 func InsertAttraction(a Attraction) error {
 	var db *sql.DB = db_utils.DB
 	prepared_stmt, err := db.Prepare("INSERT INTO ATTRACTION_ENTRY(title,type,recommended_count,city,street,housenumber,info,PosX,PosY,stars,img_url,added_by,approved) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,FALSE)")
@@ -97,7 +110,11 @@ func InsertAttraction(a Attraction) error {
 	return nil
 }
 
-// This function Also Makes sure that the City string is made to be lowercase
+/*
+This function expects that title,type,favorit_count,city,street,housenumber,info and so on are set in
+the attraction struct, It Returns an error when the Database Exec fails.
+An error indicates that values were not set properly
+*/
 func UpdateAttraction(a Attraction) error {
 	var db *sql.DB = db_utils.DB
 	prepared_stmt, err := db.Prepare("UPDATE ATTRACTION_ENTRY SET title=?,type=?,recommended_count=?,city=?,street=?,housenumber=?,info=?,PosX=?,PosY=?,img_url=? WHERE id=?")
@@ -113,6 +130,11 @@ func UpdateAttraction(a Attraction) error {
 	return nil
 }
 
+
+/*
+This function sets the attraction approval  identified by the id.
+returns an error if sql fails or Attraction doesnt exist
+*/
 func ChangeAttractionApproval(approved bool, id int64) error {
 	var db *sql.DB = db_utils.DB
 	prepared_stmt, err := db.Prepare("UPDATE ATTRACTION_ENTRY SET ATTRACTION_ENTRY.approved=? WHERE ATTRACTION_ENTRY.id=?")
@@ -128,6 +150,10 @@ func ChangeAttractionApproval(approved bool, id int64) error {
 	return nil
 }
 
+/*
+Gets a single attraction by its Id and returns it
+if there is an error it indicates that this attraction doesnt exist
+*/
 func GetAttraction(id int64) (Attraction, error) {
 	var db *sql.DB = db_utils.DB
 	row, err := db.Query("SELECT id,title,type,recommended_count,city,street,housenumber,info,approved,PosX,PosY,stars,img_url,added_by FROM ATTRACTION_ENTRY WHERE id = ? and approved=TRUE", id)
@@ -154,6 +180,11 @@ func GetAttraction(id int64) (Attraction, error) {
 
 var ErrNoRecommendation = fmt.Errorf("No Recommendations Found")
 
+
+/*
+Gets Recommendations For User by city and type
+Ordered asending by stars and Limit to 4
+*/
 func GetRecommendationForUser(id int32, city string, pref_type string) ([]Attraction, error) {
 	var db *sql.DB = db_utils.DB
 	var recommended_attractions []Attraction
@@ -165,6 +196,9 @@ func GetRecommendationForUser(id int32, city string, pref_type string) ([]Attrac
 	return getAttractionsFromDb(rows)
 }
 
+/*
+Return all approved Attractions
+*/
 func GetAttractions() ([]Attraction, error) {
 	var db *sql.DB = db_utils.DB
 	var attractions []Attraction
@@ -176,6 +210,9 @@ func GetAttractions() ([]Attraction, error) {
 	return getAttractionsFromDb(rows)
 }
 
+/*
+Returns all Attractions that were added by a given user_id
+*/
 func GetAttractionsAddedBy(user_id int32) ([]Attraction,error){
 	var db *sql.DB = db_utils.DB
 	var attractions []Attraction
@@ -186,7 +223,6 @@ func GetAttractionsAddedBy(user_id int32) ([]Attraction,error){
 	defer rows.Close()
 	return getAttractionsFromDb(rows)
 }
-
 
 func GetAttractionsUnapproved() ([]Attraction,error){
 	var db *sql.DB = db_utils.DB
@@ -211,7 +247,6 @@ func GetAttractionsUnapprovedCity(city string) ([]Attraction,error){
 }
 
 
-// isnt really used
 func GetAttractionsByPos(posx float32, posy float32) ([]Attraction, error) {
 	var db *sql.DB = db_utils.DB
 	var attractions []Attraction
@@ -248,9 +283,8 @@ func GetAttractionsByCity(city string) ([]Attraction, error) {
 }
 
 /*
-Gets Attraction by Everything Similiar
-Example User Types a
-Finds everything starting with a
+Gets an Attraction by parts of its title
+For example: ain would find "Mainzer Backstube,Mainzer Dom,Hain ..." 
 */
 func GetAttractionsByTitle(title string) ([]Attraction, error) {
 	var db *sql.DB = db_utils.DB

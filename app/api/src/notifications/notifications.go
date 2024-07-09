@@ -1,9 +1,10 @@
-package notifications;
+package notifications
+
 import (
-	_ "errors"
 	"database/sql"
-	"src/db_utils"
+	_ "errors"
 	"fmt"
+	"src/db_utils"
 )
 
 type Notification struct{
@@ -13,10 +14,13 @@ type Notification struct{
 
 var ErrNoNotification = fmt.Errorf("No Notifications Found")
 
-
+/*
+Not Implemented
+*/
 func AddNotification(user_id int32,notification Notification) error{
 	return nil
 }
+
 
 func getNotificationsFromDb(rows *sql.Rows)  ([]Notification,error){
 	var notifications []Notification

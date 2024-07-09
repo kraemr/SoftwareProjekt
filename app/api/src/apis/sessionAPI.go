@@ -1,10 +1,11 @@
-package apis;
+package apis
+
 import (
-	"src/moderator"
-	"net/http"
 	"encoding/json"
-	"src/sessions"
 	"fmt"
+	"net/http"
+	"src/moderator"
+	"src/sessions"
 	"src/users"
 )
 
@@ -16,6 +17,14 @@ func CheckUserLoggedIn(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
+
+
+/*
+This function receives the Data from the moderatorlogin and checks 
+that the Information is correct
+if it is a session is created where logged_in = true
+and certain variables like moderator moderates_city are set
+*/
 func LoginModerator(res http.ResponseWriter, req *http.Request) {
 	decoder := json.NewDecoder(req.Body)
 	var modInfo users.UserLoginInfo
@@ -41,6 +50,12 @@ func LoginModerator(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
+/*
+This function receives the Data from the User Login and checks 
+that the Information is correct
+if it is a session is created where logged_in = true
+and certain variables like userId are set for later use
+*/
 func LoginUser(res http.ResponseWriter, req *http.Request) {
 	decoder := json.NewDecoder(req.Body)
 	var user users.UserLoginInfo
@@ -66,6 +81,8 @@ func LoginUser(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
+
+/*NOT IMPLEMENTED*/
 func LogoutAPI(res http.ResponseWriter, req *http.Request){
 	sessions.Logout(req)
 	fmt.Fprintf(res,"\"success\":true");

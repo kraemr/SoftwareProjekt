@@ -1,12 +1,14 @@
-package crypto_utils;
+package crypto_utils
+
 import (
-	"golang.org/x/crypto/argon2"
-	"encoding/base64"
-	"fmt"
 	"crypto/rand"
-	"errors"
-	"strings"
 	"crypto/subtle"
+	"encoding/base64"
+	"errors"
+	"fmt"
+	"strings"
+
+	"golang.org/x/crypto/argon2"
 )
 
 var (
@@ -30,10 +32,13 @@ const parallelism = 2
 const keyLength  =32
 const saltLength = 16
 
-type hash struct {
-    
-}
 
+
+/*
+This decodes the received argon2ID hash from base64 to
+params,salt and actual hash
+Only throws an error if the format is incorrect
+*/
 func decodeHash(encodedHash string) (p *params, salt, hash []byte, err error) {
     vals := strings.Split(encodedHash, "$")
     if len(vals) != 6 {
@@ -69,6 +74,10 @@ func decodeHash(encodedHash string) (p *params, salt, hash []byte, err error) {
     return p, salt, hash, nil
 }
 
+
+/*
+Generate a random n byte salt
+*/
 func generateSalt(n uint32) ([]byte, error) {
     b := make([]byte, n)
     _, err := rand.Read(b)
@@ -85,6 +94,11 @@ func formatBase64Argon2(hash []byte,salt []byte) string{
 	return encodedHash
 }
 
+
+/*
+Hash a Password with supplied parameters
+Used when comparing received user passwords with the one saved in the db
+*/
 func getHashedPasswordWithParams(password string,argon2Params params) (string,error){
     if( len(password) == 0 || len(password) > 64){
         return "",ErrInvalidPassword

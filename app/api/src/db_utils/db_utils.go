@@ -1,11 +1,13 @@
-package db_utils;
+package db_utils
+
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"os"
 	"time"
+
 	"github.com/go-sql-driver/mysql"
-	"database/sql"
 )
 
 const (
@@ -18,7 +20,11 @@ var (
 	DB *sql.DB
 )
 
-
+/*
+This function allocates a mysql connectionPool
+For some reason we could not get cfg.FormatDSN to work, which should be used
+to initialize a DB connection
+*/
 func InitDB() {
 	site_db_pw := os.Getenv("SITE_DB_PASSWORD")
 	fmt.Println(site_db_pw)
@@ -30,7 +36,6 @@ func InitDB() {
 		AllowNativePasswords: true,
 	}
 	var err error
-	// MYSQL Driver
 	fmt.Println(cfg.FormatDSN())
 	// DO NOT USE cfg.FormatDSN
 	// It literally doesnt work

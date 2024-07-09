@@ -1,13 +1,15 @@
-package notifications;
+package notifications
+
 import (
-	"github.com/gorilla/websocket"
-	"net/http"
-	"log"
-	"fmt"
 	"encoding/json"
+	"fmt"
+	"log"
+	"net/http"
 	"src/sessions"
 	"src/users"
 	"time"
+
+	"github.com/gorilla/websocket"
 )	
 
 var(
@@ -17,6 +19,10 @@ var(
 	}
 )
 
+
+/*
+Currently this does not Check the origin
+*/
 func serveWs(w http.ResponseWriter, r *http.Request) {
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 	ws, err := upgrader.Upgrade(w, r, nil)
@@ -34,6 +40,12 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 // parse json -> jsonObject
 // getNotificationsForID(jsonObject.Id) -> send Notifications
 var NotificationSendSignal bool = false
+
+
+/*
+This sends Notifications to users connected to the websocket
+every 10 seconds it checks if there are notifications and sends them
+*/
 func sendNotifications(w http.ResponseWriter, r *http.Request){
 	if(!sessions.CheckLoggedIn(r)) {
 		return
@@ -86,7 +98,7 @@ func sendNotifications(w http.ResponseWriter, r *http.Request){
 	}
 }
 
-
+// Starts the Websocket
 func StartNotificationServer(port string,path string){
 	addr := ":" + port
 	http.HandleFunc(path, sendNotifications)

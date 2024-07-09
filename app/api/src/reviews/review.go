@@ -1,9 +1,10 @@
-package reviews;
+package reviews
+
 import (
-	_ "errors"
 	"database/sql"
-	"src/db_utils"
+	_ "errors"
 	"fmt"
+	"src/db_utils"
 )
 
 type Review struct{

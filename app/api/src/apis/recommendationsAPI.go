@@ -1,21 +1,32 @@
 package apis
 
 import (
-	"net/http"
-	"fmt"
 	"encoding/json"
+	"fmt"
+	"net/http"
 	"src/attractions"
 	"src/sessions"
 )
+
+/*
+This function gets called when /apu/recommendations receives a GET request
+the user can specify which city and category he wants recommendations for
+In an actual Production environment we woul have to have a pretty complex recommendation algo
+to give users what they want.
+Currently this just returns the best rated attractions in that city/category
+*/
 
 func getRecommendations(req *http.Request) (string,error){
 	if(!sessions.CheckLoggedIn(req)) {
 		return "{\"success\":false,\"info\":\"Not Logged in\"}",nil
 	}
+
 	var city string = req.URL.Query().Get("city")
 	var category string = req.URL.Query().Get("category")
+	
 	cityIsSet := city != ""
 	categoryIsSet := category != ""
+	
 	id := sessions.GetLoggedInUserId(req)
 	if(cityIsSet && categoryIsSet){
 		recs,err := attractions.GetRecommendationForUser(id,city,category)
@@ -29,8 +40,6 @@ func getRecommendations(req *http.Request) (string,error){
 			return "{\"success\":false}",json_err
 		}
 		output := string(json_bytes)
-
-
 		return output,nil
 	}else{
 		return "{\"success\":false}",nil
@@ -38,17 +47,27 @@ func getRecommendations(req *http.Request) (string,error){
 }
 
 func deleteRecommendations(req *http.Request) (string,error){
+	_ =req
 	return "{\"success\":false,\"info\":\"unsupported Method\"}",nil
 }
 
 func putRecommendations(req *http.Request) (string,error){
+	_ =req
 	return "{\"success\":false,\"info\":\"unsupported Method\"}",nil
 }
 
 func postRecommendations(req *http.Request) (string,error){
+	_ =req
 	return "{\"success\":false,\"info\":\"unsupported Method\"}",nil
 }
 
+
+
+/*
+This is the Callback function for /api/recommendations
+Depending on Request Method different functions are called
+Every function returns JSON-String and an error value that is nil on success
+*/
 func HandleRecommendationsREST(res http.ResponseWriter, req *http.Request){
 	var output string
 	var err error

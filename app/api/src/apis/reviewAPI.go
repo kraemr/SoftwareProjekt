@@ -1,12 +1,12 @@
 package apis
 
-import(
+import (
+	"encoding/json"
 	"fmt"
 	"net/http"
-	"strconv"
-	"encoding/json"
-	"src/sessions"
 	"src/reviews"
+	"src/sessions"
+	"strconv"
 )
 
 

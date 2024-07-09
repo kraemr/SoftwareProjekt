@@ -9,8 +9,12 @@ import (
 	"strconv"
 )
 
-func getFavorite(req *http.Request) (string, error) {
-	
+/*
+getFavorite gets called if /api/favorites receives a GET Request
+getFavorite returns Loggedin Users Favorites when no parameters are present
+if action parameter == count and attraction_id exists then this returns the FavoriteCount for the attraction
+*/
+func getFavorite(req *http.Request) (string, error) {	
 	if(req.URL.Query().Get("action") == "count" && req.URL.Query().Get("attraction_id") != ""){
 		a_id,e := strconv.ParseInt( req.URL.Query().Get("attraction_id"), 10, 64);
 		if(e != nil){
@@ -48,7 +52,13 @@ func putFavorite(req *http.Request) (string, error) {
 	return "{\"success\":false,\"info\":\"unsupported Method\"}", nil
 }
 
-// Add a Favorite
+
+/*
+This is not really conformant with REST principles, but it was way easier to NOT manage this Logic in the frontend
+postFavorite is used to set an Attraction to a Favorite of the loggedin user or to unset it
+if the favorite exists, then it deletes the favorite
+if the favorite doesnt exist, then it creates a new favorite
+*/
 func postFavorite(req *http.Request) (string, error) {
 	if !sessions.CheckLoggedIn(req) {
 		return "{\"success\":false,\"info\":\"Not Logged in\"}", nil
@@ -77,6 +87,11 @@ func postFavorite(req *http.Request) (string, error) {
 	return "{\"success\":true,\"info\":\"added favorite\"}", nil
 }
 
+/*
+This function gets called when /api/favorites receives a DELETE
+This function expects an id that identifies a favorite
+if it exists and the user is logged in AND it is actually his, then it is deleted
+*/
 func deleteFavorite(req *http.Request) (string, error) {
 	if !sessions.CheckLoggedIn(req) {
 		return "{\"success\":false,\"info\":\"Not Logged in\"}", nil
@@ -93,6 +108,11 @@ func deleteFavorite(req *http.Request) (string, error) {
 	return "{\"success\":true}", nil
 }
 
+/*
+This is the Callback function for /api/favorites
+Depending on Request Method different functions are called
+Every function returns JSON-String and an error value that is nil on success
+*/
 func HandleFavoritesREST(res http.ResponseWriter, req *http.Request) {
 	var output string
 	var err error

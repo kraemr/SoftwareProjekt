@@ -32,7 +32,6 @@ type AttractionFavoriteUnion struct {
 
 }
 
-// IF this was returned in recommendations then we dont send any
 var ErrNoFavorites = fmt.Errorf("No Favorites Found")
 func DeleteAttractionFavoriteById(id int64) error {
 	var db *sql.DB = db_utils.DB

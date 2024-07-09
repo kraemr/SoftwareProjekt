@@ -1,12 +1,17 @@
-package sessions;
+package sessions
+
 import (
-	"github.com/gorilla/sessions"
+	"fmt"
 	"net/http"
 	"os"
-	"fmt"
+
+	"github.com/gorilla/sessions"
 )
 var store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
 
+
+
+// Retrives the id set in the session
 func GetLoggedInUserId( r *http.Request) int32{
 	session, err := store.Get(r, "sessionid")
 	if(err != nil){
@@ -31,7 +36,10 @@ func UserIsBanned(r *http.Request) bool{
 	}
 }
 
-
+/*
+Gets a session if it exists and creates a new one if it doesnt
+Sets logged_in to true and the userId to the one specified
+*/
 func StartSession(w http.ResponseWriter, r *http.Request,id int32){
 	session, err := store.Get(r, "sessionid")
 	if err != nil {
@@ -47,6 +55,10 @@ func StartSession(w http.ResponseWriter, r *http.Request,id int32){
 	}
 }
 
+
+/*
+Starts a ModeratorSession sets moderator = true and the moderator_city to the specified city
+*/
 func StartModeratorSession(w http.ResponseWriter, r *http.Request,moderator_id int32,city string){
 	session, err := store.Get(r, "sessionid")
 	if err != nil {
@@ -64,6 +76,8 @@ func StartModeratorSession(w http.ResponseWriter, r *http.Request,moderator_id i
 		return
 	}
 }
+
+
 
 func CheckLoggedIn(r *http.Request) bool {
 	session, err := store.Get(r, "sessionid")
@@ -135,7 +149,9 @@ func CheckModeratorAccessToCity(r *http.Request	, _city string) bool{
 	return false
 }
 
-
+/*
+Doesnt seem to work properly
+*/
 func Logout(r *http.Request){
 	session, err := store.Get(r, "sessionid")
 	_ = err
@@ -144,7 +160,5 @@ func Logout(r *http.Request){
 	session.Values["moderator"] = false
 	session.Values["id"] = 0
 	session.Values["moderator_city"] = ""
-
-
 	session.Options.MaxAge=-1
 }

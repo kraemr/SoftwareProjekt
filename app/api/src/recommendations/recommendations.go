@@ -1,10 +1,10 @@
-package recommendations;
+package recommendations
 
-import(
-	"src/attractions"
-	"fmt"
-	"src/db_utils"
+import (
 	"database/sql"
+	"fmt"
+	"src/attractions"
+	"src/db_utils"
 )
 
 var ErrNoRecommendation = fmt.Errorf("No Recommendations Found")

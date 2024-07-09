@@ -1,13 +1,15 @@
-package sessions;
+package sessions
+
 import (
-	"src/crypto_utils"
 	"database/sql"
-	"src/db_utils"
 	"fmt"
+	"src/crypto_utils"
+	"src/db_utils"
 )
 
-
-
+/*
+Registers a User with email and saves PasswordHash
+*/
 func RegisterUser(email string,password string) bool{
 	var db *sql.DB = db_utils.DB
 	prepared_stmt, err := db.Prepare("INSERT INTO USER(email,password) VALUES(?,?)")
@@ -26,6 +28,9 @@ func RegisterUser(email string,password string) bool{
 	return true
 }
 
+/*
+This function checks if the user supplied password hashed is equal to the one in the database
+*/
 func LoginUser(email string,password string) bool{
 // type here is going to be Row instead of Rows
 	var db *sql.DB = db_utils.DB
@@ -45,6 +50,10 @@ func LoginUser(email string,password string) bool{
 	return correct
 }
 
+
+/*
+This function checks if the moderator supplied password hashed is equal to the one in the database
+*/
 func LoginModerator(email string,password string) bool{
 	// type here is going to be Row instead of Rows
 		var db *sql.DB = db_utils.DB
