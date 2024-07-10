@@ -42,13 +42,14 @@ window.addEventListener("resize", function () {
     searchContainer.style.left = "2px";
   }
 });
-// Toggle left sidebar
+// Toggle sidebar size
 function toggleSidepanel() {
   const sidepanel = document.getElementById("sidepanel-toggle");
   const button = document.getElementById("toggleButton");
   const searchContainer = document.getElementById("search-container");
+  // This is to change the sidebar size between the small and large screen layout
   if (window.innerWidth <= 768) {
-    // Check if the screen size is small
+    // e.g if the window is small and trhe sidebar is at 40% height, change it to 0
     if (sidepanel.style.height === "40%") {
       sidepanel.style.height = "0";
       button.style.bottom = "2px";
@@ -62,24 +63,6 @@ function toggleSidepanel() {
       button.style.left = "2px";
       searchContainer.style.left = "2px";
     } else {
-      sidepanel.style.width = "25%";
-      button.style.left = "25%";
-      searchContainer.style.left = "25%";
-    }
-  }
-}
-function openSidepanel() {
-  const sidepanel = document.getElementById("sidepanel-toggle");
-  const button = document.getElementById("toggleButton");
-  const searchContainer = document.getElementById("search-container");
-  // Check if the screen size is small
-  if (window.innerWidth <= 768) {
-    if ((sidepanel.style.height = "0")) {
-      sidepanel.style.height = "40%";
-      button.style.bottom = "41%";
-    }
-  } else {
-    if ((sidepanel.style.width = "0")) {
       sidepanel.style.width = "25%";
       button.style.left = "25%";
       searchContainer.style.left = "25%";
@@ -134,10 +117,10 @@ function fillCategories() {
     });
   });
 }
-
+// Function to fill the sidebar with attraction information
 function loadMarkerInfoToSidebar(attractionData) {
   hideSidebarContent();
-  openSidepanel();
+  toggleSidepanel();
   const selectedAttractionsInfo = document.getElementById(
     "selectedAttractionsInformation"
   );
