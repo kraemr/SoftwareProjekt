@@ -1,5 +1,6 @@
 function placeMarkers(data) {
   for (var elem of data) {
+    // Fetch the stars for each attraction loaded
     fetch(`/api/reviews?action=stars&attraction_id=${elem.Id}`)
       .then((response) => response.json())
       // If the array is less than 1 long, soft fail

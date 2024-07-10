@@ -1,6 +1,8 @@
+// Function to display the favourites in the sidebar
 function OpenFavourites() {
     hideSidebarContent();
     openSidepanel();
+    // Get the favourites from the current user
     fetch(document.location.origin + "/api/favorites", {
         method: "GET",
     })
@@ -8,12 +10,14 @@ function OpenFavourites() {
         .then(data => {
             const sidebarContent = document.getElementById("showFavourites");
             sidebarContent.style.display = "block";
+            // Filter input
             sidebarContent.innerHTML = `
                 <div class="input-group mb-3">
                     <input type="text" class="form-control" id="filter-input" placeholder="Filter favourites" oninput="filterFavourites()">
                 </div>
             `;
             console.log(data);
+            // Display the favourites in cards
             data.forEach(favorite => {
                 const card = document.createElement("div");
                 card.className = "card mb-2 m-2";
@@ -33,10 +37,12 @@ function OpenFavourites() {
                 buttonContainer.style.display = "flex";
                 buttonContainer.style.justifyContent = "space-between";
 
+                // Add a button to delete the favourite
                 const deleteButton = document.createElement("button");
                 deleteButton.className = "btn btn-danger";
                 deleteButton.innerHTML = "Unfavourite";
                 deleteButton.onclick = function() {
+                     // use the attraction ID from the favorite to delete the attraction data
                     fetch(document.location.origin + "/api/favorites?id=" + favorite.Id, {
                         method: "DELETE",
                     })
@@ -53,7 +59,7 @@ function OpenFavourites() {
                         console.error('Error deleting favorite:', error);
                     });
                 };
-
+                // Add a button to show the favourite on the map
                 const showOnMapButton = document.createElement("button");
                 showOnMapButton.className = "btn btn-primary";
                 showOnMapButton.innerHTML = "Show on Map";
@@ -83,7 +89,7 @@ function OpenFavourites() {
             console.error('Error fetching favorites:', error);
         });
 }
-
+// Function to filter the favourites by anything in the card body
 function filterFavourites() {
     const filterValue = document.getElementById('filter-input').value.toLowerCase();
     const favouriteCards = document.querySelectorAll('#showFavourites .card');

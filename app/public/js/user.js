@@ -1,6 +1,8 @@
 var userID;
 var username;
 var userImage;
+
+// Unused function to get the user information by their email
 function getUserByEmail(email) {
   fetch(document.location.origin + "/api/users?email=" + email, {
     method: "GET",
@@ -20,12 +22,12 @@ function getUserByEmail(email) {
       alert("Failed to load markers. Please try again.");
     });
 }
-
+// Unused function to set the user information
 function setUserSettings() {
   const settingsContainer = document.querySelector(".user-icon-src");
   settingsContainer.style.backgroundImage = "url('/images/user-icon.png')";
 }
-
+// Function that returns true of false when asked if the user is logged in
 function isLoggedIn() {
   return fetch(document.location.origin + "/api/logged_in", {
     method: "GET",
@@ -44,6 +46,7 @@ function isLoggedIn() {
       return false;
     });
 }
+// Unused function to log out the current user
 function logoutCurrentUser() {
   fetch(document.location.origin + "/api/logout", {
     method: "GET",

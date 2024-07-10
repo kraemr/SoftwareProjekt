@@ -69,11 +69,13 @@ function toggleSidepanel() {
     }
   }
 }
-// Function to open the sidepanel without 
+// DO NOT REMOVE
+// Function to open the sidepanel, since the toggle function will close it when clicking on something new
 function openSidepanel() {
   const sidepanel = document.getElementById("sidepanel-toggle");
   const button = document.getElementById("toggleButton");
   const searchContainer = document.getElementById("search-container");
+  // Can only open the sidebar for a layout
   if (window.innerWidth <= 768) {
     if ((sidepanel.style.height = "0")) {
       sidepanel.style.height = "40%";
@@ -87,7 +89,7 @@ function openSidepanel() {
     }
   }
 }
-
+// Function to get all the categories
 function getCategories() {
   var apiUrl = document.location.origin + "/api/categories";
   console.log(apiUrl);
@@ -143,6 +145,7 @@ function loadMarkerInfoToSidebar(attractionData) {
     "selectedAttractionsInformation"
   );
   selectedAttractionsInfo.style.display = "block";
+  // Put the html content for the selected attraction in the sidebar
   selectedAttractionsInfo.innerHTML = `
 <link rel="stylesheet" href="./css/sidebar.css">
 <div class="d-flex justify-content-center mb-2">
@@ -186,18 +189,22 @@ function loadMarkerInfoToSidebar(attractionData) {
     <div class="reviews-container mt-3">
       <h5 class="text-white m-2">Reviews</h5>
       <div class="userReviews">`
+// Get the current Users information for later
   fetch(document.location.origin + "/api/users", {
     method: "GET",
   })
     .then((response) => response.json())
     .then((userData) => {
+        //  Get the reviews for the attraction
       fetch(document.location.origin + "/api/reviews?attraction_id=" + attractionData.Id, {
         method: "GET",
       })
         .then((response) => response.json())
         .then((reviews) => {
+        // get the div from the selectedAttractionsInfo.innerHTML
           const reviewsContainer = document.querySelector(".userReviews");
           reviews.forEach((review) => {
+            // For each review create a card with the review information
             const reviewCard = document.createElement("div");
             reviewCard.classList.add("card", "text-light", "bg-transparent", "m-2");
             var username = review.Username;
@@ -219,13 +226,15 @@ function loadMarkerInfoToSidebar(attractionData) {
                 <p class="card-text">${review.Text}</p>
                 <p class="card-text">By ${username} on ${review.Date}
             `;
+            // Using the user information from earlier, check if the review is from the current user
             if (review.User_id === userData.UserId) {
+                // if it is from the current user, create an dedit button and a delete button
               const buttonContainer = document.createElement("div");
               const editButton = document.createElement("button");
               editButton.classList.add("btn", "btn-primary", "edit-review", "w-50");
               editButton.innerHTML = "Edit";
+              // Onclick for the edit button to update the review using a prompt
               editButton.addEventListener("click", function () {
-                // Call the edit review API endpoint here
                 console.log("Edit review:", review.Id);
                 const updatedReviewText = prompt("Enter the updated review text:");
                 console.log(updatedReviewText);
@@ -237,6 +246,7 @@ function loadMarkerInfoToSidebar(attractionData) {
                   Stars: parseFloat(rating),
                   Date: new Date().toISOString()
                 };
+                // Put the new information into the review
                 fetch(document.location.origin + "/api/reviews", {
                   method: "PUT",
                   body: JSON.stringify(reviewData),
@@ -256,19 +266,21 @@ function loadMarkerInfoToSidebar(attractionData) {
                     console.error("Error editing review:", error);
                   });
               });
+              // Create the delete button
               const deleteButton = document.createElement("button");
               deleteButton.classList.add("btn", "btn-danger", "delete-review", "w-50");
               deleteButton.innerHTML = "Delete";
+                // Onclick for the delete button to delete the review
               deleteButton.addEventListener("click", function () {
-                // Call the delete review API endpoint here
                 console.log("Delete review:", review.Id)
+                // Delete the review using the DELETE method
                 fetch(document.location.origin + "/api/reviews?id=" + review.Id, {
                   method: "DELETE",
                 })
                   .then((response) => response.json())
                   .then((data) => {
                     console.log(data);
-                    // Remove the review card from the DOM
+                    // Remove the review card from the DOM if the deletion was successful
                     if (data.success) {
                       reviewCard.remove();
                     }
@@ -277,6 +289,7 @@ function loadMarkerInfoToSidebar(attractionData) {
                     console.error("Error deleting review:", error);
                   });
               });
+              // Append the buttons to the button container and the button container to the review card
               buttonContainer.appendChild(editButton);
               buttonContainer.appendChild(deleteButton);
               reviewCard.appendChild(buttonContainer);
@@ -289,12 +302,13 @@ function loadMarkerInfoToSidebar(attractionData) {
       console.error("Error fetching reviews:", error);
     });
   `</p>
-                </div>
+    </div>
   </div>
 </div>
 
 `;
   // Overview and Reviews tabs
+  // Add event listeners to the tabs to switch between them by displaying them none or block
   document.getElementById('overviewLink').addEventListener('click', function () {
     document.getElementById('overviewSection').style.display = 'block';
     document.getElementById('reviewsSection').style.display = 'none';
@@ -346,7 +360,7 @@ function loadMarkerInfoToSidebar(attractionData) {
   // Add event listener for the favourite button
   document.getElementById("favouriteButton")
     .addEventListener("click", function () {
-
+    // Get the current user information
       fetch(document.location.origin + "/api/users", {
         method: "GET",
       })
@@ -354,7 +368,7 @@ function loadMarkerInfoToSidebar(attractionData) {
         .then((data) => {
           console.log(data.UserId);
           console.log(attractionData.Id);
-
+            // Send a POST request to the server to add or remove the attraction from the user's favourites
           fetch(document.location.origin + "/api/favorites", {
             method: "POST",
             body: JSON.stringify({
@@ -368,6 +382,7 @@ function loadMarkerInfoToSidebar(attractionData) {
             .then((response) => response.json())
             .then((data) => {
               console.log(data.info);
+              // If the attraction was added to the favourites, change the button to Unfavourite
               if (data.info === "deleted favorite") {
                 favouriteButton.innerHTML = "Favourite";
                 favouriteButton.classList.add("btn-warning");
@@ -375,6 +390,7 @@ function loadMarkerInfoToSidebar(attractionData) {
                 attractionData.recommended_count--;
                 loadMarkerInfoToSidebar(attractionData);
               }
+            // If the attraction was removed from the favourites, change the button to Favourite
               if (data.info === "added favorite") {
                 favouriteButton.innerHTML = "Unfavourite";
                 favouriteButton.classList.remove("btn-warning");
@@ -407,7 +423,7 @@ function loadMarkerInfoToSidebar(attractionData) {
   SubmitReviewButton.addEventListener("click", function () {
     const reviewText = document.getElementById("reviewAttractionText").value;
     console.log(reviewText, rating);
-    // if the user has rated the attraction and input text, send the review
+    // if the user has rated the attraction, send the review
     if (rating > 0) {
       fetch(document.location.origin + "/api/users", {
         method: "GET",

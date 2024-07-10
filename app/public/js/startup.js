@@ -1,4 +1,5 @@
-function displayGermanyonStartup() {
+// Called from index.html on startup, the name isnt accurate anymore
+function startup() {
     // Check if geolocation is supported by the browser
     if ("geolocation" in navigator) {
         // Prompt user for permission to access their location
