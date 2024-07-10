@@ -1,5 +1,7 @@
 var posX = 0;
 var posY = 0;
+// Function to add an attraction using an overlay
+// We decided to create the html code here rather than toggling a hidden form just to try it, its very unreadable
 function addAttraction() {
   // Create overlay element
   const overlay = document.createElement("div");
@@ -84,7 +86,7 @@ function addAttraction() {
       console.error("There was a problem fetching categories:", error);
       alert("Failed to load categories: " + error.message);
     });
-
+  // rest of the needed labels and inputs
   const infoLabel = document.createElement("label");
   infoLabel.innerText = "Description:";
   infoLabel.style.display = "block";
@@ -153,9 +155,10 @@ function addAttraction() {
   cancelButton.addEventListener("click", () => {
     document.body.removeChild(overlay);
   });
-
+  // Add event listener to the add button
   addButton.addEventListener("click", () => {
     console.log("Add button clicked");
+    // Collect all the information from the form
     const city = cityInput.value.toLowerCase();
     const address = addressInput.value;
     const houseNumber = houseNumberInput.value;
@@ -168,12 +171,14 @@ function addAttraction() {
     const stars = 0;
     var added_by;
     const reviews = [];
+    // APi url to get the coordinates from the address
     var apiUrl =
       "https://nominatim.openstreetmap.org/search.php?q=" +
       encodeURIComponent(fullAddress) +
       "&format=geojson&limit=1&countrycodes=de";
     console.log(title, city, address, fullAddress, type, info, image);
     console.log(apiUrl);
+    // Get the current user information
     fetch(document.location.origin + "/api/users", {
       method: "GET",
       headers: { "Content-Type": "application/json" },
@@ -183,15 +188,17 @@ function addAttraction() {
         added_by = data.username;
       });
     console.log(added_by);
+    // Fetch the coordinates from the API
     fetch(apiUrl)
       .then((response) => response.json())
       .then((data) => {
         if (data.features && data.features.length > 0) {
+          // Save the coordinates
           const coordinates = data.features[0].geometry.coordinates;
           const posX = coordinates[1];
           const posY = coordinates[0];
           console.log(posX, posY);
-
+          // Create the fetch config object
           fetch_config = {
             method: "POST",
             body: JSON.stringify({
@@ -224,6 +231,7 @@ function addAttraction() {
         }
       })
       .then(() => {
+        // When everything is done, close the overlay
         document.body.removeChild(overlay);
         window.location.reload();
       })

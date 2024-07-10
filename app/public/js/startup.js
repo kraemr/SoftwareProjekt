@@ -59,6 +59,7 @@ function startup() {
             }
 
         );
+    // If geolocation is not supported by the browser, search for "Deutschland" automatically
     } else {
         // Geolocation is not supported by the browser
         console.error("Geolocation is not supported by this browser.");

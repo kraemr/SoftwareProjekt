@@ -1,3 +1,4 @@
+// Onclick for the user icon to see user stuff
 function loadUserSettings() {
   isLoggedIn().then((isUserLoggedIn) => {
     console.log("logged in: " + isUserLoggedIn);

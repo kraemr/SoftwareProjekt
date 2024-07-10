@@ -1,10 +1,14 @@
+// Variable to store the last searched city and currently selected category
 var currentCity;
 var currentCategory;
+// Function to get the search input and modify the query
 function searchBox() {
   // Read Input Box
   var query = document.getElementById("search-input").value;
   searchLocation(query, true);
 }
+// Function to search the location by query, with a boolean whether to clear the search input
+// This is to prevent the search input from being cleared when the map starts
 function searchLocation(query, clearSearchInput) {
   // Check for empty string in query
   if (query.trim() === "") {
@@ -24,7 +28,7 @@ function searchLocation(query, clearSearchInput) {
     return;
   }
 
-  // API-URL
+  // API-URL with the queried city
   var apiUrl =
     "https://nominatim.openstreetmap.org/search.php?q=" +
     encodeURIComponent(query) +
@@ -38,7 +42,9 @@ function searchLocation(query, clearSearchInput) {
         loadAttractionsByCity(query);
         currentCity = query;
       }
+      // Update the GeoJSON layer
       updateGeoJsonLayer(data);
+      // Clear the search input if the parameter is true
       if (clearSearchInput) {
         document.getElementById("search-input").value = "";
       }
@@ -47,7 +53,7 @@ function searchLocation(query, clearSearchInput) {
       console.error("Fehler bei der API-Abfrage:", error);
     });
 }
-// Place markers by category and city
+// Function to load attractions by category from the go api
 function loadAttractionsByCategory(category) {
   var apiUrl =
     document.location.origin +
@@ -61,6 +67,7 @@ function loadAttractionsByCategory(category) {
       console.log(currentCity);
       // Löschen aller Marker
       allMarkersLayer.clearLayers();
+      // Always filter the data for the current city
       data = data.filter((attraction) => attraction.city === currentCity);
       // Hinzufügen der neuen Marker
       placeMarkers(data);
@@ -69,7 +76,7 @@ function loadAttractionsByCategory(category) {
       console.error("Fehler bei der API-Abfrage:", error);
     });
 }
-
+// Function to load attractions by city name from the go api
 function loadAttractionsByCity(city) {
   var apiUrl =
     document.location.origin +
@@ -83,10 +90,11 @@ function loadAttractionsByCity(city) {
       // Löschen aller Marke
       console.log(data);
       allMarkersLayer.clearLayers();
-      // Hinzufgen der neuen Marker
+      // If there is a category selected, filter the data
       if (currentCategory) {
         data = data.filter((attraction) => attraction.type === currentCategory);
       }
+      // Hinzufgen der neuen Marker
       placeMarkers(data);
     })
     .catch((error) => {

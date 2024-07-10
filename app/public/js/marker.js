@@ -77,7 +77,7 @@ function createBlueMarker(attraction) {
 
   return marker;
 }
-
+// Function to set the popup content for each marker
 function setPopUp(data, marker) {
   var popupContent = `
       <div>
