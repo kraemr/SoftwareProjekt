@@ -69,6 +69,24 @@ function toggleSidepanel() {
     }
   }
 }
+// Function to open the sidepanel without 
+function openSidepanel() {
+  const sidepanel = document.getElementById("sidepanel-toggle");
+  const button = document.getElementById("toggleButton");
+  const searchContainer = document.getElementById("search-container");
+  if (window.innerWidth <= 768) {
+    if ((sidepanel.style.height = "0")) {
+      sidepanel.style.height = "40%";
+      button.style.bottom = "41%";
+    }
+  } else {
+    if ((sidepanel.style.width = "0")) {
+      sidepanel.style.width = "25%";
+      button.style.left = "25%";
+      searchContainer.style.left = "25%";
+    }
+  }
+}
 
 function getCategories() {
   var apiUrl = document.location.origin + "/api/categories";
@@ -120,7 +138,7 @@ function fillCategories() {
 // Function to fill the sidebar with attraction information
 function loadMarkerInfoToSidebar(attractionData) {
   hideSidebarContent();
-  toggleSidepanel();
+  openSidepanel();
   const selectedAttractionsInfo = document.getElementById(
     "selectedAttractionsInformation"
   );

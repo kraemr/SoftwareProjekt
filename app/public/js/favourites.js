@@ -1,6 +1,6 @@
 function OpenFavourites() {
     hideSidebarContent();
-    toggleSidepanel();
+    openSidepanel();
     fetch(document.location.origin + "/api/favorites", {
         method: "GET",
     })
