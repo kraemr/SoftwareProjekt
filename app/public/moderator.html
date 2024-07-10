@@ -57,6 +57,7 @@
             cursor: pointer;
             /* Add a pointer on hover */
         }
+
         #imageDelete-overlay {
             position: fixed;
             /* Sit on top of the page content */
@@ -77,7 +78,8 @@
             cursor: pointer;
             /* Add a pointer on hover */
         }
-        .overlay-image{
+
+        .overlay-image {
             position: absolute;
             top: 50%;
             left: 50%;
@@ -367,24 +369,6 @@
             <!-- Content for managing users -->
         </div>
     </div>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            // Handle sidebar navigation
-            $('.nav-link').on('click', function () {
-                $('.nav-link').removeClass('active');
-                $(this).addClass('active');
-
-                let target = $(this).attr('id').replace('-tab', '');
-                $('.content-tab').hide();
-                $('#' + target).show();
-            });
-        });
-
-
-
-    </script>
     </div>
     <div id="manage-users" class="content-tab" style="display: none;">
         <h2>Manage Users</h2>
@@ -405,9 +389,6 @@
                 $('#' + target).show();
             });
         });
-
-
-
     </script>
     <script>
         getAllUnapprovedAttractions();
