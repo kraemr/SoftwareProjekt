@@ -9,6 +9,9 @@
 +added reviews<br>
 +make reviews owner-editable<br>
 +added star rating based on average of all reviews<br>
++added user moderation panel
++added seeing reviews for attractions for moderating
++added seeing reviews from users for moderating
 +a bunch of bug fixes<br>
 
 A custom deployable package using docker for a go backend and html frontend webapp to explore, add and review special places in your city!
