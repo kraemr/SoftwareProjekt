@@ -5,6 +5,7 @@
 ```bash
 # in the root directory where the docker-compose is
 docker-compose up --build
+# Now the web interface should be reachable from https://localhost/
 ```
 
 # Testing:
