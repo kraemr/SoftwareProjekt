@@ -1,5 +1,16 @@
 # Xplocity lol
 
+## Added Features since 04.07.2024
++better and more detailed route planer
++added a review tab
++added favorite count
++added favourite / unfavourite button
++better favorite management
++added reviews
++make reviews owner-editable
++added star rating based on average of all reviews
++a bunch of bug fixes
+
 Eine React / Angular / Electron / hauptsache kein nodejs Web Applikation um Ausflugsziele in deiner Stadt zu finden
 
 # Attractions Api
