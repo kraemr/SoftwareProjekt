@@ -11,8 +11,7 @@
 +added star rating based on average of all reviews<br>
 +a bunch of bug fixes<br>
 
-Eine React / Angular / Electron / hauptsache kein nodejs Web Applikation um Ausflugsziele in deiner Stadt zu finden
-
+A custom deployable package using docker for a go backend and html frontend webapp to explore, add and review special places in your city!
 # Attractions Api
 ## delete attraction
 
