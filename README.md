@@ -14,6 +14,8 @@
 +added seeing reviews from users for moderating<br>
 +a bunch of bug fixes<br>
 
+If you want to test features for moderation, please login as "test@testemail.com" with password "passwort1234" in an incognito tab and write reviews / favourite stuff. Then log in as a "berlin@berlin.com" using password "passwort1234" in another incognito tab (or clear site cookies) and visit localhost/moderator.html to review functionality.
+
 A custom deployable package using docker for a go backend and html frontend webapp to explore, add and review special places in your city!
 # Attractions Api
 ## delete attraction
