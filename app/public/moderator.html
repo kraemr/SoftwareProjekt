@@ -103,10 +103,10 @@
             <li class="nav-item">
                 <a class="nav-link" id="delete-attractions-tab" href="#" onclick="getAllAttractionsToModerate()">Delete
                     Attractions</a>
-            </li><!--
+            </li>
             <li class="nav-item">
-                <a class="nav-link" id="manage-users-tab" href="#">Manage Users</a>
-            </li>-->
+                <a class="nav-link" id="manage-users-tab" href="#" onclick="loadAllUsersForModCity()">Manage Users</a>
+            </li>
         </ul>
     </nav>
 
@@ -340,10 +340,49 @@
                                                 }
                                             });
                                     };
-
+                                    const showAttractionsReviewsBtn = document.createElement('button');
+                                    showAttractionsReviewsBtn.className = 'btn btn-warning m-1';
+                                    showAttractionsReviewsBtn.innerText = 'Show Reviews';
+                                    showAttractionsReviewsBtn.onclick = function () {
+                                        const reviewsList = document.createElement('div');
+                                        reviewsList.className = 'col';
+                                        reviewsList.innerHTML = '';
+                                        if (reviewsList.innerHTML != '') {
+                                            reviewsList.remove();
+                                        }
+                                        fetch(document.location.origin + "/api/reviews?attraction_id=" + attraction.Id, {
+                                            method: "GET",
+                                        })
+                                            .then((response) => response.json())
+                                            .then((data) => {
+                                                if (data.success == false) {
+                                                    const errorMessage = document.createElement('p');
+                                                    errorMessage.className = 'alert alert-danger';
+                                                    errorMessage.innerHTML = "No reviews found!";
+                                                }
+                                                data.forEach(review => {
+                                                    console.log(review);
+                                                    const reviewCard = document.createElement('div');
+                                                    reviewCard.className = 'card';
+                                                    const reviewCardBody = document.createElement('div');
+                                                    reviewCardBody.className = 'card-body';
+                                                    const reviewCardTitle = document.createElement('h5');
+                                                    reviewCardTitle.className = 'card-title';
+                                                    reviewCardTitle.innerText = review.Stars + " Stars"; const reviewCardText = document.createElement('p');
+                                                    reviewCardText.className = 'card-text';
+                                                    reviewCardText.innerText = review.Text;
+                                                    reviewCardBody.appendChild(reviewCardTitle);
+                                                    reviewCardBody.appendChild(reviewCardText);
+                                                    reviewCard.appendChild(reviewCardBody);
+                                                    reviewsList.appendChild(reviewCard);
+                                                });
+                                                cardBody.appendChild(reviewsList);
+                                            });
+                                    };
                                     cardBody.appendChild(cardTitle);
                                     cardBody.appendChild(cardText);
                                     cardBody.appendChild(deleteButton);
+                                    cardBody.appendChild(showAttractionsReviewsBtn);
                                     cardBody.appendChild(cardImage);
                                     cardInner.appendChild(cardBody);
                                     card.appendChild(cardInner);
@@ -366,9 +405,129 @@
         </div>
         <div id="manage-users" class="content-tab" style="display: none;">
             <h2>Manage Users</h2>
-            <!-- Content for managing users -->
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" id="filterUsers-input" placeholder="Filter users"
+                    oninput="filterUsers()">
+            </div>
+            <div id="users-list">
+            </div>
+            <script>
+                function loadAllUsersForModCity() {
+                    // Get current mod user
+                    fetch(document.location.origin + "/api/users?city=Müllhausen", {
+                        method: "GET",
+                    })
+                        .then((response) => response.json())
+                        .then((userListData) => {
+                            const usersList = document.getElementById('users-list');
+                            usersList.innerHTML = ''; // Clear the list before adding new items
+
+                            userListData.forEach(user => {
+                                const card = document.createElement('div');
+                                card.className = 'col';
+
+                                const cardInner = document.createElement('div');
+                                cardInner.className = 'card h-100';
+
+                                const cardBody = document.createElement('div');
+                                cardBody.className = 'card-body';
+
+                                const cardUsername = document.createElement('h5');
+                                cardUsername.className = 'card-title';
+                                cardUsername.innerText = user.Username;
+
+                                const cardEmail = document.createElement('p');
+                                cardEmail.className = 'card-text';
+                                cardEmail.innerText = user.Email;
+
+                                const cardCity = document.createElement('p');
+                                cardCity.className = 'card-text';
+                                cardCity.innerText = 'City: ' + user.City;
+
+                                const cardStatus = document.createElement('p');
+                                var status;
+                                if (user.Activated == 1) {
+                                    status = 'Active';
+                                } else {
+                                    status = 'Inactive';
+                                }
+                                const deactivateButton = document.createElement('button');
+                                deactivateButton.className = 'btn btn-danger m-1';
+                                deactivateButton.innerText = 'Deactivate';
+                                deactivateButton.onclick = function () {
+                                    fetch(document.location.origin + "/api/users?action=deactivate&id=" + user.Id, {
+                                        method: "PUT",
+                                    }).then((response) => response.json())
+                                        .then((data) => {
+                                            if (data.success == true) {
+                                                card.remove();
+                                            }
+                                        });
+                                };
+                                const showUsersReviewsBtn = document.createElement('button');
+                                showUsersReviewsBtn.className = 'btn btn-warning m-1';
+                                showUsersReviewsBtn.innerText = 'Show Reviews';
+                                showUsersReviewsBtn.onclick = function () {
+                                    const reviewsList = document.createElement('div');
+                                            reviewsList.className = 'col';
+                                            reviewsList.innerHTML = '';
+                                    fetch(document.location.origin + "/api/reviews?user_id=" + user.UserId, {
+                                        method: "GET",
+                                    }).then((response) => response.json())
+                                        .then((data) => {
+                                            if (data.success == false) {
+                                                const errorMessage = document.createElement('p');
+                                                errorMessage.className = 'alert alert-danger';
+                                                errorMessage.innerHTML = "No reviews found!";
+                                            }
+                                            data.forEach(review => {
+                                                console.log(review);
+                                                const reviewCard = document.createElement('div');
+                                                reviewCard.className = 'card';
+                                                const reviewCardBody = document.createElement('div');
+                                                reviewCardBody.className = 'card-body';
+                                                const reviewCardTitle = document.createElement('h5');
+                                                reviewCardTitle.className = 'card-title';
+                                                reviewCardTitle.innerText = review.Stars + " Stars";
+                                                const reviewCardText = document.createElement('p');
+                                                reviewCardText.className = 'card-text';
+                                                reviewCardText.innerText = review.Text;
+
+                                                const editReviewBtn = document.createElement('button');
+                                                editReviewBtn.className = 'btn btn-primary m-1';
+                                                editReviewBtn.innerText = 'Edit Review';
+                                                editReviewBtn.onclick = function () {
+                                                    // Add your edit review logic here
+                                                };
+                                                reviewCardBody.appendChild(reviewCardTitle);
+                                                reviewCardBody.appendChild(reviewCardText);
+                                                reviewCardBody.appendChild(editReviewBtn);
+                                                reviewCard.appendChild(reviewCardBody);
+                                                reviewsList.appendChild(reviewCard);
+
+                                            });
+                                            cardBody.appendChild(reviewsList);
+                                        });
+                                };
+
+                                cardStatus.className = 'card-text';
+                                cardStatus.innerText = 'Status: ' + status;
+
+                                cardBody.appendChild(cardUsername);
+                                cardBody.appendChild(cardEmail);
+                                cardBody.appendChild(cardCity);
+                                cardBody.appendChild(cardStatus);
+                                cardBody.appendChild(deactivateButton);
+                                cardBody.appendChild(showUsersReviewsBtn);
+                                cardInner.appendChild(cardBody);
+
+                                card.appendChild(cardInner);
+                                usersList.appendChild(card);
+                            });
+                        });
+                }
+            </script>
         </div>
-    </div>
     </div>
     <div id="manage-users" class="content-tab" style="display: none;">
         <h2>Manage Users</h2>
@@ -389,6 +548,9 @@
                 $('#' + target).show();
             });
         });
+
+
+
     </script>
     <script>
         getAllUnapprovedAttractions();
