@@ -3,6 +3,7 @@
 # Running The App
 
 ```bash
+# in the root directory where the docker-compose is
 docker-compose up --build
 ```
 
