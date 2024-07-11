@@ -106,5 +106,4 @@ func StartNotificationServer(port string,path string){
 	if err := http.ListenAndServe(addr, nil); err != nil {
 		log.Fatal(err)
 	}
-
 }

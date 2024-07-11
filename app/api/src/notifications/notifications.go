@@ -22,6 +22,8 @@ func AddNotification(user_id int32,notification Notification) error{
 }
 
 
+
+
 func getNotificationsFromDb(rows *sql.Rows)  ([]Notification,error){
 	var notifications []Notification
 	no_data := true	
@@ -39,9 +41,8 @@ func getNotificationsFromDb(rows *sql.Rows)  ([]Notification,error){
 
 /*
 If user was not logged in when notification came
-this can be used to get the notifications
+this can be used to get the notifications for a user starting from date
 */
-
 func getNotificationsForIDByDate(user_id int32,date string) ([]Notification,error){
 	var db *sql.DB = db_utils.DB
 	rows, err := db.Query("SELECT info,date FROM USER_NOTIFICATIONS WHERE user_id = ? and date > ? ", user_id,date)

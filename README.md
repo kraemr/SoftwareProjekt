@@ -1,6 +1,24 @@
 # Xplocity lol
 
+# Running The App
+
+```bash
+docker-compose up --build
+```
+
+# Testing:
+
+**Important** When changing the test files, the Docker must always be re-composed!
+
+```bash
+docker-compose up --build #in nem terminal
+docker exec -it softwareprojekt-webserver-1 bash #in nem anderen terminal
+cd tests/
+go test -v
+```
+
 ## Added Features since 04.07.2024
+
 +better and more detailed route planer<br>
 +added a review tab<br>
 +added favorite count<br>
@@ -17,7 +35,9 @@
 If you want to test features for moderation, please login as "test@testemail.com" with password "passwort1234" in an incognito tab and write reviews / favourite stuff. Then log in as a "berlin@berlin.com" using password "passwort1234" in another incognito tab (or clear site cookies) and visit localhost/moderator.html to review functionality.
 
 A custom deployable package using docker for a go backend and html frontend webapp to explore, add and review special places in your city!
+
 # Attractions Api
+
 ## delete attraction
 
 send request with DELETE to
@@ -58,10 +78,10 @@ GET
 path: /api/attractions?id=5
 returns single attraction Json Object
 
-
-
 # Notifications
-Notification have info field and date field info contains html that should directly be added to a divs innerHTML 
+
+Notification have info field and date field info contains html that should directly be added to a divs innerHTML
+
 ```js
 webSocket = new WebSocket("wss://"+document.location.host+"/notifications");
 webSocket.onmessage = (event) => {
@@ -69,7 +89,6 @@ webSocket.onmessage = (event) => {
 };
 ...
 ```
-
 
 # Docker Compose
 
@@ -93,21 +112,3 @@ In Docker-Compose Output werden Print statements ohne newline nicht angezeigt!!!
 # Testing Websocket Locally
 
 In firefox you need to add an exception in certificates for localhost
-
-# Testing:
-
-**Important** When changing the test files, the Docker must always be re-composed!
-
-```bash
-docker exec -it softwareprojekt-webserver-1 bash
-
-cd tests/
-
-go test -v 
-```
-
-alternative: just use this command when composing (Sadly, only found out about it at the end...)
-
-```bash
-docker-compose up --build --watch
-```
